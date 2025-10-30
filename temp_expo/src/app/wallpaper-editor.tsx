@@ -1,0 +1,396 @@
+// Wallpaper editor screen
+
+import React, { useEffect, useState } from 'react';
+import {
+  View,
+  Text,
+  StyleSheet,
+  ScrollView,
+  Switch,
+  Alert,
+  TouchableOpacity,
+} from 'react-native';
+import { useRouter, useLocalSearchParams } from 'expo-router';
+import { WallpaperPreview } from '@/components/wallpaper/WallpaperPreview';
+import { TemplateCarousel } from '@/components/wallpaper/TemplateCarousel';
+import { Button } from '@/components/ui/Button';
+import { Header } from '@/components/shared/Header';
+import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { Toast } from '@/components/ui/Toast';
+import { useSignaturesStore } from '@/store/signatures-store';
+import { useWallpaper } from '@/hooks/useWallpaper';
+import { useAnalytics } from '@/hooks/useAnalytics';
+import { usePremium } from '@/hooks/usePremium';
+import { shareImage } from '@/services/sharing/share-service';
+import { PaywallModal } from '@/components/premium/PaywallModal';
+import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
+import { colors } from '@/constants/colors';
+import { typography } from '@/constants/typography';
+import { spacing } from '@/constants/spacing';
+import { templateColorPresets } from '@/constants/colors';
+
+export default function WallpaperEditorScreen() {
+  const router = useRouter();
+  const params = useLocalSearchParams();
+  const signatureId = params.signatureId as string;
+  const { track } = useAnalytics();
+
+  const { getById } = useSignaturesStore();
+  const signature = getById(signatureId);
+
+  const { isPremium } = usePremium();
+
+  const [showColorPicker, setShowColorPicker] = useState(false);
+  const [showPaywall, setShowPaywall] = useState(false);
+  const [isSharing, setIsSharing] = useState(false);
+  const [toastVisible, setToastVisible] = useState(false);
+  const [toastMessage, setToastMessage] = useState('');
+  const [toastType, setToastType] = useState<'success' | 'error'>('success');
+
+  const {
+    selectedTemplateId,
+    wallpaperOptions,
+    isGenerating,
+    isSaving,
+    error,
+    selectTemplate,
+    updateOptions,
+    setWallpaperRef,
+    generateWallpaper,
+    saveToGallery,
+    setAsWallpaper,
+  } = useWallpaper({
+    signature: signature!,
+    isPremium,
+  });
+
+  useEffect(() => {
+    track('screen_viewed', { screen_name: 'Wallpaper Editor' });
+  }, [track]);
+
+  if (!signature) {
+    return (
+      <View style={styles.container}>
+        <Header
+          title="Wallpaper Editor"
+          leftAction={<Text style={styles.backText}>Back</Text>}
+          onLeftPress={() => router.back()}
+        />
+        <View style={styles.errorContainer}>
+          <Text style={styles.errorText}>Signature not found</Text>
+        </View>
+      </View>
+    );
+  }
+
+  const handleSaveToGallery = async () => {
+    const success = await saveToGallery();
+    if (success) {
+      Alert.alert('Success', 'Wallpaper saved to gallery!');
+    } else if (error) {
+      Alert.alert('Error', error);
+    }
+  };
+
+  const handleSetAsWallpaper = async () => {
+    const success = await setAsWallpaper();
+    if (!success && error) {
+      Alert.alert('Error', error);
+    }
+  };
+
+  const handlePremiumRequired = () => {
+    setShowPaywall(true);
+  };
+
+  const handleColorSelect = (colorPreset: typeof templateColorPresets[0]) => {
+    updateOptions({ backgroundColor: colorPreset.value });
+    setShowColorPicker(false);
+  };
+
+  const handleShare = async () => {
+    setIsSharing(true);
+
+    track(ANALYTICS_EVENTS.SHARE_OPENED, {
+      content_type: 'wallpaper',
+      template_id: selectedTemplateId,
+      celebrity_name: signature.celebrityName,
+    });
+
+    try {
+      // Generate wallpaper first
+      const wallpaperUri = await generateWallpaper();
+
+      if (!wallpaperUri) {
+        setToastType('error');
+        setToastMessage('Failed to generate wallpaper');
+        setToastVisible(true);
+        return;
+      }
+
+      // Share the generated wallpaper
+      const result = await shareImage(wallpaperUri, {
+        dialogTitle: `Share ${signature.celebrityName} Wallpaper`,
+      });
+
+      if (result.success) {
+        track(ANALYTICS_EVENTS.SHARE_COMPLETED, {
+          content_type: 'wallpaper',
+          template_id: selectedTemplateId,
+        });
+
+        setToastType('success');
+        setToastMessage('Wallpaper shared successfully!');
+        setToastVisible(true);
+      } else {
+        setToastType('error');
+        setToastMessage(result.error || 'Failed to share wallpaper');
+        setToastVisible(true);
+      }
+    } catch (error) {
+      setToastType('error');
+      setToastMessage('An error occurred while sharing');
+      setToastVisible(true);
+    } finally {
+      setIsSharing(false);
+    }
+  };
+
+  return (
+    <View style={styles.container}>
+      <Header
+        title="Create Wallpaper"
+        leftAction={<Text style={styles.backText}>Back</Text>}
+        onLeftPress={() => router.back()}
+      />
+
+      <ScrollView
+        style={styles.scrollView}
+        contentContainerStyle={styles.scrollContent}
+        showsVerticalScrollIndicator={false}
+      >
+        {/* Wallpaper Preview */}
+        <WallpaperPreview
+          signature={signature}
+          options={wallpaperOptions}
+          onRefReady={setWallpaperRef}
+        />
+
+        {/* Template Selection */}
+        <View style={styles.section}>
+          <Text style={styles.sectionLabel}>Choose Template</Text>
+          <TemplateCarousel
+            selectedTemplateId={selectedTemplateId}
+            onTemplateSelect={selectTemplate}
+            isPremium={isPremium}
+            onPremiumRequired={handlePremiumRequired}
+          />
+        </View>
+
+        {/* Color Customization */}
+        <View style={styles.section}>
+          <TouchableOpacity
+            style={styles.colorButton}
+            onPress={() => setShowColorPicker(!showColorPicker)}
+            activeOpacity={0.7}
+          >
+            <Text style={styles.sectionLabel}>Background Color</Text>
+            <View
+              style={[
+                styles.colorPreview,
+                { backgroundColor: wallpaperOptions.backgroundColor || colors.background },
+              ]}
+            />
+          </TouchableOpacity>
+
+          {showColorPicker && (
+            <View style={styles.colorGrid}>
+              {templateColorPresets.map((preset) => (
+                <TouchableOpacity
+                  key={preset.id}
+                  style={[
+                    styles.colorOption,
+                    { backgroundColor: preset.value },
+                    preset.value === wallpaperOptions.backgroundColor &&
+                      styles.colorOptionSelected,
+                  ]}
+                  onPress={() => handleColorSelect(preset)}
+                  activeOpacity={0.7}
+                />
+              ))}
+            </View>
+          )}
+        </View>
+
+        {/* Toggle Options */}
+        <View style={styles.section}>
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Show Date</Text>
+            <Switch
+              value={wallpaperOptions.showDate}
+              onValueChange={(value) => updateOptions({ showDate: value })}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={colors.background}
+            />
+          </View>
+
+          <View style={styles.toggleRow}>
+            <Text style={styles.toggleLabel}>Show Location</Text>
+            <Switch
+              value={wallpaperOptions.showLocation}
+              onValueChange={(value) => updateOptions({ showLocation: value })}
+              trackColor={{ false: colors.border, true: colors.primary }}
+              thumbColor={colors.background}
+              disabled={!signature.location}
+            />
+          </View>
+        </View>
+
+        {/* Error Message */}
+        {error && <Text style={styles.errorText}>{error}</Text>}
+
+        {/* Action Buttons */}
+        <View style={styles.actions}>
+          <Button
+            title="📤 Share Wallpaper"
+            onPress={handleShare}
+            variant="secondary"
+            disabled={isGenerating || isSaving || isSharing}
+            loading={isSharing}
+            fullWidth
+            style={styles.actionButton}
+          />
+          <Button
+            title="Save to Gallery"
+            onPress={handleSaveToGallery}
+            variant="secondary"
+            disabled={isGenerating || isSaving || isSharing}
+            loading={isSaving}
+            fullWidth
+            style={styles.actionButton}
+          />
+          <Button
+            title="Set as Wallpaper"
+            onPress={handleSetAsWallpaper}
+            variant="primary"
+            disabled={isGenerating || isSaving || isSharing}
+            fullWidth
+            style={styles.actionButton}
+          />
+        </View>
+
+        {/* Info Text */}
+        <Text style={styles.infoText}>
+          💡 Tip: Premium users get HD quality wallpapers and access to 15+ exclusive templates
+        </Text>
+      </ScrollView>
+
+      {/* Toast notification */}
+      <Toast
+        visible={toastVisible}
+        message={toastMessage}
+        type={toastType}
+        onDismiss={() => setToastVisible(false)}
+      />
+
+      {/* Paywall Modal */}
+      <PaywallModal
+        visible={showPaywall}
+        onClose={() => setShowPaywall(false)}
+        feature="Premium Templates"
+      />
+    </View>
+  );
+}
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    backgroundColor: colors.background,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  scrollContent: {
+    paddingBottom: spacing.xl,
+  },
+  section: {
+    marginBottom: spacing.lg,
+    paddingHorizontal: spacing.md,
+  },
+  sectionLabel: {
+    ...typography.label,
+    color: colors.text,
+    marginBottom: spacing.sm,
+  },
+  colorButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  colorPreview: {
+    width: 40,
+    height: 40,
+    borderRadius: 20,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+  colorOption: {
+    width: 50,
+    height: 50,
+    borderRadius: 25,
+    borderWidth: 2,
+    borderColor: colors.border,
+  },
+  colorOptionSelected: {
+    borderColor: colors.primary,
+    borderWidth: 3,
+  },
+  toggleRow: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.sm,
+    borderBottomWidth: 1,
+    borderBottomColor: colors.borderLight,
+  },
+  toggleLabel: {
+    ...typography.body,
+    color: colors.text,
+  },
+  actions: {
+    paddingHorizontal: spacing.md,
+    gap: spacing.md,
+    marginTop: spacing.lg,
+  },
+  actionButton: {
+    marginBottom: 0,
+  },
+  infoText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+  },
+  errorContainer: {
+    flex: 1,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  errorText: {
+    ...typography.body,
+    color: colors.error,
+    textAlign: 'center',
+  },
+  backText: {
+    ...typography.body,
+    color: colors.primary,
+  },
+});
