@@ -3,8 +3,6 @@
 import React from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
 
 export interface PremiumBadgeProps {
   size?: 'small' | 'medium' | 'large';

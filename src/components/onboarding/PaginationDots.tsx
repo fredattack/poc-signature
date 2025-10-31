@@ -7,12 +7,13 @@ import Animated, {
   interpolate,
   Extrapolation,
 } from 'react-native-reanimated';
+import type { SharedValue } from 'react-native-reanimated';
 import { colors } from '@/constants/colors';
 import { spacing } from '@/constants/spacing';
 
 export interface PaginationDotsProps {
   slides: number;
-  scrollX: Animated.SharedValue<number>;
+  scrollX: SharedValue<number>;
   slideWidth: number;
 }
 
@@ -39,7 +40,7 @@ export const PaginationDots: React.FC<PaginationDotsProps> = ({
 
 interface DotProps {
   index: number;
-  scrollX: Animated.SharedValue<number>;
+  scrollX: SharedValue<number>;
   slideWidth: number;
 }
 

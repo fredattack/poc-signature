@@ -3,12 +3,12 @@ import {
   Modal as RNModal,
   View,
   StyleSheet,
-  TouchableOpacity,
   TouchableWithoutFeedback,
   ViewStyle,
+  Text,
 } from 'react-native';
 import { colors } from '@/constants/colors';
-import { spacing, borderRadius, layout } from '@/constants/spacing';
+import { spacing, layout } from '@/constants/spacing';
 
 export interface ModalProps {
   visible: boolean;
@@ -17,6 +17,7 @@ export interface ModalProps {
   containerStyle?: ViewStyle;
   dismissable?: boolean;
   animationType?: 'none' | 'slide' | 'fade';
+  title?: string;
 }
 
 export const Modal: React.FC<ModalProps> = ({
@@ -26,6 +27,7 @@ export const Modal: React.FC<ModalProps> = ({
   containerStyle,
   dismissable = true,
   animationType = 'slide',
+  title,
 }) => {
   return (
     <RNModal
@@ -37,7 +39,10 @@ export const Modal: React.FC<ModalProps> = ({
       <TouchableWithoutFeedback onPress={dismissable ? onClose : undefined}>
         <View style={styles.backdrop}>
           <TouchableWithoutFeedback>
-            <View style={[styles.container, containerStyle]}>{children}</View>
+            <View style={[styles.container, containerStyle]}>
+              {title ? <Text style={styles.title}>{title}</Text> : null}
+              {children}
+            </View>
           </TouchableWithoutFeedback>
         </View>
       </TouchableWithoutFeedback>
@@ -67,5 +72,11 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.3,
     shadowRadius: 8,
     elevation: 8,
+  },
+  title: {
+    fontWeight: '700',
+    fontSize: 18,
+    marginBottom: spacing.md,
+    color: colors.text,
   },
 });

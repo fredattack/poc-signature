@@ -217,8 +217,8 @@ export default function SignatureDetailScreen() {
       <Toast
         visible={toastVisible}
         message={toastMessage}
-        type={toastType}
-        onDismiss={() => setToastVisible(false)}
+        variant={toastType}
+        onHide={() => setToastVisible(false)}
       />
     </View>
   );

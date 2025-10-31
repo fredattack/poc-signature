@@ -17,7 +17,6 @@ import { ColorPicker } from '@/components/signature/ColorPicker';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { Header } from '@/components/shared/Header';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { useSignature } from '@/hooks/useSignature';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { colors } from '@/constants/colors';
@@ -27,7 +26,8 @@ import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
 export default function SignatureCanvasScreen() {
   const router = useRouter();
-  const canvasRef = useRef(null);
+  const canvasRef = useRef<View>(null);
+  const [clearSignal, setClearSignal] = useState(0);
   const { track } = useAnalytics();
 
   const {
@@ -50,9 +50,7 @@ export default function SignatureCanvasScreen() {
 
   // Set canvas ref
   useEffect(() => {
-    if (canvasRef.current) {
-      setCanvasRef(canvasRef);
-    }
+    setCanvasRef(canvasRef);
   }, [setCanvasRef]);
 
   // Track screen view
@@ -62,9 +60,7 @@ export default function SignatureCanvasScreen() {
 
   const handleClear = () => {
     clearCanvas();
-    if (canvasRef.current && typeof canvasRef.current.clear === 'function') {
-      canvasRef.current.clear();
-    }
+    setClearSignal((value) => value + 1);
   };
 
   const handleSave = async () => {
@@ -135,8 +131,9 @@ export default function SignatureCanvasScreen() {
           <View style={styles.canvasContainer}>
             <SignatureCanvas
               color={currentColor}
-              onPathsChange={addPath}
-              canvasRef={canvasRef}
+              onStrokeComplete={addPath}
+              captureRef={canvasRef}
+              clearSignal={clearSignal}
             />
           </View>
 

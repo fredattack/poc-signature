@@ -7,7 +7,6 @@ import {
   Dimensions,
   TouchableOpacity,
   Text,
-  ScrollView,
   NativeScrollEvent,
   NativeSyntheticEvent,
 } from 'react-native';
@@ -16,6 +15,7 @@ import Animated, {
   useSharedValue,
   useAnimatedScrollHandler,
 } from 'react-native-reanimated';
+import type { AnimatedScrollView } from 'react-native-reanimated';
 import { OnboardingSlide } from '@/components/onboarding/OnboardingSlide';
 import {
   CaptureIllustration,
@@ -62,7 +62,7 @@ const slides = [
 export default function OnboardingScreen() {
   const router = useRouter();
   const { track } = useAnalytics();
-  const scrollViewRef = useRef<ScrollView>(null);
+  const scrollViewRef = useRef<AnimatedScrollView | null>(null);
   const scrollX = useSharedValue(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 

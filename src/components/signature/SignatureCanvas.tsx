@@ -1,20 +1,45 @@
 // Signature canvas with 60fps Skia rendering
 
-import React, { useCallback, useRef } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import { Canvas, Path, Skia, TouchInfo, useTouchHandler } from '@shopify/react-native-skia';
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import {
+  View,
+  StyleSheet,
+  Dimensions,
+  type GestureResponderEvent,
+  type View as RNView,
+} from 'react-native';
+import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import { SignatureColor, CanvasPath } from '@/types/signature.types';
 import { colors } from '@/constants/colors';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_STROKE_WIDTH } from '@/utils/constants';
 
 export interface SignatureCanvasProps {
   color: SignatureColor;
-  onPathsChange: (paths: CanvasPath[]) => void;
-  canvasRef?: React.RefObject<any>;
+  onStrokeComplete: (path: CanvasPath) => void;
+  captureRef?: React.RefObject<RNView>;
+  clearSignal?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CANVAS_ACTUAL_WIDTH = Math.min(SCREEN_WIDTH - 32, CANVAS_WIDTH);
+
+const getTouchPoint = (event: GestureResponderEvent): { x: number; y: number } | null => {
+  const touch =
+    event.nativeEvent.touches?.[0] ??
+    event.nativeEvent.changedTouches?.[0] ?? {
+      locationX: event.nativeEvent.locationX,
+      locationY: event.nativeEvent.locationY,
+    };
+
+  if (touch == null) {
+    return null;
+  }
+
+  return {
+    x: touch.locationX,
+    y: touch.locationY,
+  };
+};
 
 const getColorHex = (color: SignatureColor): string => {
   switch (color) {
@@ -33,63 +58,95 @@ const getColorHex = (color: SignatureColor): string => {
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   color,
-  onPathsChange,
-  canvasRef,
+  onStrokeComplete,
+  captureRef,
+  clearSignal,
 }) => {
-  const [paths, setPaths] = React.useState<CanvasPath[]>([]);
+  const [paths, setPaths] = useState<CanvasPath[]>([]);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
 
-  const onTouch = useTouchHandler({
-    onStart: (touchInfo: TouchInfo) => {
-      const { x, y } = touchInfo;
-
-      // Start new path
-      currentPath.current = Skia.Path.Make();
-      currentPath.current.moveTo(x, y);
-      currentPoints.current = [{ x, y }];
-    },
-    onActive: (touchInfo: TouchInfo) => {
-      const { x, y } = touchInfo;
-
-      // Add point to current path
-      currentPath.current.lineTo(x, y);
-      currentPoints.current.push({ x, y });
-
-      // Force re-render for smooth drawing
-      setPaths((prevPaths) => [...prevPaths]);
-    },
-    onEnd: () => {
-      // Save completed path
-      const newPath: CanvasPath = {
-        points: [...currentPoints.current],
-        color,
-      };
-
-      const updatedPaths = [...paths, newPath];
-      setPaths(updatedPaths);
-      onPathsChange(updatedPaths);
-
-      // Reset for next path
+  useEffect(() => {
+    if (clearSignal !== undefined) {
+      setPaths([]);
       currentPath.current = Skia.Path.Make();
       currentPoints.current = [];
-    },
-  });
+    }
+  }, [clearSignal]);
 
-  const clearCanvas = useCallback(() => {
-    setPaths([]);
-    onPathsChange([]);
+  const completeStroke = useCallback(() => {
+    if (currentPoints.current.length === 0) {
+      return;
+    }
+
+    const newPath: CanvasPath = {
+      points: [...currentPoints.current],
+      color,
+    };
+
+    setPaths((prev) => [...prev, newPath]);
+    onStrokeComplete(newPath);
+
     currentPath.current = Skia.Path.Make();
     currentPoints.current = [];
-  }, [onPathsChange]);
+  }, [color, onStrokeComplete]);
 
-  // Expose clear method via ref
-  React.useImperativeHandle(canvasRef, () => ({
-    clear: clearCanvas,
-  }));
+  const handleTouchStart = useCallback((event: GestureResponderEvent) => {
+    const point = getTouchPoint(event);
+    if (!point) {
+      return;
+    }
+
+    currentPath.current = Skia.Path.Make();
+    currentPath.current.moveTo(point.x, point.y);
+    currentPoints.current = [point];
+  }, []);
+
+  const handleTouchMove = useCallback((event: GestureResponderEvent) => {
+    const point = getTouchPoint(event);
+    if (!point) {
+      return;
+    }
+
+    currentPath.current.lineTo(point.x, point.y);
+    currentPoints.current.push(point);
+
+    // trigger repaint
+    setPaths((prev) => [...prev]);
+  }, []);
+
+  const handleTouchEnd = useCallback(() => {
+    completeStroke();
+  }, [completeStroke]);
+
+  const renderCompletedPaths = useMemo(
+    () =>
+      paths.map((pathData, index) => {
+        const skiaPath = Skia.Path.Make();
+        if (pathData.points.length > 0) {
+          skiaPath.moveTo(pathData.points[0].x, pathData.points[0].y);
+          for (let i = 1; i < pathData.points.length; i++) {
+            skiaPath.lineTo(pathData.points[i].x, pathData.points[i].y);
+          }
+        }
+
+        return (
+          <Path
+            key={`path-${index}`}
+            path={skiaPath}
+            color={getColorHex(pathData.color)}
+            style="stroke"
+            strokeWidth={CANVAS_STROKE_WIDTH}
+            strokeCap="round"
+            strokeJoin="round"
+          />
+        );
+      }),
+    [paths]
+  );
 
   return (
-    <View style={styles.container} ref={canvasRef}>
+    <View style={styles.container} ref={captureRef}>
       <Canvas
         style={[
           styles.canvas,
@@ -98,32 +155,11 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
             height: CANVAS_HEIGHT,
           },
         ]}
-        onTouch={onTouch}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
       >
-        {/* Render completed paths */}
-        {paths.map((pathData, index) => {
-          const skiaPath = Skia.Path.Make();
-          if (pathData.points.length > 0) {
-            skiaPath.moveTo(pathData.points[0].x, pathData.points[0].y);
-            for (let i = 1; i < pathData.points.length; i++) {
-              skiaPath.lineTo(pathData.points[i].x, pathData.points[i].y);
-            }
-          }
-
-          return (
-            <Path
-              key={`path-${index}`}
-              path={skiaPath}
-              color={getColorHex(pathData.color)}
-              style="stroke"
-              strokeWidth={CANVAS_STROKE_WIDTH}
-              strokeCap="round"
-              strokeJoin="round"
-            />
-          );
-        })}
-
-        {/* Render current path being drawn */}
+        {renderCompletedPaths}
         {currentPoints.current.length > 0 && (
           <Path
             path={currentPath.current}

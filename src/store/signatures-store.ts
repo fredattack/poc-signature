@@ -19,6 +19,7 @@ interface SignaturesState {
   getAll: () => Signature[];
   getActiveSignatures: () => Signature[];
   clearAll: () => Promise<void>;
+  getSortedSignatures: (sortBy: 'recent' | 'oldest' | 'a-z' | 'z-a') => Signature[];
 
   // Sync methods
   markAsSynced: (id: string, cloudImageUrl: string) => Promise<void>;

@@ -1,6 +1,6 @@
 // File system utilities for image storage
 
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 
 const SIGNATURES_DIR = `${FileSystem.documentDirectory}signatures/`;
 const WALLPAPERS_DIR = `${FileSystem.documentDirectory}wallpapers/`;

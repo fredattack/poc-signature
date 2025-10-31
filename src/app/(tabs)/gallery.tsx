@@ -13,6 +13,7 @@ import { colors } from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing } from '@/constants/spacing';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
+import { Signature } from '@/types/signature.types';
 
 type SortOption = 'recent' | 'oldest' | 'a-z' | 'z-a';
 
@@ -26,7 +27,9 @@ const sortOptions: { value: SortOption; label: string }[] = [
 export default function GalleryScreen() {
   const router = useRouter();
   const { screen, track } = useAnalytics();
-  const { loadSignatures, getSortedSignatures, getActiveSignatures } = useSignaturesStore();
+  const loadSignatures = useSignaturesStore((state) => state.loadSignatures);
+  const getSortedSignatures = useSignaturesStore((state) => state.getSortedSignatures);
+  const getActiveSignatures = useSignaturesStore((state) => state.getActiveSignatures);
 
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -37,7 +40,7 @@ export default function GalleryScreen() {
     loadSignatures();
   }, [screen, loadSignatures]);
 
-  const signatures = getSortedSignatures(sortBy);
+  const signatures: Signature[] = getSortedSignatures(sortBy);
   const activeCount = getActiveSignatures().length;
 
   const handleSortChange = (option: SortOption) => {
@@ -132,7 +135,7 @@ export default function GalleryScreen() {
           onCtaPress={handleNewSignature}
         />
       ) : (
-        <FlashList
+        <FlashList<Signature>
           data={signatures}
           renderItem={({ item }) => (
             <View style={styles.cardWrapper}>
@@ -142,7 +145,6 @@ export default function GalleryScreen() {
               />
             </View>
           )}
-          estimatedItemSize={200}
           numColumns={2}
           contentContainerStyle={styles.listContent}
           showsVerticalScrollIndicator={false}

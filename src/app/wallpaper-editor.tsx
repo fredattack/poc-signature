@@ -289,8 +289,8 @@ export default function WallpaperEditorScreen() {
       <Toast
         visible={toastVisible}
         message={toastMessage}
-        type={toastType}
-        onDismiss={() => setToastVisible(false)}
+        variant={toastType}
+        onHide={() => setToastVisible(false)}
       />
 
       {/* Paywall Modal */}
