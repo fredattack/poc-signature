@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   TextInput,
   View,
@@ -7,9 +7,7 @@ import {
   TextInputProps,
   ViewStyle,
 } from 'react-native';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing, borderRadius, layout } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface InputProps extends TextInputProps {
   label?: string;
@@ -27,6 +25,9 @@ export const Input: React.FC<InputProps> = ({
   ...textInputProps
 }) => {
   const [isFocused, setIsFocused] = useState(false);
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const placeholderColor = theme.colors.text.tertiary;
 
   const inputStyles = [
     styles.input,
@@ -40,7 +41,7 @@ export const Input: React.FC<InputProps> = ({
       {label && <Text style={styles.label}>{label}</Text>}
       <TextInput
         style={inputStyles}
-        placeholderTextColor={colors.textTertiary}
+        placeholderTextColor={placeholderColor}
         onFocus={() => setIsFocused(true)}
         onBlur={() => setIsFocused(false)}
         {...textInputProps}
@@ -51,39 +52,74 @@ export const Input: React.FC<InputProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    marginBottom: spacing.md,
-  },
-  label: {
-    ...typography.label,
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  input: {
-    height: layout.inputHeight,
-    borderWidth: 1,
-    borderColor: colors.border,
-    borderRadius: borderRadius.md,
-    paddingHorizontal: spacing.md,
-    ...typography.body,
-    color: colors.text,
-    backgroundColor: colors.background,
-  },
-  inputFocused: {
-    borderColor: colors.primary,
-  },
-  inputError: {
-    borderColor: colors.error,
-  },
-  errorText: {
-    ...typography.caption,
-    color: colors.error,
-    marginTop: spacing.xs,
-  },
-  helperText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const labelTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: '500' as const,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: tokens.typography.caption.fontWeight,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    container: {
+      marginBottom: tokens.spacing.sm,
+    },
+    label: {
+      ...labelTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.xs,
+    },
+    input: {
+      height: tokens.layout.inputHeight,
+      borderWidth: 1,
+      borderColor:
+        mode === 'dark'
+          ? 'rgba(244, 244, 244, 0.16)'
+          : 'rgba(35, 35, 35, 0.12)',
+      borderRadius: tokens.radii.mild,
+      paddingHorizontal: tokens.spacing.md,
+      ...bodyTypography,
+      color: colors.text.primary,
+      backgroundColor: colors.surface.card,
+    },
+    inputFocused: {
+      borderColor: colors.brand.primary,
+      shadowColor: colors.brand.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+      elevation: 2,
+    },
+    inputError: {
+      borderColor: colors.feedback.critical,
+    },
+    errorText: {
+      ...captionTypography,
+      color: colors.feedback.critical,
+      marginTop: tokens.spacing.xs,
+    },
+    helperText: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      marginTop: tokens.spacing.xs,
+    },
+  });
+};

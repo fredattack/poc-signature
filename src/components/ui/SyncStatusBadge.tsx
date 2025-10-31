@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { SyncStatus } from '@/types/sync.types';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing, borderRadius } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface SyncStatusBadgeProps {
   status: SyncStatus;
@@ -14,31 +12,37 @@ export const SyncStatusBadge: React.FC<SyncStatusBadgeProps> = ({
   status,
   size = 'small',
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const getStatusConfig = () => {
     switch (status) {
       case SyncStatus.Pending:
         return {
           label: 'Pending',
-          backgroundColor: colors.warning,
-          textColor: colors.textInverse,
+          backgroundColor: theme.colors.feedback.warning,
+          textColor: theme.colors.text.inverse,
         };
       case SyncStatus.Synced:
         return {
           label: 'Synced',
-          backgroundColor: colors.success,
-          textColor: colors.textInverse,
+          backgroundColor: theme.colors.feedback.success,
+          textColor: theme.colors.text.inverse,
         };
       case SyncStatus.Failed:
         return {
           label: 'Failed',
-          backgroundColor: colors.error,
-          textColor: colors.textInverse,
+          backgroundColor: theme.colors.feedback.critical,
+          textColor: theme.colors.text.inverse,
         };
       default:
         return {
           label: 'Unknown',
-          backgroundColor: colors.border,
-          textColor: colors.text,
+          backgroundColor:
+            theme.mode === 'dark'
+              ? 'rgba(244, 244, 244, 0.12)'
+              : 'rgba(35, 35, 35, 0.12)',
+          textColor: theme.colors.text.primary,
         };
     }
   };
@@ -68,29 +72,41 @@ export const SyncStatusBadge: React.FC<SyncStatusBadgeProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  badge: {
-    borderRadius: borderRadius.sm,
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    alignSelf: 'flex-start',
-  },
-  badgeSmall: {
-    paddingVertical: 2,
-    paddingHorizontal: spacing.xs,
-  },
-  badgeMedium: {
-    paddingVertical: spacing.xs,
-    paddingHorizontal: spacing.sm,
-  },
-  text: {
-    ...typography.caption,
-    fontWeight: '600',
-  },
-  textSmall: {
-    fontSize: 10,
-  },
-  textMedium: {
-    fontSize: 12,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    badge: {
+      borderRadius: tokens.radii.mild,
+      paddingVertical: tokens.spacing.xs / 2,
+      paddingHorizontal: tokens.spacing.xs,
+      alignSelf: 'flex-start',
+    },
+    badgeSmall: {
+      paddingVertical: 2,
+      paddingHorizontal: tokens.spacing.micro,
+    },
+    badgeMedium: {
+      paddingVertical: tokens.spacing.micro,
+      paddingHorizontal: tokens.spacing.xs,
+    },
+    text: {
+      ...captionTypography,
+      color: colors.text.inverse,
+    },
+    textSmall: {
+      fontSize: 11,
+    },
+    textMedium: {
+      fontSize: 13,
+    },
+  });
+};

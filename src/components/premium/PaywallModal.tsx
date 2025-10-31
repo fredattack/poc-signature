@@ -1,6 +1,6 @@
 // Paywall modal for premium subscription
 
-import React, { useState } from 'react';
+import React, { useMemo, useState } from 'react';
 import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
@@ -9,9 +9,7 @@ import { useAnalytics } from '@/hooks/useAnalytics';
 import { SubscriptionPlan } from '@/services/api/subscriptions';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { PREMIUM_MONTHLY_PRICE, PREMIUM_ANNUAL_PRICE, TRIAL_DURATION_DAYS } from '@/utils/constants';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface PaywallModalProps {
   visible: boolean;
@@ -37,6 +35,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 }) => {
   const { activatePremium, isLoading } = usePremium();
   const { track } = useAnalytics();
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(SubscriptionPlan.Annual);
 
@@ -148,80 +148,126 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  benefitsContainer: {
-    marginBottom: spacing.xl,
-  },
-  benefitRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginBottom: spacing.sm,
-  },
-  checkmark: {
-    ...typography.h3,
-    color: colors.success,
-    marginRight: spacing.sm,
-  },
-  benefitText: {
-    ...typography.body,
-    color: colors.text,
-    flex: 1,
-  },
-  pricingContainer: {
-    marginBottom: spacing.lg,
-    gap: spacing.md,
-  },
-  planCard: {
-    padding: spacing.md,
-    borderRadius: 12,
-    borderWidth: 2,
-    borderColor: colors.border,
-    backgroundColor: colors.background,
-  },
-  planCardSelected: {
-    borderColor: colors.primary,
-    backgroundColor: colors.primaryLight + '10',
-  },
-  planHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.xs,
-  },
-  planName: {
-    ...typography.h3,
-    color: colors.text,
-  },
-  savingsBadge: {
-    backgroundColor: colors.accent,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs / 2,
-    borderRadius: 4,
-  },
-  savingsText: {
-    ...typography.caption,
-    color: colors.background,
-    fontWeight: '600',
-  },
-  planPrice: {
-    ...typography.h2,
-    color: colors.text,
-    marginBottom: spacing.xs / 2,
-  },
-  planDetails: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  finePrint: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.md,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  const headingTypography = {
+    fontSize: tokens.typography.headingM.fontSize,
+    lineHeight: tokens.typography.headingM.lineHeight,
+    fontWeight: tokens.typography.headingM.fontWeight,
+    letterSpacing: tokens.typography.headingM.letterSpacing,
+  };
+
+  const priceTypography = {
+    fontSize: tokens.typography.headingL.fontSize,
+    lineHeight: tokens.typography.headingL.lineHeight,
+    fontWeight: tokens.typography.headingL.fontWeight,
+    letterSpacing: tokens.typography.headingL.letterSpacing,
+  };
+
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: tokens.typography.caption.fontWeight,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  const captionBoldTypography = {
+    ...captionTypography,
+    fontWeight: '600' as const,
+  };
+
+  const selectedBackground =
+    mode === 'dark'
+      ? 'rgba(129, 144, 85, 0.18)'
+      : 'rgba(138, 154, 91, 0.08)';
+
+  return StyleSheet.create({
+    subtitle: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      marginBottom: tokens.spacing.md,
+    },
+    benefitsContainer: {
+      marginBottom: tokens.spacing.lg,
+    },
+    benefitRow: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      marginBottom: tokens.spacing.sm,
+    },
+    checkmark: {
+      ...headingTypography,
+      color: colors.feedback.success,
+      marginRight: tokens.spacing.sm,
+    },
+    benefitText: {
+      ...bodyTypography,
+      color: colors.text.primary,
+      flex: 1,
+    },
+    pricingContainer: {
+      marginBottom: tokens.spacing.lg,
+      gap: tokens.spacing.md,
+    },
+    planCard: {
+      padding: tokens.spacing.md,
+      borderRadius: tokens.radii.regular,
+      borderWidth: 2,
+      borderColor:
+        mode === 'dark'
+          ? 'rgba(244, 244, 244, 0.16)'
+          : 'rgba(35, 35, 35, 0.12)',
+      backgroundColor: colors.surface.card,
+    },
+    planCardSelected: {
+      borderColor: colors.brand.primary,
+      backgroundColor: selectedBackground,
+    },
+    planHeader: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'space-between',
+      marginBottom: tokens.spacing.xs,
+    },
+    planName: {
+      ...headingTypography,
+      color: colors.text.primary,
+    },
+    savingsBadge: {
+      backgroundColor: colors.brand.accent,
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.micro,
+      borderRadius: tokens.radii.mild,
+    },
+    savingsText: {
+      ...captionBoldTypography,
+      color: colors.text.inverse,
+    },
+    planPrice: {
+      ...priceTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.micro,
+    },
+    planDetails: {
+      ...captionTypography,
+      color: colors.text.secondary,
+    },
+    finePrint: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      marginTop: tokens.spacing.md,
+    },
+  });
+};

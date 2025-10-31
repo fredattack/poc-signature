@@ -10,8 +10,8 @@ import {
 } from 'react-native';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
 import { SignatureColor, CanvasPath } from '@/types/signature.types';
-import { colors } from '@/constants/colors';
 import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_STROKE_WIDTH } from '@/utils/constants';
+import { useThemeTokens } from '@/theme';
 
 export interface SignatureCanvasProps {
   color: SignatureColor;
@@ -41,20 +41,14 @@ const getTouchPoint = (event: GestureResponderEvent): { x: number; y: number } |
   };
 };
 
-const getColorHex = (color: SignatureColor): string => {
-  switch (color) {
-    case SignatureColor.Black:
-      return colors.signatureBlack;
-    case SignatureColor.Blue:
-      return colors.signatureBlue;
-    case SignatureColor.Red:
-      return colors.signatureRed;
-    case SignatureColor.White:
-      return colors.signatureWhite;
-    default:
-      return colors.signatureBlack;
-  }
+const SIGNATURE_HEX: Record<SignatureColor, string> = {
+  [SignatureColor.Black]: '#000000',
+  [SignatureColor.Blue]: '#2563EB',
+  [SignatureColor.Red]: '#DC2626',
+  [SignatureColor.White]: '#FFFFFF',
 };
+
+const getColorHex = (color: SignatureColor): string => SIGNATURE_HEX[color] ?? '#000000';
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   color,
@@ -65,6 +59,8 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   const [paths, setPaths] = useState<CanvasPath[]>([]);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   useEffect(() => {
     if (clearSignal !== undefined) {
@@ -175,17 +171,29 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-    borderRadius: 16,
-    borderWidth: 2,
-    borderColor: colors.border,
-    overflow: 'hidden',
-  },
-  canvas: {
-    backgroundColor: colors.background,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const borderColor =
+    mode === 'dark'
+      ? 'rgba(244, 244, 244, 0.16)'
+      : 'rgba(35, 35, 35, 0.12)';
+
+  return StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.surface.card,
+      borderRadius: tokens.radii.generous,
+      borderWidth: 2,
+      borderColor,
+      overflow: 'hidden',
+      ...tokens.elevation.level1,
+    },
+    canvas: {
+      backgroundColor: colors.surface.background,
+    },
+  });
+};

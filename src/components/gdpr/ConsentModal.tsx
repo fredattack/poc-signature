@@ -1,14 +1,12 @@
 // GDPR consent modal for analytics opt-in/opt-out
 
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { View, Text, StyleSheet, ScrollView } from 'react-native';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { asyncStorage } from '@/services/storage/async-storage';
 import { STORAGE_KEYS } from '@/utils/constants';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface ConsentModalProps {
   onConsent: (accepted: boolean) => void;
@@ -16,6 +14,8 @@ export interface ConsentModalProps {
 
 export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
   const [visible, setVisible] = useState(false);
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   useEffect(() => {
     checkConsentStatus();
@@ -101,34 +101,58 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
   );
 };
 
-const styles = StyleSheet.create({
-  description: {
-    ...typography.body,
-    color: colors.text,
-    marginBottom: spacing.lg,
-    lineHeight: 22,
-  },
-  dataList: {
-    marginBottom: spacing.lg,
-  },
-  dataTitle: {
-    ...typography.label,
-    color: colors.text,
-    fontWeight: '600',
-    marginBottom: spacing.sm,
-  },
-  dataItem: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.xs,
-  },
-  note: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    fontStyle: 'italic',
-    marginBottom: spacing.lg,
-  },
-  buttons: {
-    gap: spacing.sm,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  const labelTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: tokens.typography.caption.fontWeight,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    description: {
+      ...bodyTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.md,
+    },
+    dataList: {
+      marginBottom: tokens.spacing.md,
+    },
+    dataTitle: {
+      ...labelTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.xs,
+    },
+    dataItem: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      marginBottom: tokens.spacing.micro,
+    },
+    note: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      fontStyle: 'italic',
+      marginBottom: tokens.spacing.md,
+    },
+    buttons: {
+      gap: tokens.spacing.sm,
+    },
+  });
+};

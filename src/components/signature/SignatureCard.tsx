@@ -1,12 +1,10 @@
 // Signature card for grid display
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
 import { Signature } from '@/types/signature.types';
 import { SyncStatusBadge } from '@/components/ui/SyncStatusBadge';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing, borderRadius } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 import { formatRelativeTime } from '@/utils/formatters';
 
 export interface SignatureCardProps {
@@ -15,6 +13,9 @@ export interface SignatureCardProps {
 }
 
 export const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onPress }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <TouchableOpacity
       style={styles.container}
@@ -53,54 +54,72 @@ export const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onPress
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-    marginBottom: spacing.sm,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const titleTypography = {
+    fontSize: tokens.typography.headingS.fontSize,
+    lineHeight: tokens.typography.headingS.lineHeight,
+    fontWeight: tokens.typography.headingS.fontWeight,
+    letterSpacing: tokens.typography.headingS.letterSpacing,
+  };
+
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: tokens.typography.caption.fontWeight,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  const borderColor =
+    mode === 'dark'
+      ? 'rgba(244, 244, 244, 0.12)'
+      : 'rgba(35, 35, 35, 0.08)';
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      backgroundColor: colors.surface.card,
+      borderRadius: tokens.radii.regular,
+      overflow: 'hidden',
+      marginBottom: tokens.spacing.sm,
+      borderWidth: 1,
+      borderColor,
+      ...tokens.elevation.level2,
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  thumbnailContainer: {
-    width: '100%',
-    aspectRatio: 1,
-    backgroundColor: colors.backgroundSecondary,
-    position: 'relative',
-  },
-  thumbnail: {
-    width: '100%',
-    height: '100%',
-  },
-  statusBadge: {
-    position: 'absolute',
-    top: spacing.xs,
-    right: spacing.xs,
-  },
-  infoContainer: {
-    padding: spacing.sm,
-  },
-  celebrityName: {
-    ...typography.h4,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  date: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  location: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-});
+    thumbnailContainer: {
+      width: '100%',
+      aspectRatio: 1,
+      backgroundColor: colors.surface.backgroundTint,
+      position: 'relative',
+    },
+    thumbnail: {
+      width: '100%',
+      height: '100%',
+    },
+    statusBadge: {
+      position: 'absolute',
+      top: tokens.spacing.xs,
+      right: tokens.spacing.xs,
+    },
+    infoContainer: {
+      padding: tokens.spacing.sm,
+    },
+    celebrityName: {
+      ...titleTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.xs,
+    },
+    date: {
+      ...captionTypography,
+      color: colors.text.secondary,
+    },
+    location: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      marginTop: tokens.spacing.xs,
+    },
+  });
+};

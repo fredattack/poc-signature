@@ -1,80 +1,77 @@
-// Typography styles
+import { typography as tokenTypography } from '../theme/tokens';
 
 export const typography = {
-  // Headings
   h1: {
-    fontSize: 32,
-    fontWeight: '700' as const,
-    lineHeight: 40,
-    letterSpacing: -0.5,
+    fontSize: tokenTypography.displayL.fontSize,
+    lineHeight: tokenTypography.displayL.lineHeight,
+    fontWeight: tokenTypography.displayL.fontWeight,
+    letterSpacing: tokenTypography.displayL.letterSpacing,
   },
   h2: {
-    fontSize: 24,
-    fontWeight: '700' as const,
-    lineHeight: 32,
-    letterSpacing: -0.3,
+    fontSize: tokenTypography.headingL.fontSize,
+    lineHeight: tokenTypography.headingL.lineHeight,
+    fontWeight: tokenTypography.headingL.fontWeight,
+    letterSpacing: tokenTypography.headingL.letterSpacing,
   },
   h3: {
-    fontSize: 20,
-    fontWeight: '600' as const,
-    lineHeight: 28,
-    letterSpacing: -0.2,
+    fontSize: tokenTypography.headingM.fontSize,
+    lineHeight: tokenTypography.headingM.lineHeight,
+    fontWeight: tokenTypography.headingM.fontWeight,
+    letterSpacing: tokenTypography.headingM.letterSpacing,
   },
   h4: {
-    fontSize: 18,
-    fontWeight: '600' as const,
-    lineHeight: 24,
-    letterSpacing: 0,
+    fontSize: tokenTypography.headingS.fontSize,
+    lineHeight: tokenTypography.headingS.lineHeight,
+    fontWeight: tokenTypography.headingS.fontWeight,
+    letterSpacing: tokenTypography.headingS.letterSpacing,
   },
-
-  // Body text
   body: {
-    fontSize: 16,
-    fontWeight: '400' as const,
-    lineHeight: 24,
-    letterSpacing: 0,
+    fontSize: tokenTypography.body.fontSize,
+    lineHeight: tokenTypography.body.lineHeight,
+    fontWeight: tokenTypography.body.fontWeight,
+    letterSpacing: tokenTypography.body.letterSpacing,
   },
   bodyLarge: {
-    fontSize: 18,
-    fontWeight: '400' as const,
-    lineHeight: 28,
-    letterSpacing: 0,
+    fontSize: tokenTypography.bodyL.fontSize,
+    lineHeight: tokenTypography.bodyL.lineHeight,
+    fontWeight: tokenTypography.bodyL.fontWeight,
+    letterSpacing: tokenTypography.bodyL.letterSpacing,
   },
   bodySmall: {
-    fontSize: 14,
-    fontWeight: '400' as const,
-    lineHeight: 20,
-    letterSpacing: 0,
+    fontSize: tokenTypography.caption.fontSize,
+    lineHeight: tokenTypography.caption.lineHeight,
+    fontWeight: tokenTypography.caption.fontWeight,
+    letterSpacing: tokenTypography.caption.letterSpacing,
   },
-
-  // Caption
   caption: {
-    fontSize: 12,
-    fontWeight: '400' as const,
-    lineHeight: 16,
-    letterSpacing: 0.3,
+    fontSize: tokenTypography.caption.fontSize,
+    lineHeight: tokenTypography.caption.lineHeight,
+    fontWeight: tokenTypography.caption.fontWeight,
+    letterSpacing: tokenTypography.caption.letterSpacing,
   },
-
-  // Button
+  legal: {
+    fontSize: tokenTypography.legal.fontSize,
+    lineHeight: tokenTypography.legal.lineHeight,
+    fontWeight: tokenTypography.legal.fontWeight,
+    letterSpacing: tokenTypography.legal.letterSpacing,
+  },
   button: {
-    fontSize: 16,
+    fontSize: tokenTypography.body.fontSize,
+    lineHeight: tokenTypography.body.lineHeight,
     fontWeight: '600' as const,
-    lineHeight: 24,
-    letterSpacing: 0.5,
+    letterSpacing: tokenTypography.body.letterSpacing,
   },
-  buttonSmall: {
-    fontSize: 14,
+  buttonLarge: {
+    fontSize: tokenTypography.bodyL.fontSize,
+    lineHeight: tokenTypography.bodyL.lineHeight,
     fontWeight: '600' as const,
-    lineHeight: 20,
-    letterSpacing: 0.3,
+    letterSpacing: tokenTypography.bodyL.letterSpacing,
   },
-
-  // Label
   label: {
-    fontSize: 14,
+    fontSize: tokenTypography.caption.fontSize,
+    lineHeight: tokenTypography.caption.lineHeight,
     fontWeight: '500' as const,
-    lineHeight: 20,
-    letterSpacing: 0.1,
+    letterSpacing: tokenTypography.caption.letterSpacing,
   },
 } as const;
 

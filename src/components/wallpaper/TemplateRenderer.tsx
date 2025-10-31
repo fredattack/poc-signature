@@ -1,6 +1,6 @@
 // Template renderer using react-native-svg
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Image, StyleSheet, Dimensions } from 'react-native';
 import Svg, { Text, Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
 import { Signature } from '@/types/signature.types';
@@ -9,6 +9,7 @@ import { Template, TemplateLayout } from '@/types/template.types';
 import { getTemplateById } from '@/constants/templates';
 import { formatDate, formatLocation } from '@/utils/formatters';
 import { WALLPAPER_STANDARD_RESOLUTION } from '@/utils/constants';
+import { useThemeTokens } from '@/theme';
 
 export interface TemplateRendererProps {
   signature: Signature;
@@ -28,6 +29,8 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
   height = DEFAULT_HEIGHT,
 }) => {
   const template = getTemplateById(options.templateId);
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   if (!template) {
     return null;
@@ -137,35 +140,38 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'relative',
-    overflow: 'hidden',
-    borderRadius: 16,
-  },
-  background: {
-    ...StyleSheet.absoluteFillObject,
-  },
-  overlay: {
-    flex: 1,
-    justifyContent: 'space-between',
-    padding: 24,
-  },
-  signatureContainer: {
-    position: 'absolute',
-    top: '30%',
-    left: '10%',
-    right: '10%',
-    height: '40%',
-  },
-  signatureImage: {
-    width: '100%',
-    height: '100%',
-  },
-  nameContainer: {
-    alignItems: 'center',
-  },
-  metadataContainer: {
-    alignItems: 'center',
-  },
-});
+const createStyles = ({
+  tokens,
+}: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    container: {
+      position: 'relative',
+      overflow: 'hidden',
+      borderRadius: tokens.radii.generous,
+    },
+    background: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    overlay: {
+      flex: 1,
+      justifyContent: 'space-between',
+      padding: tokens.spacing.md,
+    },
+    signatureContainer: {
+      position: 'absolute',
+      top: '30%',
+      left: '10%',
+      right: '10%',
+      height: '40%',
+    },
+    signatureImage: {
+      width: '100%',
+      height: '100%',
+    },
+    nameContainer: {
+      alignItems: 'center',
+    },
+    metadataContainer: {
+      alignItems: 'center',
+    },
+  });

@@ -1,8 +1,6 @@
-import React, { useEffect, useRef } from 'react';
-import { View, Text, StyleSheet, Animated } from 'react-native';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing, borderRadius } from '@/constants/spacing';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Text, StyleSheet, Animated } from 'react-native';
+import { useThemeTokens } from '@/theme';
 
 export type ToastVariant = 'success' | 'error' | 'info';
 
@@ -23,6 +21,8 @@ export const Toast: React.FC<ToastProps> = ({
 }) => {
   const fadeAnim = useRef(new Animated.Value(0)).current;
   const translateY = useRef(new Animated.Value(-100)).current;
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   useEffect(() => {
     if (visible) {
@@ -82,44 +82,52 @@ export const Toast: React.FC<ToastProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    position: 'absolute',
-    top: 50,
-    left: spacing.md,
-    right: spacing.md,
-    padding: spacing.md,
-    borderRadius: borderRadius.md,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    container: {
+      position: 'absolute',
+      top: 50,
+      left: tokens.spacing.sm,
+      right: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.sm,
+      paddingHorizontal: tokens.spacing.md,
+      borderRadius: tokens.radii.regular,
+      ...tokens.elevation.level2,
+      zIndex: 1000,
+      backgroundColor: colors.surface.card,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    zIndex: 1000,
-  },
-  text: {
-    ...typography.body,
-    textAlign: 'center',
-  },
-  successContainer: {
-    backgroundColor: colors.success,
-  },
-  errorContainer: {
-    backgroundColor: colors.error,
-  },
-  infoContainer: {
-    backgroundColor: colors.info,
-  },
-  successText: {
-    color: colors.textInverse,
-  },
-  errorText: {
-    color: colors.textInverse,
-  },
-  infoText: {
-    color: colors.textInverse,
-  },
-});
+    text: {
+      ...bodyTypography,
+      textAlign: 'center',
+      color: colors.text.inverse,
+    },
+    successContainer: {
+      backgroundColor: colors.feedback.success,
+    },
+    errorContainer: {
+      backgroundColor: colors.feedback.critical,
+    },
+    infoContainer: {
+      backgroundColor: colors.feedback.info,
+    },
+    successText: {
+      color: colors.text.inverse,
+    },
+    errorText: {
+      color: colors.text.inverse,
+    },
+    infoText: {
+      color: colors.text.inverse,
+    },
+  });
+};

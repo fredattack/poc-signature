@@ -1,6 +1,6 @@
 import React from 'react';
 import { RefreshControl, ScrollView, ViewStyle } from 'react-native';
-import { colors } from '@/constants/colors';
+import { useThemeTokens } from '@/theme';
 
 export interface PullToRefreshProps {
   onRefresh: () => void;
@@ -15,6 +15,8 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
   children,
   style,
 }) => {
+  const { colors } = useThemeTokens();
+
   return (
     <ScrollView
       style={style}
@@ -22,8 +24,8 @@ export const PullToRefresh: React.FC<PullToRefreshProps> = ({
         <RefreshControl
           refreshing={refreshing}
           onRefresh={onRefresh}
-          tintColor={colors.primary}
-          colors={[colors.primary]}
+          tintColor={colors.brand.primary}
+          colors={[colors.brand.primary]}
         />
       }
     >

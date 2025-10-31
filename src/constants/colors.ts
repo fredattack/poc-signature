@@ -1,63 +1,63 @@
-// Color palette
+import { colors as tokenColors } from '../theme/tokens';
 
+// Backwards-compatible palette mapping to 2025 design tokens
 export const colors = {
-  // Primary colors
-  primary: '#6366F1', // Indigo
-  primaryDark: '#4F46E5',
-  primaryLight: '#818CF8',
-  accent: '#EC4899', // Pink accent
+  // Brand colors
+  primary: tokenColors.brand.primary,
+  primaryLight: tokenColors.brand.primaryTint,
+  primaryDark: tokenColors.brand.primaryShade,
+  secondary: tokenColors.brand.secondary,
+  secondaryLight: tokenColors.brand.secondaryTint,
+  secondaryDark: tokenColors.brand.secondaryShade,
+  accent: tokenColors.brand.accent,
+  accentLight: tokenColors.brand.accentTint,
+  accentDark: tokenColors.brand.accentShade,
 
   // Background colors
-  background: '#FFFFFF',
-  backgroundSecondary: '#F9FAFB',
-  backgroundTertiary: '#F3F4F6',
+  background: tokenColors.surface.background,
+  backgroundSecondary: tokenColors.surface.card,
+  backgroundTertiary: tokenColors.surface.backgroundShade,
+  backgroundDark: tokenColors.surface.backgroundDark,
+  backgroundDarkCard: tokenColors.surface.cardDark,
 
   // Text colors
-  text: '#111827',
-  textSecondary: '#6B7280',
-  textTertiary: '#9CA3AF',
-  textInverse: '#FFFFFF',
+  text: tokenColors.text.primary,
+  textSecondary: tokenColors.text.secondary,
+  textTertiary: tokenColors.text.tertiary,
+  textInverse: tokenColors.text.inverse,
+  textInverseSecondary: tokenColors.text.inverseSecondary,
+  textInverseTertiary: tokenColors.text.inverseTertiary,
 
-  // Border colors
-  border: '#E5E7EB',
-  borderLight: '#F3F4F6',
-  borderDark: '#D1D5DB',
+  // Borders & overlays
+  border: 'rgba(35, 35, 35, 0.12)',
+  borderMuted: 'rgba(35, 35, 35, 0.08)',
+  borderDark: 'rgba(244, 244, 244, 0.16)',
+  overlay: tokenColors.overlay.medium,
+  overlayLight: tokenColors.overlay.light,
 
   // Status colors
-  success: '#10B981',
-  warning: '#F59E0B',
-  error: '#EF4444',
-  info: '#3B82F6',
-
-  // Signature colors
-  signatureBlack: '#000000',
-  signatureBlue: '#2563EB',
-  signatureRed: '#DC2626',
-  signatureWhite: '#FFFFFF',
-
-  // Gradient colors
-  gradientStart: '#6366F1',
-  gradientEnd: '#EC4899',
-
-  // Overlay
-  overlay: 'rgba(0, 0, 0, 0.5)',
-  overlayLight: 'rgba(0, 0, 0, 0.3)',
+  success: tokenColors.feedback.success,
+  successLight: tokenColors.feedback.successTint,
+  successDark: tokenColors.feedback.successShade,
+  warning: tokenColors.feedback.warning,
+  warningLight: tokenColors.feedback.warningTint,
+  warningDark: tokenColors.feedback.warningShade,
+  error: tokenColors.feedback.critical,
+  errorLight: tokenColors.feedback.criticalTint,
+  errorDark: tokenColors.feedback.criticalShade,
+  info: tokenColors.feedback.info,
 } as const;
 
 export type ColorKey = keyof typeof colors;
 
-// Wallpaper template color presets
+// Wallpaper template color presets aligned with brand palette
 export const templateColorPresets = [
-  { id: 'black', name: 'Black', value: '#000000' },
-  { id: 'white', name: 'White', value: '#FFFFFF' },
-  { id: 'indigo', name: 'Indigo', value: '#6366F1' },
-  { id: 'purple', name: 'Purple', value: '#A855F7' },
-  { id: 'pink', name: 'Pink', value: '#EC4899' },
-  { id: 'red', name: 'Red', value: '#EF4444' },
-  { id: 'orange', name: 'Orange', value: '#F97316' },
-  { id: 'yellow', name: 'Yellow', value: '#EAB308' },
-  { id: 'green', name: 'Green', value: '#10B981' },
-  { id: 'blue', name: 'Blue', value: '#3B82F6' },
-  { id: 'cyan', name: 'Cyan', value: '#06B6D4' },
-  { id: 'gray', name: 'Gray', value: '#6B7280' },
-];
+  { id: 'sage', name: 'Sauge', value: tokenColors.brand.primary },
+  { id: 'beige', name: 'Beige', value: tokenColors.brand.secondary },
+  { id: 'water', name: 'Eau', value: tokenColors.brand.accent },
+  { id: 'graphite', name: 'Graphite', value: tokenColors.surface.backgroundDark },
+  { id: 'pearl', name: 'Perle', value: tokenColors.surface.background },
+  { id: 'success', name: 'Succès', value: tokenColors.feedback.success },
+  { id: 'warning', name: 'Alerte', value: tokenColors.feedback.warning },
+  { id: 'critical', name: 'Critique', value: tokenColors.feedback.critical },
+] as const;

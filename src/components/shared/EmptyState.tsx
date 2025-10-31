@@ -1,9 +1,7 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@/components/ui/Button';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface EmptyStateProps {
   icon?: React.ReactNode;
@@ -20,6 +18,9 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   ctaLabel,
   onCtaPress,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <View style={styles.container}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
@@ -34,30 +35,49 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    padding: spacing.xl,
-  },
-  iconContainer: {
-    marginBottom: spacing.lg,
-  },
-  title: {
-    ...typography.h2,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  description: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  ctaContainer: {
-    marginTop: spacing.md,
-    minWidth: 200,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const titleTypography = {
+    fontSize: tokens.typography.headingL.fontSize,
+    lineHeight: tokens.typography.headingL.lineHeight,
+    fontWeight: tokens.typography.headingL.fontWeight,
+    letterSpacing: tokens.typography.headingL.letterSpacing,
+  };
+
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      padding: tokens.spacing.lg,
+    },
+    iconContainer: {
+      marginBottom: tokens.spacing.md,
+    },
+    title: {
+      ...titleTypography,
+      color: colors.text.primary,
+      textAlign: 'center',
+      marginBottom: tokens.spacing.xs,
+    },
+    description: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      marginBottom: tokens.spacing.md,
+    },
+    ctaContainer: {
+      marginTop: tokens.spacing.sm,
+      minWidth: 200,
+    },
+  });
+};

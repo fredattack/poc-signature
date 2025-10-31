@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   TouchableOpacity,
   Text,
@@ -8,9 +8,7 @@ import {
   ViewStyle,
   TextStyle,
 } from 'react-native';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing, borderRadius, layout } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -40,6 +38,13 @@ export const Button: React.FC<ButtonProps> = ({
   textStyle,
   icon,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const indicatorColor =
+    variant === 'primary'
+      ? theme.colors.text.inverse
+      : theme.colors.brand.primary;
+
   const buttonStyles = [
     styles.button,
     styles[`${variant}Button`],
@@ -64,9 +69,7 @@ export const Button: React.FC<ButtonProps> = ({
       activeOpacity={0.7}
     >
       {loading ? (
-        <ActivityIndicator
-          color={variant === 'primary' ? colors.textInverse : colors.primary}
-        />
+        <ActivityIndicator color={indicatorColor} />
       ) : (
         <View style={styles.content}>
           {icon && <View style={styles.icon}>{icon}</View>}
@@ -77,76 +80,96 @@ export const Button: React.FC<ButtonProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  button: {
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: borderRadius.md,
-    flexDirection: 'row',
-  },
-  content: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    marginRight: spacing.sm,
-  },
-  fullWidth: {
-    width: '100%',
-  },
-  disabled: {
-    opacity: 0.5,
-  },
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const baseTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
 
-  // Variants
-  primaryButton: {
-    backgroundColor: colors.primary,
-  },
-  secondaryButton: {
-    backgroundColor: colors.backgroundSecondary,
-    borderWidth: 1,
-    borderColor: colors.border,
-  },
-  ghostButton: {
-    backgroundColor: 'transparent',
-  },
+  const largeTypography = {
+    fontSize: tokens.typography.bodyL.fontSize,
+    lineHeight: tokens.typography.bodyL.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.bodyL.letterSpacing,
+  };
 
-  // Sizes
-  smallButton: {
-    height: layout.buttonHeightSmall,
-    paddingHorizontal: spacing.md,
-  },
-  mediumButton: {
-    height: layout.buttonHeight,
-    paddingHorizontal: spacing.lg,
-  },
-  largeButton: {
-    height: layout.buttonHeightLarge,
-    paddingHorizontal: spacing.xl,
-  },
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
 
-  // Text
-  buttonText: {
-    ...typography.button,
-  },
-  primaryText: {
-    color: colors.textInverse,
-  },
-  secondaryText: {
-    color: colors.text,
-  },
-  ghostText: {
-    color: colors.primary,
-  },
-  smallText: {
-    ...typography.buttonSmall,
-  },
-  mediumText: {
-    ...typography.button,
-  },
-  largeText: {
-    ...typography.button,
-    fontSize: 18,
-  },
-});
+  return StyleSheet.create({
+    button: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      borderRadius: tokens.radii.mild,
+      flexDirection: 'row',
+    },
+    content: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    icon: {
+      marginRight: tokens.spacing.xs,
+    },
+    fullWidth: {
+      width: '100%',
+    },
+    disabled: {
+      opacity: 0.48,
+    },
+    // Variants
+    primaryButton: {
+      backgroundColor: colors.brand.primary,
+    },
+    secondaryButton: {
+      backgroundColor: colors.surface.card,
+      borderWidth: 1,
+      borderColor:
+        mode === 'dark'
+          ? 'rgba(244, 244, 244, 0.16)'
+          : 'rgba(35, 35, 35, 0.12)',
+    },
+    ghostButton: {
+      backgroundColor: 'transparent',
+    },
+
+    // Sizes
+    smallButton: {
+      height: tokens.layout.buttonHeightSmall,
+      paddingHorizontal: tokens.spacing.sm,
+    },
+    mediumButton: {
+      height: tokens.layout.buttonHeight,
+      paddingHorizontal: tokens.spacing.md,
+    },
+    largeButton: {
+      height: tokens.layout.buttonHeight,
+      paddingHorizontal: tokens.spacing.lg,
+    },
+
+    // Text
+    buttonText: baseTypography,
+    primaryText: {
+      color: colors.text.inverse,
+    },
+    secondaryText: {
+      color: colors.text.primary,
+    },
+    ghostText: {
+      color: colors.brand.primary,
+    },
+    smallText: captionTypography,
+    mediumText: baseTypography,
+    largeText: largeTypography,
+  });
+};

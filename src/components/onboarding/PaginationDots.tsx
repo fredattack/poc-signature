@@ -1,6 +1,6 @@
 // Pagination dots indicator for onboarding carousel
 
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -8,8 +8,7 @@ import Animated, {
   Extrapolation,
 } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
-import { colors } from '@/constants/colors';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface PaginationDotsProps {
   slides: number;
@@ -22,6 +21,9 @@ export const PaginationDots: React.FC<PaginationDotsProps> = ({
   scrollX,
   slideWidth,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <View style={styles.container}>
       {Array.from({ length: slides }).map((_, index) => {
@@ -45,6 +47,9 @@ interface DotProps {
 }
 
 const Dot: React.FC<DotProps> = ({ index, scrollX, slideWidth }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createDotStyles(theme), [theme]);
+
   const animatedStyle = useAnimatedStyle(() => {
     const inputRange = [
       (index - 1) * slideWidth,
@@ -75,18 +80,27 @@ const Dot: React.FC<DotProps> = ({ index, scrollX, slideWidth }) => {
   return <Animated.View style={[styles.dot, animatedStyle]} />;
 };
 
-const styles = StyleSheet.create({
-  container: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    gap: spacing.xs,
-    marginBottom: spacing.xl,
-  },
-  dot: {
-    width: 8,
-    height: 8,
-    borderRadius: 4,
-    backgroundColor: colors.primary,
-  },
-});
+const createStyles = ({
+  tokens,
+}: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    container: {
+      flexDirection: 'row',
+      alignItems: 'center',
+      justifyContent: 'center',
+      gap: tokens.spacing.xs,
+      marginBottom: tokens.spacing.xl,
+    },
+  });
+
+const createDotStyles = ({
+  colors,
+}: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    dot: {
+      width: 8,
+      height: 8,
+      borderRadius: 4,
+      backgroundColor: colors.brand.primary,
+    },
+  });

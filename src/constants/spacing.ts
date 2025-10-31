@@ -1,76 +1,56 @@
-// Spacing scale and layout constants
+import {
+  spacing as tokenSpacing,
+  radii as tokenRadii,
+  layout as tokenLayout,
+} from '../theme/tokens';
 
 export const spacing = {
-  xs: 4,
-  sm: 8,
-  md: 16,
-  lg: 24,
-  xl: 32,
-  xxl: 48,
-  xxxl: 64,
+  xs: tokenSpacing.micro,
+  sm: tokenSpacing.xs,
+  md: tokenSpacing.sm,
+  lg: tokenSpacing.md,
+  xl: tokenSpacing.lg,
+  xxl: tokenSpacing.xl,
+  xxxl: tokenSpacing.xxl,
 } as const;
 
 export type SpacingKey = keyof typeof spacing;
 
 export const borderRadius = {
   none: 0,
-  sm: 4,
-  md: 8,
-  lg: 12,
-  xl: 16,
-  full: 9999,
+  sm: tokenRadii.subtle,
+  md: tokenRadii.mild,
+  lg: tokenRadii.regular,
+  xl: tokenRadii.generous,
+  full: tokenRadii.full,
 } as const;
 
 export type BorderRadiusKey = keyof typeof borderRadius;
 
-// Layout constants
 export const layout = {
-  // Container padding
-  containerPadding: spacing.md,
-  containerPaddingLarge: spacing.lg,
-
-  // Screen edges
-  screenPadding: spacing.md,
-
-  // Component spacing
-  componentGap: spacing.md,
-  sectionGap: spacing.xl,
-
-  // Grid
-  gridGap: spacing.sm,
+  containerPadding: tokenLayout.containerMargin,
+  containerPaddingLarge: tokenLayout.containerMarginTablet,
+  screenPadding: tokenLayout.containerMargin,
+  componentGap: tokenSpacing.sm,
+  sectionGap: tokenSpacing.lg,
+  gridGap: tokenSpacing.xs,
   gridColumns: 2,
-
-  // Button heights
-  buttonHeight: 48,
-  buttonHeightSmall: 40,
-  buttonHeightLarge: 56,
-
-  // Input heights
-  inputHeight: 48,
-
-  // Icon sizes
+  buttonHeight: tokenLayout.buttonHeight,
+  buttonHeightSmall: tokenLayout.buttonHeightSmall,
+  buttonHeightLarge: tokenLayout.buttonHeight,
+  inputHeight: tokenLayout.inputHeight,
   iconSizeSmall: 16,
   iconSize: 24,
   iconSizeLarge: 32,
   iconSizeXLarge: 48,
-
-  // Avatar sizes
   avatarSizeSmall: 32,
   avatarSize: 48,
   avatarSizeLarge: 64,
-
-  // Card
-  cardPadding: spacing.md,
-
-  // Modal
-  modalPadding: spacing.lg,
-  modalBorderRadius: borderRadius.xl,
-
-  // Header
-  headerHeight: 56,
-
-  // Bottom tab bar
-  tabBarHeight: 60,
+  cardPadding: tokenSpacing.sm,
+  modalPadding: tokenSpacing.md,
+  modalBorderRadius: tokenRadii.generous,
+  headerHeight: tokenLayout.headerHeight,
+  tabBarHeight: tokenLayout.tabBarHeight,
 } as const;
 
 export type LayoutKey = keyof typeof layout;

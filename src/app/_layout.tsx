@@ -6,6 +6,7 @@ import { AnalyticsProvider } from '@/components/analytics/AnalyticsProvider';
 import { ScreenTracker } from '@/components/analytics/ScreenTracker';
 import { ErrorBoundary } from '@/components/error/ErrorBoundary';
 import { fileSystem } from '@/services/storage/file-system';
+import { ThemeProvider } from '@/theme';
 
 // Create QueryClient instance
 const queryClient = new QueryClient({
@@ -24,51 +25,60 @@ export default function RootLayout() {
   }, []);
 
   return (
-    <ErrorBoundary>
-      <QueryClientProvider client={queryClient}>
-        <AnalyticsProvider>
-          <StatusBar style="auto" />
-          <ScreenTracker />
-          <Stack>
-          <Stack.Screen name="index" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="onboarding"
-            options={{
-              headerShown: false,
-              gestureEnabled: false,
-            }}
-          />
-          <Stack.Screen name="(auth)" options={{ headerShown: false }} />
-          <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
-          <Stack.Screen
-            name="signature-canvas"
-            options={{
-              headerShown: false,
-              presentation: 'modal',
-            }}
-          />
-          <Stack.Screen
-            name="signature-detail"
-            options={{
-              headerShown: false,
-            }}
-          />
-          <Stack.Screen
-            name="wallpaper-editor"
-            options={{
-              headerShown: false,
-              presentation: 'modal',
-            }}
-          />
-          <Stack.Screen
-            name="premium"
-            options={{
-              headerShown: false,
-            }}
-          />
-          </Stack>
-        </AnalyticsProvider>
-      </QueryClientProvider>
-    </ErrorBoundary>
+    <ThemeProvider>
+      <ErrorBoundary>
+        <QueryClientProvider client={queryClient}>
+          <AnalyticsProvider>
+            <StatusBar style="auto" />
+            <ScreenTracker />
+            <Stack>
+              <Stack.Screen name="index" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="onboarding"
+                options={{
+                  headerShown: false,
+                  gestureEnabled: false,
+                }}
+              />
+              <Stack.Screen name="(auth)" options={{ headerShown: false }} />
+              <Stack.Screen name="(tabs)" options={{ headerShown: false }} />
+              <Stack.Screen
+                name="signature-canvas"
+                options={{
+                  headerShown: false,
+                  presentation: 'modal',
+                }}
+              />
+              <Stack.Screen
+                name="signature-detail"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="wallpaper-editor"
+                options={{
+                  headerShown: false,
+                  presentation: 'modal',
+                }}
+              />
+              <Stack.Screen
+                name="premium"
+                options={{
+                  headerShown: false,
+                }}
+              />
+              <Stack.Screen
+                name="theme-sandbox"
+                options={{
+                  title: 'Design Tokens',
+                  presentation: 'card',
+                }}
+              />
+            </Stack>
+          </AnalyticsProvider>
+        </QueryClientProvider>
+      </ErrorBoundary>
+    </ThemeProvider>
   );
 }

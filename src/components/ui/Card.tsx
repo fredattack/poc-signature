@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, StyleSheet, ViewStyle } from 'react-native';
-import { colors } from '@/constants/colors';
-import { spacing, borderRadius, layout } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface CardProps {
   children: React.ReactNode;
@@ -16,6 +15,9 @@ export const Card: React.FC<CardProps> = ({
   padding = 'medium',
   elevated = true,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   const cardStyles = [
     styles.card,
     elevated && styles.elevated,
@@ -29,33 +31,37 @@ export const Card: React.FC<CardProps> = ({
   return <View style={cardStyles}>{children}</View>;
 };
 
-const styles = StyleSheet.create({
-  card: {
-    backgroundColor: colors.background,
-    borderRadius: borderRadius.lg,
-    borderWidth: 1,
-    borderColor: colors.borderLight,
-  },
-  elevated: {
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = ({
+  colors,
+  tokens,
+  mode,
+}: ReturnType<typeof useThemeTokens>) => {
+  const elevation = tokens.elevation.level2;
+
+  return StyleSheet.create({
+    card: {
+      backgroundColor: colors.surface.card,
+      borderRadius: tokens.radii.regular,
+      borderWidth: 1,
+      borderColor:
+        mode === 'dark'
+          ? 'rgba(244, 244, 244, 0.12)'
+          : 'rgba(35, 35, 35, 0.08)',
     },
-    shadowOpacity: 0.1,
-    shadowRadius: 4,
-    elevation: 3,
-  },
-  paddingNone: {
-    padding: 0,
-  },
-  paddingSmall: {
-    padding: spacing.sm,
-  },
-  paddingMedium: {
-    padding: layout.cardPadding,
-  },
-  paddingLarge: {
-    padding: spacing.lg,
-  },
-});
+    elevated: {
+      ...elevation,
+    },
+    paddingNone: {
+      padding: 0,
+    },
+    paddingSmall: {
+      padding: tokens.spacing.xs,
+    },
+    paddingMedium: {
+      padding: tokens.spacing.sm,
+    },
+    paddingLarge: {
+      padding: tokens.spacing.md,
+    },
+  });
+};

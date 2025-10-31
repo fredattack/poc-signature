@@ -1,7 +1,6 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
-import { colors } from '@/constants/colors';
-import { layout } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export type SpinnerSize = 'small' | 'medium' | 'large';
 
@@ -14,10 +13,14 @@ export interface LoadingSpinnerProps {
 
 export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   size = 'medium',
-  color = colors.primary,
+  color,
   fullScreen = false,
   style,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+  const spinnerColor = color ?? theme.colors.brand.primary;
+
   const getSizeValue = () => {
     switch (size) {
       case 'small':
@@ -32,28 +35,32 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   if (fullScreen) {
     return (
       <View style={styles.fullScreenContainer}>
-        <ActivityIndicator size={getSizeValue()} color={color} />
+        <ActivityIndicator size={getSizeValue()} color={spinnerColor} />
       </View>
     );
   }
 
   return (
     <View style={[styles.container, style]}>
-      <ActivityIndicator size={getSizeValue()} color={color} />
+      <ActivityIndicator size={getSizeValue()} color={spinnerColor} />
     </View>
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    padding: layout.componentGap,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  fullScreenContainer: {
-    flex: 1,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    container: {
+      padding: tokens.spacing.sm,
+      alignItems: 'center',
+      justifyContent: 'center',
+    },
+    fullScreenContainer: {
+      flex: 1,
+      alignItems: 'center',
+      justifyContent: 'center',
+      backgroundColor: colors.surface.background,
+    },
+  });

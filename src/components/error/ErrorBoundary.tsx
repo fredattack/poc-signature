@@ -3,9 +3,8 @@
 import React, { Component, ReactNode } from 'react';
 import { View, Text, StyleSheet } from 'react-native';
 import { Button } from '@/components/ui/Button';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
+import type { Tokens } from '@/theme';
 
 interface Props {
   children: ReactNode;
@@ -16,7 +15,11 @@ interface State {
   error: Error | null;
 }
 
-export class ErrorBoundary extends Component<Props, State> {
+type ThemedProps = Props & {
+  theme: ReturnType<typeof useThemeTokens>;
+};
+
+class ErrorBoundaryBase extends Component<ThemedProps, State> {
   constructor(props: Props) {
     super(props);
     this.state = {
@@ -49,6 +52,8 @@ export class ErrorBoundary extends Component<Props, State> {
 
   render() {
     if (this.state.hasError) {
+      const styles = createStyles(this.props.theme);
+
       return (
         <View style={styles.container}>
           <Text style={styles.emoji}>😞</Text>
@@ -78,45 +83,84 @@ export class ErrorBoundary extends Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.xl,
-    backgroundColor: colors.background,
-  },
-  emoji: {
-    fontSize: 64,
-    marginBottom: spacing.lg,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.text,
-    marginBottom: spacing.md,
-    textAlign: 'center',
-  },
-  message: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  errorDetails: {
-    backgroundColor: colors.backgroundSecondary,
-    padding: spacing.md,
-    borderRadius: 8,
-    marginBottom: spacing.lg,
-    width: '100%',
-  },
-  errorTitle: {
-    ...typography.label,
-    color: colors.error,
-    marginBottom: spacing.sm,
-  },
-  errorText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    fontFamily: 'monospace',
-  },
-});
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const titleTypography = {
+    fontSize: tokens.typography.displayM.fontSize,
+    lineHeight: tokens.typography.displayM.lineHeight,
+    fontWeight: tokens.typography.displayM.fontWeight,
+    letterSpacing: tokens.typography.displayM.letterSpacing,
+  };
+
+  const bodyTypography = {
+    fontSize: tokens.typography.body.fontSize,
+    lineHeight: tokens.typography.body.lineHeight,
+    fontWeight: tokens.typography.body.fontWeight,
+    letterSpacing: tokens.typography.body.letterSpacing,
+  };
+
+  const captionTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: tokens.typography.caption.fontWeight,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  const labelTypography = {
+    fontSize: tokens.typography.caption.fontSize,
+    lineHeight: tokens.typography.caption.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.caption.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    container: {
+      flex: 1,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: tokens.spacing.lg,
+      backgroundColor: colors.surface.background,
+    },
+    emoji: {
+      fontSize: 64,
+      marginBottom: tokens.spacing.lg,
+    },
+    title: {
+      ...titleTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.md,
+      textAlign: 'center',
+    },
+    message: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      textAlign: 'center',
+      marginBottom: tokens.spacing.lg,
+    },
+    errorDetails: {
+      backgroundColor: colors.surface.card,
+      padding: tokens.spacing.md,
+      borderRadius: tokens.radii.regular,
+      marginBottom: tokens.spacing.lg,
+      width: '100%',
+      ...tokens.elevation.level1,
+    },
+    errorTitle: {
+      ...labelTypography,
+      color: colors.feedback.critical,
+      marginBottom: tokens.spacing.xs,
+    },
+    errorText: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      fontFamily: 'monospace',
+    },
+  });
+};
+
+export const ErrorBoundary: React.FC<Props> = (props) => {
+  const theme = useThemeTokens();
+  return <ErrorBoundaryBase {...props} theme={theme} />;
+};

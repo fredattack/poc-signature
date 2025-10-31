@@ -1,13 +1,12 @@
 // Wallpaper preview with real-time updates
 
-import React, { useRef, useEffect } from 'react';
+import React, { useRef, useEffect, useMemo } from 'react';
 import { View, StyleSheet, Dimensions } from 'react-native';
 import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
 import { TemplateRenderer } from './TemplateRenderer';
 import { Signature } from '@/types/signature.types';
 import { WallpaperOptions } from '@/types/wallpaper.types';
-import { colors } from '@/constants/colors';
-import { borderRadius } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface WallpaperPreviewProps {
   signature: Signature;
@@ -25,6 +24,8 @@ export const WallpaperPreview: React.FC<WallpaperPreviewProps> = ({
   onRefReady,
 }) => {
   const viewRef = useRef(null);
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
 
   // Notify parent when ref is ready
   useEffect(() => {
@@ -61,22 +62,19 @@ export const WallpaperPreview: React.FC<WallpaperPreviewProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  container: {
-    alignItems: 'center',
-    marginVertical: 16,
-  },
-  previewContainer: {
-    borderRadius: borderRadius.lg,
-    overflow: 'hidden',
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    container: {
+      alignItems: 'center',
+      marginVertical: tokens.spacing.md,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-    backgroundColor: colors.background,
-  },
-});
+    previewContainer: {
+      borderRadius: tokens.radii.generous,
+      overflow: 'hidden',
+      backgroundColor: colors.surface.card,
+      ...tokens.elevation.level3,
+    },
+  });

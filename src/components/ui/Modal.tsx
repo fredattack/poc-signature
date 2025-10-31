@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import {
   Modal as RNModal,
   View,
@@ -7,8 +7,7 @@ import {
   ViewStyle,
   Text,
 } from 'react-native';
-import { colors } from '@/constants/colors';
-import { spacing, layout } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 
 export interface ModalProps {
   visible: boolean;
@@ -29,6 +28,9 @@ export const Modal: React.FC<ModalProps> = ({
   animationType = 'slide',
   title,
 }) => {
+  const theme = useThemeTokens();
+  const styles = useMemo(() => createStyles(theme), [theme]);
+
   return (
     <RNModal
       visible={visible}
@@ -50,33 +52,37 @@ export const Modal: React.FC<ModalProps> = ({
   );
 };
 
-const styles = StyleSheet.create({
-  backdrop: {
-    flex: 1,
-    backgroundColor: colors.overlay,
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: spacing.lg,
-  },
-  container: {
-    backgroundColor: colors.background,
-    borderRadius: layout.modalBorderRadius,
-    padding: layout.modalPadding,
-    width: '100%',
-    maxWidth: 400,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 4,
+const createStyles = ({
+  colors,
+  tokens,
+}: ReturnType<typeof useThemeTokens>) => {
+  const titleTypography = {
+    fontSize: tokens.typography.headingS.fontSize,
+    lineHeight: tokens.typography.headingS.lineHeight,
+    fontWeight: '600' as const,
+    letterSpacing: tokens.typography.headingS.letterSpacing,
+  };
+
+  return StyleSheet.create({
+    backdrop: {
+      flex: 1,
+      backgroundColor: colors.overlay.medium,
+      justifyContent: 'center',
+      alignItems: 'center',
+      padding: tokens.spacing.lg,
     },
-    shadowOpacity: 0.3,
-    shadowRadius: 8,
-    elevation: 8,
-  },
-  title: {
-    fontWeight: '700',
-    fontSize: 18,
-    marginBottom: spacing.md,
-    color: colors.text,
-  },
-});
+    container: {
+      backgroundColor: colors.surface.card,
+      borderRadius: tokens.radii.generous,
+      padding: tokens.spacing.lg,
+      width: '100%',
+      maxWidth: 400,
+      ...tokens.elevation.level3,
+    },
+    title: {
+      ...titleTypography,
+      marginBottom: tokens.spacing.sm,
+      color: colors.text.primary,
+    },
+  });
+};
