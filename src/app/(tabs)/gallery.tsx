@@ -15,9 +15,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Header } from '@/components/shared/Header';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { useThemeTokens } from '@/theme';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { Signature } from '@/types/signature.types';
 
@@ -33,6 +31,10 @@ const sortOptions: { value: SortOption; label: string }[] = [
 export default function GalleryScreen() {
   const router = useRouter();
   const { screen, track } = useAnalytics();
+  const theme = useThemeTokens();
+  const { colors } = theme;
+  const styles = React.useMemo(() => createStyles(theme), [theme]);
+
   const loadSignatures = useSignaturesStore(
     (state: { loadSignatures: () => Promise<void> }) => state.loadSignatures
   );
@@ -170,8 +172,8 @@ export default function GalleryScreen() {
             <RefreshControl
               refreshing={refreshing}
               onRefresh={() => void handleRefresh()}
-              tintColor={colors.primary}
-              colors={[colors.primary]}
+              tintColor={colors.brand.primary}
+              colors={[colors.brand.primary]}
             />
           }
         />
@@ -180,87 +182,86 @@ export default function GalleryScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  cardWrapper: {
-    flex: 1,
-    paddingHorizontal: spacing.xs,
-  },
-  checkmark: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: 'bold',
-  },
-  container: {
-    backgroundColor: colors.backgroundSecondary,
-    flex: 1,
-  },
-  emptyIcon: {
-    fontSize: 64,
-  },
-  listContent: {
-    padding: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  sortButton: {
-    alignItems: 'center',
-    backgroundColor: colors.backgroundSecondary,
-    borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    flexDirection: 'row',
-    gap: spacing.xs,
-    paddingHorizontal: spacing.sm,
-    paddingVertical: spacing.xs,
-  },
-  sortButtonText: {
-    ...typography.caption,
-    color: colors.text,
-    fontWeight: '600',
-  },
-  sortContainer: {
-    position: 'relative',
-  },
-  sortIcon: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  sortMenu: {
-    backgroundColor: colors.background,
-    borderColor: colors.border,
-    borderRadius: 8,
-    borderWidth: 1,
-    elevation: 5,
-    minWidth: 120,
-    position: 'absolute',
-    right: 0,
-    shadowColor: '#000',
-    shadowOffset: {
-      width: 0,
-      height: 2,
+const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
+  StyleSheet.create({
+    cardWrapper: {
+      flex: 1,
+      paddingHorizontal: tokens.spacing.xs,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    top: 40,
-    zIndex: 1000,
-  },
-  sortMenuItem: {
-    alignItems: 'center',
-    borderBottomColor: colors.borderLight,
-    borderBottomWidth: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    paddingHorizontal: spacing.md,
-    paddingVertical: spacing.sm,
-  },
-  sortMenuItemActive: {
-    backgroundColor: colors.primaryLight,
-  },
-  sortMenuItemText: {
-    ...typography.body,
-    color: colors.text,
-  },
-  sortMenuItemTextActive: {
-    color: colors.primary,
-    fontWeight: '600',
-  },
-});
+    checkmark: {
+      color: colors.brand.primary,
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: 'bold',
+      lineHeight: tokens.typography.body.lineHeight,
+    },
+    container: {
+      backgroundColor: colors.surface.background,
+      flex: 1,
+    },
+    emptyIcon: {
+      fontSize: 64,
+    },
+    listContent: {
+      padding: tokens.spacing.md,
+      paddingBottom: tokens.spacing.xl,
+    },
+    sortButton: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.card,
+      borderColor: colors.overlay.light,
+      borderRadius: 8,
+      borderWidth: 1,
+      flexDirection: 'row',
+      gap: tokens.spacing.xs,
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.xs,
+    },
+    sortButtonText: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: '600',
+      letterSpacing: tokens.typography.caption.letterSpacing,
+      lineHeight: tokens.typography.caption.lineHeight,
+    },
+    sortContainer: {
+      position: 'relative',
+    },
+    sortIcon: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.caption.fontSize,
+      lineHeight: tokens.typography.caption.lineHeight,
+    },
+    sortMenu: {
+      backgroundColor: colors.surface.card,
+      borderColor: colors.overlay.light,
+      borderRadius: 8,
+      borderWidth: 1,
+      minWidth: 120,
+      position: 'absolute',
+      right: 0,
+      top: 40,
+      zIndex: 1000,
+      ...tokens.elevation.level3,
+    },
+    sortMenuItem: {
+      alignItems: 'center',
+      borderBottomColor: colors.overlay.light,
+      borderBottomWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      paddingHorizontal: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
+    },
+    sortMenuItemActive: {
+      backgroundColor: colors.brand.primaryTint,
+    },
+    sortMenuItemText: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.body.fontSize,
+      lineHeight: tokens.typography.body.lineHeight,
+    },
+    sortMenuItemTextActive: {
+      color: colors.brand.primary,
+      fontWeight: '600',
+    },
+  });
