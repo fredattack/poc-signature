@@ -50,9 +50,9 @@ export default function SignatureCanvasScreen() {
   const canvasDimensions = useMemo(() => {
     if (isLandscape) {
       const { width, height } = Dimensions.get('window');
-      // In landscape, use full screen width and height
+      const horizontalMargin = tokens.spacing.md * 2; // Margins on both sides
       return {
-        width, // Full width, no padding
+        width: width - horizontalMargin, // Full width minus margins
         height: height - 100, // Space for floating controls at bottom
       };
     }
@@ -60,7 +60,7 @@ export default function SignatureCanvasScreen() {
       width: undefined, // Let SignatureCanvas use its default
       height: COMPACT_CANVAS_HEIGHT,
     };
-  }, [isLandscape]);
+  }, [isLandscape, tokens.spacing.md]);
 
   const {
     paths,
@@ -177,6 +177,7 @@ export default function SignatureCanvasScreen() {
             onStrokeComplete={addPath}
             captureRef={canvasRef}
             clearSignal={clearSignal}
+            width={canvasDimensions.width}
             height={canvasDimensions.height}
             onBeginStroke={() => {
               haptics.triggerLight();
@@ -248,32 +249,6 @@ export default function SignatureCanvasScreen() {
             </TouchableOpacity>
           </Animated.View>
         )}
-
-        {/* Floating Done button */}
-        <TouchableOpacity
-          style={[
-            styles.landscapeDoneButton,
-            {
-              backgroundColor: colors.brand.primary,
-              ...tokens.elevation.level3,
-            },
-          ]}
-          onPress={() => {
-            Alert.alert(
-              'Rotate Device',
-              'Please rotate your device to portrait mode to save the signature.',
-              [{ text: 'Got it' }]
-            );
-          }}
-          accessibilityRole="button"
-          accessibilityLabel="Exit landscape mode"
-        >
-          <Text
-            style={[styles.landscapeDoneText, { color: colors.surface.card }]}
-          >
-            Done ✓
-          </Text>
-        </TouchableOpacity>
       </SafeAreaView>
     );
   }
@@ -587,18 +562,6 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       paddingVertical: tokens.spacing.sm,
       position: 'absolute',
       right: tokens.spacing.md,
-    },
-    landscapeDoneButton: {
-      borderRadius: tokens.radii.mild,
-      paddingHorizontal: tokens.spacing.lg,
-      paddingVertical: tokens.spacing.md,
-      position: 'absolute',
-      right: tokens.spacing.md,
-      top: tokens.spacing.md,
-    },
-    landscapeDoneText: {
-      fontSize: tokens.typography.body.fontSize,
-      fontWeight: '600' as const,
     },
     landscapeToggleButton: {
       alignItems: 'center',

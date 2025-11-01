@@ -43,6 +43,7 @@ export interface SignatureCanvasProps {
   onBeginStroke?: () => void;
   onEndStroke?: () => void;
   height?: number;
+  width?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -85,6 +86,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   onBeginStroke,
   onEndStroke,
   height = CANVAS_HEIGHT,
+  width,
 }) => {
   const [paths, setPaths] = useState<CanvasPath[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
@@ -255,7 +257,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         style={[
           styles.canvas,
           {
-            width: CANVAS_ACTUAL_WIDTH,
+            width: width ?? CANVAS_ACTUAL_WIDTH,
             height,
           },
         ]}
