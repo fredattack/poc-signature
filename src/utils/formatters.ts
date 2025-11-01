@@ -1,30 +1,38 @@
 // Date and text formatting utilities
 
-export const formatDate = (date: Date): string => {
+// Helper to ensure we have a Date object
+const toDate = (date: Date | string): Date => {
+  return typeof date === 'string' ? new Date(date) : date;
+};
+
+export const formatDate = (date: Date | string): string => {
+  const dateObj = toDate(date);
   const options: Intl.DateTimeFormatOptions = {
     year: 'numeric',
     month: 'long',
     day: 'numeric',
   };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+  return new Intl.DateTimeFormat('en-US', options).format(dateObj);
 };
 
-export const formatTime = (date: Date): string => {
+export const formatTime = (date: Date | string): string => {
+  const dateObj = toDate(date);
   const options: Intl.DateTimeFormatOptions = {
     hour: 'numeric',
     minute: '2-digit',
     hour12: true,
   };
-  return new Intl.DateTimeFormat('en-US', options).format(date);
+  return new Intl.DateTimeFormat('en-US', options).format(dateObj);
 };
 
-export const formatDateTime = (date: Date): string => {
+export const formatDateTime = (date: Date | string): string => {
   return `${formatDate(date)} at ${formatTime(date)}`;
 };
 
-export const formatRelativeTime = (date: Date): string => {
+export const formatRelativeTime = (date: Date | string): string => {
+  const dateObj = toDate(date);
   const now = new Date();
-  const diffMs = now.getTime() - date.getTime();
+  const diffMs = now.getTime() - dateObj.getTime();
   const diffMins = Math.floor(diffMs / 60000);
   const diffHours = Math.floor(diffMs / 3600000);
   const diffDays = Math.floor(diffMs / 86400000);
@@ -41,7 +49,7 @@ export const formatRelativeTime = (date: Date): string => {
   if (diffDays < 7) {
     return `${diffDays} ${diffDays === 1 ? 'day' : 'days'} ago`;
   }
-  return formatDate(date);
+  return formatDate(dateObj);
 };
 
 export const formatLocation = (city?: string, country?: string): string => {
