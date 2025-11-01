@@ -36,6 +36,7 @@ export default function SignatureCanvasScreen() {
   const router = useRouter();
   const canvasRef = useRef<View | null>(null);
   const [clearSignal, setClearSignal] = useState(0);
+  const [showLandscapeControls, setShowLandscapeControls] = useState(false);
   const { track } = useAnalytics();
   const haptics = useHaptics();
   const orientation = useOrientation();
@@ -183,43 +184,70 @@ export default function SignatureCanvasScreen() {
           />
         </View>
 
-        {/* Floating controls at bottom */}
-        <View
+        {/* Toggle button for controls (bottom left) */}
+        <TouchableOpacity
           style={[
-            styles.landscapeControls,
+            styles.landscapeToggleButton,
             {
-              backgroundColor: colors.surface.card,
+              backgroundColor: colors.brand.primary,
               ...tokens.elevation.level3,
             },
           ]}
+          onPress={() => {
+            setShowLandscapeControls(!showLandscapeControls);
+            haptics.triggerLight();
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Toggle controls"
         >
-          <ColorPickerDropdown value={currentColor} onChange={setColor} />
-
-          <TouchableOpacity
-            onPress={handleClear}
-            disabled={paths.length === 0}
-            style={[
-              styles.landscapeControlButton,
-              paths.length === 0 && styles.controlButtonDisabled,
-            ]}
-            accessibilityRole="button"
-            accessibilityLabel="Clear canvas"
+          <Text
+            style={[styles.landscapeToggleIcon, { color: colors.surface.card }]}
           >
-            <Text
+            {showLandscapeControls ? '✕' : '🎨'}
+          </Text>
+        </TouchableOpacity>
+
+        {/* Floating controls at bottom - shown on toggle */}
+        {showLandscapeControls && (
+          <Animated.View
+            entering={SlideInUp.duration(300).springify()}
+            exiting={SlideInUp.duration(200)}
+            style={[
+              styles.landscapeControls,
+              {
+                backgroundColor: colors.surface.card,
+                ...tokens.elevation.level3,
+              },
+            ]}
+          >
+            <ColorPickerDropdown value={currentColor} onChange={setColor} />
+
+            <TouchableOpacity
+              onPress={handleClear}
+              disabled={paths.length === 0}
               style={[
-                styles.landscapeControlText,
-                {
-                  color:
-                    paths.length === 0
-                      ? colors.text.tertiary
-                      : colors.text.primary,
-                },
+                styles.landscapeControlButton,
+                paths.length === 0 && styles.controlButtonDisabled,
               ]}
+              accessibilityRole="button"
+              accessibilityLabel="Clear canvas"
             >
-              ✕ Clear
-            </Text>
-          </TouchableOpacity>
-        </View>
+              <Text
+                style={[
+                  styles.landscapeControlText,
+                  {
+                    color:
+                      paths.length === 0
+                        ? colors.text.tertiary
+                        : colors.text.primary,
+                  },
+                ]}
+              >
+                ✕ Clear
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+        )}
 
         {/* Floating Done button */}
         <TouchableOpacity
@@ -552,7 +580,7 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
     landscapeControls: {
       alignItems: 'center',
       borderRadius: tokens.radii.mild,
-      bottom: tokens.spacing.md,
+      bottom: tokens.spacing.xxl + tokens.spacing.md,
       flexDirection: 'row',
       gap: tokens.spacing.sm,
       left: tokens.spacing.md,
@@ -572,6 +600,20 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
     landscapeDoneText: {
       fontSize: tokens.typography.body.fontSize,
       fontWeight: '600' as const,
+    },
+    landscapeToggleButton: {
+      alignItems: 'center',
+      borderRadius: 28,
+      bottom: tokens.spacing.md,
+      height: 56,
+      justifyContent: 'center',
+      left: tokens.spacing.md,
+      position: 'absolute',
+      width: 56,
+    },
+    landscapeToggleIcon: {
+      fontSize: 24,
+      textAlign: 'center',
     },
     locationHint: {
       fontSize: tokens.typography.caption.fontSize,
