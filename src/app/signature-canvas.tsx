@@ -431,19 +431,12 @@ export default function SignatureCanvasScreen() {
         ]}
       >
         <Button
-          title="Clear"
-          onPress={handleClear}
-          variant="secondary"
-          disabled={paths.length === 0 || isSaving}
-          style={styles.actionButton}
-        />
-        <Button
           title={isSaving ? 'Saving...' : '💾 Save Signature'}
           onPress={() => void handleSave()}
           variant="primary"
           disabled={!isValid || isSaving}
           loading={isSaving}
-          style={styles.actionButton}
+          style={styles.saveButton}
         />
       </Animated.View>
     </SafeAreaView>
@@ -452,18 +445,12 @@ export default function SignatureCanvasScreen() {
 
 const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
-    actionButton: {
-      flex: 1,
-      minHeight: 56,
-    },
     backButton: {
       fontSize: tokens.typography.body.fontSize,
       fontWeight: '500' as const,
     },
     buttonContainer: {
       borderTopWidth: 1,
-      flexDirection: 'row',
-      gap: tokens.spacing.sm,
       paddingBottom: tokens.spacing.md,
       paddingHorizontal: tokens.spacing.md,
       paddingTop: tokens.spacing.md,
@@ -593,5 +580,9 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       flexDirection: 'row',
       gap: tokens.spacing.sm,
       justifyContent: 'space-between',
+    },
+    saveButton: {
+      minHeight: 56,
+      width: '100%',
     },
   });
