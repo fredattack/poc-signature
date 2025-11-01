@@ -26,7 +26,19 @@ export default function SettingsScreen() {
   };
 
   const handleSystemTheme = () => {
-    void setThemeMode('system');
+    console.log('⚙️ System theme button pressed');
+    console.log('📊 Current isSystemMode:', isSystemMode);
+
+    if (isSystemMode) {
+      // Si déjà en mode system, passer en mode manuel (garder le mode actuel)
+      const manualMode = mode; // 'light' ou 'dark'
+      console.log('✨ Switching to manual mode:', manualMode);
+      void setThemeMode(manualMode);
+    } else {
+      // Sinon, activer le mode system
+      console.log('✨ Switching to system mode');
+      void setThemeMode('system');
+    }
   };
 
   return (
@@ -94,10 +106,13 @@ export default function SettingsScreen() {
               styles.settingRow,
               {
                 backgroundColor: colors.surface.card,
-                borderColor: colors.overlay.light,
+                borderColor: isSystemMode
+                  ? colors.brand.primary
+                  : colors.overlay.light,
               },
             ]}
             onPress={handleSystemTheme}
+            activeOpacity={0.6}
           >
             <View style={styles.settingInfo}>
               <Text
@@ -111,7 +126,9 @@ export default function SettingsScreen() {
                   { color: colors.text.secondary },
                 ]}
               >
-                Follow device appearance settings
+                {isSystemMode
+                  ? 'Tap to switch to manual mode'
+                  : 'Follow device appearance settings'}
               </Text>
             </View>
             {isSystemMode && (
