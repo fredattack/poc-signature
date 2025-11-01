@@ -1,41 +1,35 @@
-// Signature capture screen
+// Signature capture screen - Single-page layout (no scroll)
 
-import React, {
-  useCallback,
-  useEffect,
-  useMemo,
-  useRef,
-  useState,
-} from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
-  KeyboardAvoidingView,
-  Platform,
-  ScrollView,
   StyleSheet,
   Switch,
   Text,
+  TouchableOpacity,
   View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignatureCanvas } from '@/components/signature/SignatureCanvas';
-import { ColorPicker } from '@/components/signature/ColorPicker';
+import { ColorPickerDropdown } from '@/components/signature/ColorPickerDropdown';
 import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
-import { Header } from '@/components/shared/Header';
 import { useSignature } from '@/hooks/useSignature';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { useThemeTokens } from '@/theme';
 
+// Custom canvas height for single-page layout (no scroll)
+const COMPACT_CANVAS_HEIGHT = 280;
+
 export default function SignatureCanvasScreen() {
   const router = useRouter();
   const canvasRef = useRef<View | null>(null);
   const [clearSignal, setClearSignal] = useState(0);
-  const [scrollEnabled, setScrollEnabled] = useState(true);
   const { track } = useAnalytics();
   const theme = useThemeTokens();
+  const { colors, tokens } = theme;
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   const {
@@ -84,9 +78,6 @@ export default function SignatureCanvasScreen() {
     }
   };
 
-  const disableScroll = useCallback(() => setScrollEnabled(false), []);
-  const enableScroll = useCallback(() => setScrollEnabled(true), []);
-
   const handleBack = () => {
     if (paths.length > 0) {
       Alert.alert(
@@ -109,223 +100,303 @@ export default function SignatureCanvasScreen() {
     }
   };
 
+  const handleInfo = () => {
+    Alert.alert(
+      'Signature Capture',
+      'Draw the celebrity signature on the canvas using your finger. Choose a color, add the celebrity name, and optionally save location data.',
+      [{ text: 'Got it' }]
+    );
+  };
+
   return (
-    <SafeAreaView style={styles.safeArea} edges={['top', 'left', 'right']}>
-      <View style={styles.container}>
-        <Header
-          title="Capture Signature"
-          leftAction={<Text style={styles.backText}>Back</Text>}
-          onLeftPress={handleBack}
-        />
-
-        <KeyboardAvoidingView
-          style={styles.content}
-          behavior={Platform.OS === 'ios' ? 'padding' : undefined}
-          keyboardVerticalOffset={24}
+    <SafeAreaView
+      style={[styles.container, { backgroundColor: colors.surface.background }]}
+      edges={['top', 'left', 'right']}
+    >
+      {/* Header */}
+      <View
+        style={[styles.header, { borderBottomColor: colors.overlay.light }]}
+      >
+        <TouchableOpacity
+          onPress={handleBack}
+          accessibilityRole="button"
+          accessibilityLabel="Go back"
         >
-          <ScrollView
-            style={styles.scrollView}
-            contentContainerStyle={styles.scrollContent}
-            showsVerticalScrollIndicator={false}
-            keyboardShouldPersistTaps="handled"
-            scrollEnabled={scrollEnabled}
+          <Text style={[styles.backButton, { color: colors.brand.primary }]}>
+            ← Back
+          </Text>
+        </TouchableOpacity>
+        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
+          Capture Signature
+        </Text>
+        <TouchableOpacity
+          onPress={handleInfo}
+          accessibilityRole="button"
+          accessibilityLabel="Information"
+        >
+          <Text style={[styles.infoIcon, { color: colors.text.secondary }]}>
+            ⓘ
+          </Text>
+        </TouchableOpacity>
+      </View>
+
+      {/* Main Content - NO SCROLL */}
+      <View style={styles.content}>
+        {/* Canvas Hint */}
+        <Text style={[styles.canvasHint, { color: colors.text.secondary }]}>
+          ✍️ Draw the signature
+        </Text>
+
+        {/* Signature Canvas with Inline Controls */}
+        <View
+          style={[
+            styles.canvasWrapper,
+            {
+              borderColor: colors.brand.primary,
+              backgroundColor: colors.surface.card,
+              ...tokens.elevation.level2,
+            },
+          ]}
+        >
+          <SignatureCanvas
+            color={currentColor}
+            onStrokeComplete={addPath}
+            captureRef={canvasRef}
+            clearSignal={clearSignal}
+            height={COMPACT_CANVAS_HEIGHT}
+          />
+
+          {/* Canvas Controls - Integrated */}
+          <View
+            style={[
+              styles.canvasControls,
+              { backgroundColor: colors.surface.backgroundTint },
+            ]}
           >
-            <Text style={styles.instructions}>
-              Draw the celebrity&apos;s signature on the canvas below
-            </Text>
+            <ColorPickerDropdown value={currentColor} onChange={setColor} />
 
-            <View style={styles.canvasContainer}>
-              <View style={styles.canvasFrame}>
-                <SignatureCanvas
-                  color={currentColor}
-                  onStrokeComplete={addPath}
-                  captureRef={canvasRef}
-                  clearSignal={clearSignal}
-                  onBeginStroke={disableScroll}
-                  onEndStroke={enableScroll}
-                />
-              </View>
-            </View>
+            <View style={styles.controlButtons}>
+              <TouchableOpacity
+                onPress={() => {
+                  // TODO: Implement undo functionality
+                  Alert.alert('Undo', 'Undo feature coming soon!');
+                }}
+                style={styles.controlButton}
+                accessibilityRole="button"
+                accessibilityLabel="Undo last stroke"
+              >
+                <Text
+                  style={[styles.controlText, { color: colors.text.primary }]}
+                >
+                  ↶ Undo
+                </Text>
+              </TouchableOpacity>
 
-            <View style={styles.section}>
-              <Text style={styles.sectionLabel}>Signature Color</Text>
-              <ColorPicker
-                selectedColor={currentColor}
-                onColorSelect={setColor}
-              />
-            </View>
-
-            <View style={styles.section}>
-              <Input
-                label="Celebrity Name *"
-                placeholder="Enter celebrity name"
-                value={celebrityName}
-                onChangeText={setCelebrityName}
-                error={
-                  validationError && !celebrityName
-                    ? validationError
-                    : undefined
-                }
-                autoCapitalize="words"
-                autoCorrect={false}
-              />
-            </View>
-
-            <View style={styles.section}>
-              <View style={styles.switchRow}>
-                <View style={styles.switchLabel}>
-                  <Text style={styles.sectionLabel}>Capture Location</Text>
-                  <Text style={styles.switchHelper}>
-                    Save where you got this signature
-                  </Text>
-                </View>
-                <Switch
-                  value={captureLocation}
-                  onValueChange={toggleLocationCapture}
-                  trackColor={{
-                    false: theme.colors.overlay.light,
-                    true: theme.colors.brand.primary,
-                  }}
-                  thumbColor={theme.colors.surface.card}
-                />
-              </View>
-            </View>
-
-            {error && <Text style={styles.errorText}>{error}</Text>}
-
-            <View style={styles.actions}>
-              <Button
-                title="Clear"
+              <TouchableOpacity
                 onPress={handleClear}
-                variant="secondary"
-                disabled={paths.length === 0 || isSaving}
-                style={styles.actionButton}
-              />
-              <Button
-                title={isSaving ? 'Saving...' : 'Save Signature'}
-                onPress={() => void handleSave()}
-                variant="primary"
-                disabled={!isValid || isSaving}
-                loading={isSaving}
-                style={styles.actionButton}
-              />
+                disabled={paths.length === 0}
+                style={[
+                  styles.controlButton,
+                  paths.length === 0 && styles.controlButtonDisabled,
+                ]}
+                accessibilityRole="button"
+                accessibilityLabel="Clear canvas"
+              >
+                <Text
+                  style={[
+                    styles.controlText,
+                    {
+                      color:
+                        paths.length === 0
+                          ? colors.text.tertiary
+                          : colors.text.primary,
+                    },
+                  ]}
+                >
+                  ✕ Clear
+                </Text>
+              </TouchableOpacity>
             </View>
+          </View>
+        </View>
 
-            {!isValid && (
-              <Text style={styles.hintText}>
-                {validationError ??
-                  'Please draw a signature and enter celebrity name'}
+        {/* Form Fields - Compact */}
+        <View style={styles.formSection}>
+          <Input
+            label="Celebrity Name *"
+            placeholder="Type or select..."
+            value={celebrityName}
+            onChangeText={(text) => {
+              setCelebrityName(text);
+            }}
+            error={
+              validationError && !celebrityName ? validationError : undefined
+            }
+            autoCapitalize="words"
+            autoCorrect={false}
+          />
+
+          {/* Location Toggle - Compact Row */}
+          <View style={styles.locationRow}>
+            <View style={styles.locationLabelContainer}>
+              <Text
+                style={[styles.locationLabel, { color: colors.text.primary }]}
+              >
+                📍 Location
               </Text>
-            )}
-          </ScrollView>
-        </KeyboardAvoidingView>
+              <Text
+                style={[styles.locationHint, { color: colors.text.secondary }]}
+              >
+                {captureLocation ? 'Will save' : 'Optional'}
+              </Text>
+            </View>
+            <Switch
+              value={captureLocation}
+              onValueChange={toggleLocationCapture}
+              trackColor={{
+                false: colors.overlay.light,
+                true: colors.brand.primary,
+              }}
+              thumbColor={colors.surface.card}
+              ios_backgroundColor={colors.overlay.light}
+            />
+          </View>
+        </View>
+
+        {/* Validation Error Message */}
+        {error && (
+          <Text
+            style={[styles.errorMessage, { color: colors.feedback.critical }]}
+          >
+            {error}
+          </Text>
+        )}
+      </View>
+
+      {/* Action Buttons - Sticky Footer */}
+      <View
+        style={[
+          styles.buttonContainer,
+          { borderTopColor: colors.overlay.light },
+        ]}
+      >
+        <Button
+          title="Clear"
+          onPress={handleClear}
+          variant="secondary"
+          disabled={paths.length === 0 || isSaving}
+          style={styles.actionButton}
+        />
+        <Button
+          title={isSaving ? 'Saving...' : '💾 Save Signature'}
+          onPress={() => void handleSave()}
+          variant="primary"
+          disabled={!isValid || isSaving}
+          loading={isSaving}
+          style={styles.actionButton}
+        />
       </View>
     </SafeAreaView>
   );
 }
 
-const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
+const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     actionButton: {
       flex: 1,
     },
-    actions: {
-      flexDirection: 'row',
-      gap: tokens.spacing.md,
-      marginTop: tokens.spacing.lg,
-    },
-    backText: {
-      color: colors.brand.primary,
+    backButton: {
       fontSize: tokens.typography.body.fontSize,
-      fontWeight: tokens.typography.body.fontWeight,
-      letterSpacing: tokens.typography.body.letterSpacing,
-      lineHeight: tokens.typography.body.lineHeight,
+      fontWeight: '500' as const,
     },
-    canvasContainer: {
+    buttonContainer: {
+      borderTopWidth: 1,
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
+      paddingBottom: tokens.spacing.md,
+      paddingHorizontal: tokens.spacing.md,
+      paddingTop: tokens.spacing.md,
+    },
+    canvasControls: {
       alignItems: 'center',
-      marginBottom: tokens.spacing.lg,
-      width: '100%',
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
+      justifyContent: 'space-between',
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.sm,
     },
-    canvasFrame: {
-      backgroundColor: colors.surface.card,
-      borderColor: colors.brand.primary,
+    canvasHint: {
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: tokens.typography.caption.fontWeight,
+      marginBottom: tokens.spacing.xs,
+    },
+    canvasWrapper: {
       borderRadius: tokens.radii.generous,
-      borderWidth: 2,
+      borderWidth: 1.5,
+      marginBottom: tokens.spacing.md,
       overflow: 'hidden',
-      width: '100%',
     },
     container: {
-      backgroundColor: colors.surface.background,
       flex: 1,
     },
     content: {
       flex: 1,
+      paddingHorizontal: tokens.spacing.md,
+      paddingTop: tokens.spacing.sm,
     },
-    errorText: {
-      color: colors.feedback.critical,
-      fontSize: tokens.typography.body.fontSize,
-      fontWeight: tokens.typography.body.fontWeight,
-      letterSpacing: tokens.typography.body.letterSpacing,
-      lineHeight: tokens.typography.body.lineHeight,
-      marginTop: tokens.spacing.md,
-      textAlign: 'center',
+    controlButton: {
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.xs,
     },
-    hintText: {
-      color: colors.text.secondary,
+    controlButtonDisabled: {
+      opacity: 0.4,
+    },
+    controlButtons: {
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
+    },
+    controlText: {
       fontSize: tokens.typography.caption.fontSize,
-      fontWeight: tokens.typography.caption.fontWeight,
-      letterSpacing: tokens.typography.caption.letterSpacing,
-      lineHeight: tokens.typography.caption.lineHeight,
+      fontWeight: '500' as const,
+    },
+    errorMessage: {
+      fontSize: tokens.typography.caption.fontSize,
       marginTop: tokens.spacing.sm,
       textAlign: 'center',
     },
-    instructions: {
-      color: colors.text.secondary,
-      fontSize: tokens.typography.body.fontSize,
-      fontWeight: tokens.typography.body.fontWeight,
-      letterSpacing: tokens.typography.body.letterSpacing,
-      lineHeight: tokens.typography.body.lineHeight,
-      marginBottom: tokens.spacing.lg,
-      textAlign: 'center',
+    formSection: {
+      gap: tokens.spacing.md,
     },
-    safeArea: {
-      backgroundColor: colors.surface.background,
-      flex: 1,
-    },
-    scrollContent: {
-      paddingBottom: tokens.spacing.xl,
+    header: {
+      alignItems: 'center',
+      borderBottomWidth: 1,
+      flexDirection: 'row',
+      justifyContent: 'space-between',
       paddingHorizontal: tokens.spacing.md,
-      paddingTop: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
     },
-    scrollView: {
-      flex: 1,
+    headerTitle: {
+      fontSize: tokens.typography.headingM.fontSize,
+      fontWeight: tokens.typography.headingM.fontWeight,
     },
-    section: {
-      marginBottom: tokens.spacing.lg,
+    infoIcon: {
+      fontSize: 20,
     },
-    sectionLabel: {
-      color: colors.text.primary,
-      fontSize: tokens.typography.caption.fontSize,
-      fontWeight: '600' as const,
-      letterSpacing: tokens.typography.caption.letterSpacing,
-      lineHeight: tokens.typography.caption.lineHeight,
-      marginBottom: tokens.spacing.sm,
-    },
-    switchHelper: {
-      color: colors.text.secondary,
+    locationHint: {
       fontSize: tokens.typography.caption.fontSize,
       fontWeight: tokens.typography.caption.fontWeight,
-      letterSpacing: tokens.typography.caption.letterSpacing,
-      lineHeight: tokens.typography.caption.lineHeight,
-      marginTop: tokens.spacing.xs,
     },
-    switchLabel: {
+    locationLabel: {
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: '500' as const,
+    },
+    locationLabelContainer: {
       flex: 1,
-      marginRight: tokens.spacing.md,
     },
-    switchRow: {
+    locationRow: {
       alignItems: 'center',
       flexDirection: 'row',
+      gap: tokens.spacing.sm,
       justifyContent: 'space-between',
     },
   });

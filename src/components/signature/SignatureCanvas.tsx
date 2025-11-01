@@ -12,9 +12,19 @@ import {
   type GestureResponderEvent,
   type View as RNView,
   StyleSheet,
+  Text,
   View,
 } from 'react-native';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  useAnimatedStyle,
+  useSharedValue,
+  withRepeat,
+  withSequence,
+  withTiming,
+} from 'react-native-reanimated';
 import { CanvasPath, SignatureColor } from '@/types/signature.types';
 import {
   CANVAS_HEIGHT,
@@ -32,6 +42,7 @@ export interface SignatureCanvasProps {
   clearSignal?: number;
   onBeginStroke?: () => void;
   onEndStroke?: () => void;
+  height?: number;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
@@ -73,13 +84,33 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   clearSignal,
   onBeginStroke,
   onEndStroke,
+  height = CANVAS_HEIGHT,
 }) => {
   const [paths, setPaths] = useState<CanvasPath[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
+  const [hasStartedDrawing, setHasStartedDrawing] = useState(false);
+  const [isComplete, setIsComplete] = useState(false);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const hintOpacity = useSharedValue(0.5);
+
+  // Pulse animation for hint overlay
+  useEffect(() => {
+    if (!hasStartedDrawing) {
+      hintOpacity.value = withRepeat(
+        withSequence(
+          withTiming(0.8, { duration: 1500 }),
+          withTiming(0.5, { duration: 1500 })
+        ),
+        -1,
+        true
+      );
+    } else {
+      hintOpacity.value = withTiming(0, { duration: 300 });
+    }
+  }, [hasStartedDrawing, hintOpacity]);
 
   useEffect(() => {
     if (clearSignal !== undefined) {
@@ -87,6 +118,8 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       currentPath.current = Skia.Path.Make();
       currentPoints.current = [];
       setIsDrawing(false);
+      setHasStartedDrawing(false);
+      setIsComplete(false);
     }
   }, [clearSignal]);
 
@@ -102,6 +135,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
     setPaths((prev) => [...prev, newPath]);
     onStrokeComplete(newPath);
+    setIsComplete(true);
 
     currentPath.current = Skia.Path.Make();
     currentPoints.current = [];
@@ -115,13 +149,17 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         return;
       }
 
+      if (!hasStartedDrawing) {
+        setHasStartedDrawing(true);
+      }
+
       currentPath.current = Skia.Path.Make();
       currentPath.current.moveTo(point.x, point.y);
       currentPoints.current = [point];
       setIsDrawing(true);
       onBeginStroke?.();
     },
-    [onBeginStroke]
+    [hasStartedDrawing, onBeginStroke]
   );
 
   const handleTouchMove = useCallback((event: GestureResponderEvent) => {
@@ -178,6 +216,10 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     [paths]
   );
 
+  const animatedHintStyle = useAnimatedStyle(() => ({
+    opacity: hintOpacity.value,
+  }));
+
   return (
     <View
       style={styles.container}
@@ -194,7 +236,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           styles.canvas,
           {
             width: CANVAS_ACTUAL_WIDTH,
-            height: CANVAS_HEIGHT,
+            height,
           },
         ]}
         onTouchStart={handleTouchStart}
@@ -214,6 +256,30 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           />
         )}
       </Canvas>
+
+      {/* Hint Overlay - Shows when canvas is empty */}
+      {!hasStartedDrawing && (
+        <Animated.View
+          style={[styles.hintOverlay, animatedHintStyle]}
+          pointerEvents="none"
+        >
+          <Text style={styles.hintIcon}>✍️</Text>
+          <Text style={styles.hintText}>Draw here</Text>
+          <Text style={styles.hintSubtext}>Touch & drag with finger</Text>
+        </Animated.View>
+      )}
+
+      {/* Checkmark - Shows when signature is complete */}
+      {isComplete && paths.length > 0 && (
+        <Animated.View
+          entering={FadeIn.duration(300)}
+          exiting={FadeOut.duration(200)}
+          style={styles.checkmark}
+          pointerEvents="none"
+        >
+          <Text style={styles.checkmarkText}>✓</Text>
+        </Animated.View>
+      )}
     </View>
   );
 };
@@ -230,6 +296,23 @@ const createStyles = ({
     canvas: {
       backgroundColor: colors.surface.background,
     },
+    checkmark: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.card,
+      borderRadius: 20,
+      bottom: 12,
+      height: 40,
+      justifyContent: 'center',
+      position: 'absolute',
+      right: 12,
+      width: 40,
+      ...tokens.elevation.level2,
+    },
+    checkmarkText: {
+      color: colors.brand.primary,
+      fontSize: 24,
+      fontWeight: '600' as const,
+    },
     container: {
       alignItems: 'center',
       backgroundColor: colors.surface.card,
@@ -239,6 +322,30 @@ const createStyles = ({
       justifyContent: 'center',
       overflow: 'hidden',
       ...tokens.elevation.level1,
+    },
+    hintIcon: {
+      fontSize: 32,
+      marginBottom: tokens.spacing.xs,
+    },
+    hintOverlay: {
+      alignItems: 'center',
+      bottom: 0,
+      justifyContent: 'center',
+      left: 0,
+      position: 'absolute',
+      right: 0,
+      top: 0,
+    },
+    hintSubtext: {
+      color: colors.text.tertiary,
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: tokens.typography.caption.fontWeight,
+      marginTop: tokens.spacing.xs,
+    },
+    hintText: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: '500' as const,
     },
   });
 };
