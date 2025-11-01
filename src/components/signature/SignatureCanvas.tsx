@@ -51,19 +51,18 @@ const CANVAS_ACTUAL_WIDTH = Math.min(SCREEN_WIDTH - 32, CANVAS_WIDTH);
 const getTouchPoint = (
   event: GestureResponderEvent
 ): { x: number; y: number } | null => {
-  const touch = event.nativeEvent.touches?.[0] ??
-    event.nativeEvent.changedTouches?.[0] ?? {
-      locationX: event.nativeEvent.locationX,
-      locationY: event.nativeEvent.locationY,
-    };
+  const { locationX, locationY } = event.nativeEvent;
 
-  if (touch == null) {
+  if (locationX == null || locationY == null) {
+    console.log(
+      '[SignatureCanvas] Invalid touch point - locationX or locationY is null'
+    );
     return null;
   }
 
   return {
-    x: touch.locationX,
-    y: touch.locationY,
+    x: locationX,
+    y: locationY,
   };
 };
 
@@ -150,11 +149,15 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   const handleTouchStart = useCallback(
     (event: GestureResponderEvent) => {
       const point = getTouchPoint(event);
+      console.log('[SignatureCanvas] Touch START:', point);
+
       if (!point) {
+        console.log('[SignatureCanvas] Touch START - no valid point, aborting');
         return;
       }
 
       if (!hasStartedDrawing) {
+        console.log('[SignatureCanvas] First stroke - hiding hint');
         setHasStartedDrawing(true);
       }
 
@@ -163,6 +166,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       currentPoints.current = [point];
       setCurrentDrawingPath([point]);
       setIsDrawing(true);
+      console.log('[SignatureCanvas] Drawing started at', point);
       onBeginStroke?.();
     },
     [hasStartedDrawing, onBeginStroke]
@@ -170,7 +174,9 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
   const handleTouchMove = useCallback((event: GestureResponderEvent) => {
     const point = getTouchPoint(event);
+
     if (!point) {
+      console.log('[SignatureCanvas] Touch MOVE - no valid point, skipping');
       return;
     }
 
@@ -179,14 +185,24 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
     // Force re-render by updating state with current drawing path
     setCurrentDrawingPath([...currentPoints.current]);
+    console.log(
+      '[SignatureCanvas] Touch MOVE - points:',
+      currentPoints.current.length
+    );
   }, []);
 
   const handleTouchEnd = useCallback(() => {
+    console.log(
+      '[SignatureCanvas] Touch END - completing stroke with',
+      currentPoints.current.length,
+      'points'
+    );
     completeStroke();
     onEndStroke?.();
   }, [completeStroke, onEndStroke]);
 
   const handleTouchCancel = useCallback(() => {
+    console.log('[SignatureCanvas] Touch CANCEL - clearing current stroke');
     currentPoints.current = [];
     currentPath.current = Skia.Path.Make();
     setCurrentDrawingPath([]);
@@ -231,13 +247,9 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     <View
       style={styles.container}
       ref={captureRef}
-      onStartShouldSetResponder={() => true}
-      onMoveShouldSetResponder={() => true}
-      onResponderGrant={() => {
-        // Prevent parent scroll when touching canvas
-        return true;
-      }}
+      onStartShouldSetResponder={() => false} // Let children handle
     >
+      {/* Canvas - RENDERING ONLY, no touch handlers */}
       <Canvas
         style={[
           styles.canvas,
@@ -246,10 +258,6 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
             height,
           },
         ]}
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-        onTouchCancel={handleTouchCancel}
       >
         {renderCompletedPaths}
         {isDrawing && currentDrawingPath.length > 0 && (
@@ -264,7 +272,34 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         )}
       </Canvas>
 
-      {/* Hint Overlay - Shows when canvas is empty */}
+      {/* TRANSPARENT TOUCH OVERLAY - Captures all touch events */}
+      <View
+        style={StyleSheet.absoluteFill}
+        onStartShouldSetResponder={() => {
+          console.log(
+            '[SignatureCanvas] onStartShouldSetResponder - returning true'
+          );
+          return true;
+        }}
+        onMoveShouldSetResponder={() => {
+          console.log(
+            '[SignatureCanvas] onMoveShouldSetResponder - returning true'
+          );
+          return true;
+        }}
+        onResponderGrant={handleTouchStart}
+        onResponderMove={handleTouchMove}
+        onResponderRelease={handleTouchEnd}
+        onResponderTerminate={handleTouchCancel}
+        onResponderTerminationRequest={() => {
+          console.log(
+            '[SignatureCanvas] onResponderTerminationRequest - returning false (keep control)'
+          );
+          return false; // Don't give up touches
+        }}
+      />
+
+      {/* Hint Overlay - Shows when canvas is empty, doesn't interfere with touches */}
       {!hasStartedDrawing && (
         <Animated.View
           style={[styles.hintOverlay, animatedHintStyle]}
