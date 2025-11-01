@@ -123,7 +123,7 @@ export type ThemeProviderProps = {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  mode: initialMode = 'system',
+  mode: initialMode = 'light',
 }) => {
   const systemMode = useColorScheme();
   const [userMode, setUserModeState] = useState<ThemeProviderMode>(initialMode);

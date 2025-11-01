@@ -5,40 +5,22 @@ import {
   ScrollView,
   StyleSheet,
   Text,
-  TouchableOpacity,
   View,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
 import { Toggle } from '@/components/ui';
 
 export default function SettingsScreen() {
-  const { colors, mode, userMode, setThemeMode } = useThemeTokens();
+  const { colors, mode, setThemeMode } = useThemeTokens();
 
   const isDarkMode = mode === 'dark';
-  const isSystemMode = userMode === 'system';
 
   const handleThemeToggle = (enabled: boolean) => {
     console.log('🔄 Toggle pressed! enabled:', enabled);
-    console.log('📊 Current state - mode:', mode, 'userMode:', userMode);
+    console.log('📊 Current mode:', mode);
     const newMode = enabled ? 'dark' : 'light';
     console.log('✨ Setting theme to:', newMode);
     void setThemeMode(newMode);
-  };
-
-  const handleSystemTheme = () => {
-    console.log('⚙️ System theme button pressed');
-    console.log('📊 Current isSystemMode:', isSystemMode);
-
-    if (isSystemMode) {
-      // Si déjà en mode system, passer en mode manuel (garder le mode actuel)
-      const manualMode = mode; // 'light' ou 'dark'
-      console.log('✨ Switching to manual mode:', manualMode);
-      void setThemeMode(manualMode);
-    } else {
-      // Sinon, activer le mode system
-      console.log('✨ Switching to system mode');
-      void setThemeMode('system');
-    }
   };
 
   return (
@@ -86,57 +68,11 @@ export default function SettingsScreen() {
                   { color: colors.text.secondary },
                 ]}
               >
-                {isSystemMode
-                  ? 'Using system preference'
-                  : isDarkMode
-                    ? 'Dark theme enabled'
-                    : 'Light theme enabled'}
+                {isDarkMode ? 'Dark theme enabled' : 'Light theme enabled'}
               </Text>
             </View>
-            <Toggle
-              value={isDarkMode && !isSystemMode}
-              onToggle={handleThemeToggle}
-              disabled={isSystemMode}
-            />
+            <Toggle value={isDarkMode} onToggle={handleThemeToggle} />
           </View>
-
-          {/* Use System Theme */}
-          <TouchableOpacity
-            style={[
-              styles.settingRow,
-              {
-                backgroundColor: colors.surface.card,
-                borderColor: isSystemMode
-                  ? colors.brand.primary
-                  : colors.overlay.light,
-              },
-            ]}
-            onPress={handleSystemTheme}
-            activeOpacity={0.6}
-          >
-            <View style={styles.settingInfo}>
-              <Text
-                style={[styles.settingLabel, { color: colors.text.primary }]}
-              >
-                Use System Theme
-              </Text>
-              <Text
-                style={[
-                  styles.settingDescription,
-                  { color: colors.text.secondary },
-                ]}
-              >
-                {isSystemMode
-                  ? 'Tap to switch to manual mode'
-                  : 'Follow device appearance settings'}
-              </Text>
-            </View>
-            {isSystemMode && (
-              <Text style={[styles.checkmark, { color: colors.brand.primary }]}>
-                ✓
-              </Text>
-            )}
-          </TouchableOpacity>
         </View>
 
         {/* App Info Section */}
@@ -192,8 +128,7 @@ export default function SettingsScreen() {
                   { color: colors.text.secondary },
                 ]}
               >
-                {mode === 'dark' ? 'Dark' : 'Light'} (
-                {isSystemMode ? 'System' : 'Manual'})
+                {mode === 'dark' ? 'Dark' : 'Light'}
               </Text>
             </View>
           </View>
@@ -242,9 +177,6 @@ export default function SettingsScreen() {
           >
             <Text style={[styles.debugText, { color: colors.text.tertiary }]}>
               Mode: {mode}
-            </Text>
-            <Text style={[styles.debugText, { color: colors.text.tertiary }]}>
-              User Preference: {userMode}
             </Text>
             <Text style={[styles.debugText, { color: colors.text.tertiary }]}>
               Background: {colors.surface.background}
