@@ -3,6 +3,7 @@
 import React, { useEffect, useMemo, useRef, useState } from 'react';
 import {
   Alert,
+  Dimensions,
   StyleSheet,
   Switch,
   Text,
@@ -24,6 +25,7 @@ import { Input } from '@/components/ui/Input';
 import { useSignature } from '@/hooks/useSignature';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useHaptics } from '@/hooks/useHaptics';
+import { useOrientation } from '@/hooks/useOrientation';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { useThemeTokens } from '@/theme';
 
@@ -36,9 +38,28 @@ export default function SignatureCanvasScreen() {
   const [clearSignal, setClearSignal] = useState(0);
   const { track } = useAnalytics();
   const haptics = useHaptics();
+  const orientation = useOrientation();
   const theme = useThemeTokens();
   const { colors, tokens } = theme;
   const styles = useMemo(() => createStyles(theme), [theme]);
+
+  const isLandscape = orientation === 'landscape';
+
+  // Calculate canvas dimensions based on orientation
+  const canvasDimensions = useMemo(() => {
+    if (isLandscape) {
+      const { width, height } = Dimensions.get('window');
+      // In landscape, give maximum space minus controls overlay
+      return {
+        width: width - 32, // 16px padding on each side
+        height: height - 100, // Space for floating controls at bottom
+      };
+    }
+    return {
+      width: undefined, // Let SignatureCanvas use its default
+      height: COMPACT_CANVAS_HEIGHT,
+    };
+  }, [isLandscape]);
 
   const {
     paths,
@@ -138,6 +159,98 @@ export default function SignatureCanvasScreen() {
     );
   };
 
+  // Render landscape mode
+  if (isLandscape) {
+    return (
+      <SafeAreaView
+        style={[
+          styles.landscapeContainer,
+          { backgroundColor: colors.surface.background },
+        ]}
+        edges={['top', 'left', 'right', 'bottom']}
+      >
+        {/* Full-screen canvas */}
+        <View style={styles.landscapeCanvasWrapper}>
+          <SignatureCanvas
+            color={currentColor}
+            onStrokeComplete={addPath}
+            captureRef={canvasRef}
+            clearSignal={clearSignal}
+            height={canvasDimensions.height}
+            onBeginStroke={() => {
+              haptics.triggerLight();
+            }}
+          />
+        </View>
+
+        {/* Floating controls at bottom */}
+        <View
+          style={[
+            styles.landscapeControls,
+            {
+              backgroundColor: colors.surface.card,
+              ...tokens.elevation.level3,
+            },
+          ]}
+        >
+          <ColorPickerDropdown value={currentColor} onChange={setColor} />
+
+          <TouchableOpacity
+            onPress={handleClear}
+            disabled={paths.length === 0}
+            style={[
+              styles.landscapeControlButton,
+              paths.length === 0 && styles.controlButtonDisabled,
+            ]}
+            accessibilityRole="button"
+            accessibilityLabel="Clear canvas"
+          >
+            <Text
+              style={[
+                styles.landscapeControlText,
+                {
+                  color:
+                    paths.length === 0
+                      ? colors.text.tertiary
+                      : colors.text.primary,
+                },
+              ]}
+            >
+              ✕ Clear
+            </Text>
+          </TouchableOpacity>
+        </View>
+
+        {/* Floating Done button */}
+        <TouchableOpacity
+          style={[
+            styles.landscapeDoneButton,
+            {
+              backgroundColor: colors.brand.primary,
+              ...tokens.elevation.level3,
+            },
+          ]}
+          onPress={() => {
+            Alert.alert(
+              'Rotate Device',
+              'Please rotate your device to portrait mode to save the signature.',
+              [{ text: 'Got it' }]
+            );
+          }}
+          accessibilityRole="button"
+          accessibilityLabel="Exit landscape mode"
+        >
+          <Text
+            style={[styles.landscapeDoneText, { color: colors.surface.card }]}
+          >
+            Done ✓
+          </Text>
+        </TouchableOpacity>
+      </SafeAreaView>
+    );
+  }
+
+  // Render portrait mode (original layout)
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.surface.background }]}
@@ -193,7 +306,7 @@ export default function SignatureCanvasScreen() {
             onStrokeComplete={addPath}
             captureRef={canvasRef}
             clearSignal={clearSignal}
-            height={COMPACT_CANVAS_HEIGHT}
+            height={canvasDimensions.height}
             onBeginStroke={() => {
               haptics.triggerLight();
             }}
@@ -417,6 +530,48 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
     },
     infoIcon: {
       fontSize: 20,
+    },
+    // Landscape mode styles
+    landscapeCanvasWrapper: {
+      alignItems: 'center',
+      flex: 1,
+      justifyContent: 'center',
+      paddingHorizontal: tokens.spacing.md,
+    },
+    landscapeContainer: {
+      flex: 1,
+    },
+    landscapeControlButton: {
+      paddingHorizontal: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
+    },
+    landscapeControlText: {
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: '600' as const,
+    },
+    landscapeControls: {
+      alignItems: 'center',
+      borderRadius: tokens.radii.mild,
+      bottom: tokens.spacing.md,
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
+      left: tokens.spacing.md,
+      paddingHorizontal: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
+      position: 'absolute',
+      right: tokens.spacing.md,
+    },
+    landscapeDoneButton: {
+      borderRadius: tokens.radii.mild,
+      paddingHorizontal: tokens.spacing.lg,
+      paddingVertical: tokens.spacing.md,
+      position: 'absolute',
+      right: tokens.spacing.md,
+      top: tokens.spacing.md,
+    },
+    landscapeDoneText: {
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: '600' as const,
     },
     locationHint: {
       fontSize: tokens.typography.caption.fontSize,
