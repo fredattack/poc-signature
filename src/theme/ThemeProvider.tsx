@@ -1,10 +1,19 @@
-import React, { createContext, useContext, useMemo } from 'react';
+import React, {
+  createContext,
+  useContext,
+  useEffect,
+  useMemo,
+  useState,
+} from 'react';
 import { ColorSchemeName, useColorScheme } from 'react-native';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 import { tokens, Tokens } from './tokens';
 
 type ThemeMode = 'light' | 'dark';
 
 type ThemeProviderMode = ThemeMode | 'system';
+
+const THEME_STORAGE_KEY = '@signatureapp/theme_mode';
 
 // Make ThemeColors flexible to support both light and dark theme values
 type ThemeColors = {
@@ -58,8 +67,10 @@ type ThemeColors = {
 
 type ThemeContextValue = {
   mode: ThemeMode;
+  userMode: ThemeProviderMode;
   colors: ThemeColors;
   tokens: Tokens;
+  setThemeMode: (mode: ThemeProviderMode) => Promise<void>;
 };
 
 const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
@@ -111,11 +122,44 @@ export type ThemeProviderProps = {
 
 export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   children,
-  mode = 'system',
+  mode: initialMode = 'system',
 }) => {
   const systemMode = useColorScheme();
+  const [userMode, setUserModeState] = useState<ThemeProviderMode>(initialMode);
+  const [isLoaded, setIsLoaded] = useState(false);
 
-  const resolvedMode = resolveMode(mode, systemMode);
+  // Load saved theme preference on mount
+  useEffect(() => {
+    const loadThemePreference = async () => {
+      try {
+        const savedMode = await AsyncStorage.getItem(THEME_STORAGE_KEY);
+        if (
+          savedMode === 'light' ||
+          savedMode === 'dark' ||
+          savedMode === 'system'
+        ) {
+          setUserModeState(savedMode);
+        }
+      } catch (error) {
+        console.error('Failed to load theme preference:', error);
+      } finally {
+        setIsLoaded(true);
+      }
+    };
+
+    void loadThemePreference();
+  }, []);
+
+  const setThemeMode = async (mode: ThemeProviderMode) => {
+    try {
+      await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
+      setUserModeState(mode);
+    } catch (error) {
+      console.error('Failed to save theme preference:', error);
+    }
+  };
+
+  const resolvedMode = resolveMode(userMode, systemMode);
 
   const contextValue = useMemo<ThemeContextValue>(() => {
     const themedColors =
@@ -123,10 +167,17 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
 
     return {
       mode: resolvedMode,
+      userMode,
       colors: themedColors,
       tokens,
+      setThemeMode,
     };
-  }, [resolvedMode]);
+  }, [resolvedMode, userMode]);
+
+  // Don't render until theme preference is loaded
+  if (!isLoaded) {
+    return null;
+  }
 
   return (
     <ThemeContext.Provider value={contextValue}>
