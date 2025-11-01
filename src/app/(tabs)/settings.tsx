@@ -18,7 +18,11 @@ export default function SettingsScreen() {
   const isSystemMode = userMode === 'system';
 
   const handleThemeToggle = (enabled: boolean) => {
-    void setThemeMode(enabled ? 'dark' : 'light');
+    console.log('🔄 Toggle pressed! enabled:', enabled);
+    console.log('📊 Current state - mode:', mode, 'userMode:', userMode);
+    const newMode = enabled ? 'dark' : 'light';
+    console.log('✨ Setting theme to:', newMode);
+    void setThemeMode(newMode);
   };
 
   const handleSystemTheme = () => {

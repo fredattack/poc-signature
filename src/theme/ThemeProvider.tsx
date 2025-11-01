@@ -152,11 +152,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   }, []);
 
   const setThemeMode = useCallback(async (mode: ThemeProviderMode) => {
+    console.log('🎨 ThemeProvider.setThemeMode called with:', mode);
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
+      console.log('💾 Saved to AsyncStorage:', mode);
       setUserModeState(mode);
+      console.log('✅ Updated userModeState to:', mode);
     } catch (error) {
-      console.error('Failed to save theme preference:', error);
+      console.error('❌ Failed to save theme preference:', error);
     }
   }, []);
 
@@ -165,6 +168,13 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const contextValue = useMemo<ThemeContextValue>(() => {
     const themedColors =
       resolvedMode === 'dark' ? createDarkColors() : tokens.colors;
+
+    console.log(
+      '🔄 Context updated - resolvedMode:',
+      resolvedMode,
+      'userMode:',
+      userMode
+    );
 
     return {
       mode: resolvedMode,
