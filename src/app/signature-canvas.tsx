@@ -10,12 +10,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, {
-  SlideInUp,
-  useAnimatedStyle,
-  useSharedValue,
-  withSpring,
-} from 'react-native-reanimated';
+import Animated, { SlideInUp } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignatureCanvas } from '@/components/signature/SignatureCanvas';
@@ -84,28 +79,9 @@ export default function SignatureCanvasScreen() {
     setCanvasRef(canvasRef);
   }, [setCanvasRef]);
 
-  // Page entrance animation
-  const contentOpacity = useSharedValue(0);
-  const contentTranslateY = useSharedValue(20);
-
   useEffect(() => {
     track(ANALYTICS_EVENTS.SIGNATURE_STARTED);
-
-    // Entrance animation
-    contentOpacity.value = withSpring(1, {
-      damping: 18,
-      stiffness: 200,
-    });
-    contentTranslateY.value = withSpring(0, {
-      damping: 18,
-      stiffness: 200,
-    });
-  }, [track, contentOpacity, contentTranslateY]);
-
-  const animatedContentStyle = useAnimatedStyle(() => ({
-    opacity: contentOpacity.value,
-    transform: [{ translateY: contentTranslateY.value }],
-  }));
+  }, [track]);
 
   const handleClear = () => {
     haptics.triggerMedium();
@@ -287,7 +263,7 @@ export default function SignatureCanvasScreen() {
       </View>
 
       {/* Main Content - NO SCROLL */}
-      <Animated.View style={[styles.content, animatedContentStyle]}>
+      <View style={styles.content}>
         {/* Canvas Hint */}
         <Text style={[styles.canvasHint, { color: colors.text.secondary }]}>
           ✍️ Draw the signature
@@ -420,11 +396,10 @@ export default function SignatureCanvasScreen() {
             {error}
           </Text>
         )}
-      </Animated.View>
+      </View>
 
-      {/* Action Buttons - Sticky Footer */}
-      <Animated.View
-        entering={SlideInUp.delay(300).duration(300).springify()}
+      {/* Action Buttons - Fixed Footer */}
+      <View
         style={[
           styles.buttonContainer,
           { borderTopColor: colors.overlay.light },
@@ -438,7 +413,7 @@ export default function SignatureCanvasScreen() {
           loading={isSaving}
           style={styles.saveButton}
         />
-      </Animated.View>
+      </View>
     </SafeAreaView>
   );
 }
