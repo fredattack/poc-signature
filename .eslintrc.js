@@ -68,7 +68,9 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
 
     // React Native specific
-    'react-native/no-unused-styles': 'error',
+    // Disabled: false positives when styles are created via functions/useMemo
+    // See: https://github.com/intellicode/eslint-plugin-react-native/issues/270
+    'react-native/no-unused-styles': 'off',
     'react-native/split-platform-components': 'warn',
     'react-native/no-inline-styles': 'warn',
     'react-native/no-color-literals': 'warn',
