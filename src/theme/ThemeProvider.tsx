@@ -1,5 +1,6 @@
 import React, {
   createContext,
+  useCallback,
   useContext,
   useEffect,
   useMemo,
@@ -150,14 +151,14 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     void loadThemePreference();
   }, []);
 
-  const setThemeMode = async (mode: ThemeProviderMode) => {
+  const setThemeMode = useCallback(async (mode: ThemeProviderMode) => {
     try {
       await AsyncStorage.setItem(THEME_STORAGE_KEY, mode);
       setUserModeState(mode);
     } catch (error) {
       console.error('Failed to save theme preference:', error);
     }
-  };
+  }, []);
 
   const resolvedMode = resolveMode(userMode, systemMode);
 
@@ -172,7 +173,7 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
       tokens,
       setThemeMode,
     };
-  }, [resolvedMode, userMode]);
+  }, [resolvedMode, userMode, setThemeMode]);
 
   // Don't render until theme preference is loaded
   if (!isLoaded) {
