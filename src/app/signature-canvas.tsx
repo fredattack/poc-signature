@@ -141,7 +141,7 @@ export default function SignatureCanvasScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.surface.background }]}
-      edges={['top', 'left', 'right']}
+      edges={['top', 'left', 'right', 'bottom']}
     >
       {/* Header */}
       <View
@@ -374,7 +374,8 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       flex: 1,
     },
     content: {
-      flex: 1,
+      flexShrink: 1,
+      paddingBottom: tokens.spacing.sm,
       paddingHorizontal: tokens.spacing.md,
       paddingTop: tokens.spacing.sm,
     },
