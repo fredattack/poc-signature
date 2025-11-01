@@ -50,9 +50,9 @@ export default function SignatureCanvasScreen() {
   const canvasDimensions = useMemo(() => {
     if (isLandscape) {
       const { width, height } = Dimensions.get('window');
-      // In landscape, give maximum space minus controls overlay
+      // In landscape, use full screen width and height
       return {
-        width: width - 32, // 16px padding on each side
+        width, // Full width, no padding
         height: height - 100, // Space for floating controls at bottom
       };
     }
@@ -564,7 +564,6 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       alignItems: 'center',
       flex: 1,
       justifyContent: 'center',
-      paddingHorizontal: tokens.spacing.md,
     },
     landscapeContainer: {
       flex: 1,
