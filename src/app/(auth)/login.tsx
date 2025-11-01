@@ -1,7 +1,7 @@
 // Login screen with email/password and social login
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -15,7 +15,14 @@ import { spacing } from '@/constants/spacing';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login, loginWithGoogle, loginWithApple, setAnonymous, isLoading, error } = useAuth();
+  const {
+    login,
+    loginWithGoogle,
+    loginWithApple,
+    setAnonymous,
+    isLoading,
+    error,
+  } = useAuth();
   const { track } = useAnalytics();
 
   const [email, setEmail] = useState('');
@@ -90,7 +97,9 @@ export default function LoginScreen() {
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
       >
-        <Text style={styles.subtitle}>Sign in to sync your signatures across devices</Text>
+        <Text style={styles.subtitle}>
+          Sign in to sync your signatures across devices
+        </Text>
 
         {/* Email Input */}
         <Input
@@ -179,45 +188,45 @@ export default function LoginScreen() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     backgroundColor: colors.background,
-  },
-  scrollView: {
     flex: 1,
   },
   content: {
-    padding: spacing.lg,
     gap: spacing.md,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
+    padding: spacing.lg,
   },
   divider: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     marginVertical: spacing.lg,
   },
   dividerLine: {
+    backgroundColor: colors.border,
     flex: 1,
     height: 1,
-    backgroundColor: colors.border,
   },
   dividerText: {
     ...typography.caption,
     color: colors.textSecondary,
     marginHorizontal: spacing.md,
   },
+  scrollView: {
+    flex: 1,
+  },
   signUpContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
     marginTop: spacing.lg,
   },
   signUpText: {
     ...typography.body,
     color: colors.textSecondary,
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.lg,
+    textAlign: 'center',
   },
 });

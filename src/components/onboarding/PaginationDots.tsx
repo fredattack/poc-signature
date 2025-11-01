@@ -1,11 +1,11 @@
 // Pagination dots indicator for onboarding carousel
 
 import React, { useMemo } from 'react';
-import { View, StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import Animated, {
-  useAnimatedStyle,
-  interpolate,
   Extrapolation,
+  interpolate,
+  useAnimatedStyle,
 } from 'react-native-reanimated';
 import type { SharedValue } from 'react-native-reanimated';
 import { useThemeTokens } from '@/theme';
@@ -80,27 +80,23 @@ const Dot: React.FC<DotProps> = ({ index, scrollX, slideWidth }) => {
   return <Animated.View style={[styles.dot, animatedStyle]} />;
 };
 
-const createStyles = ({
-  tokens,
-}: ReturnType<typeof useThemeTokens>) =>
+const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     container: {
-      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'center',
+      flexDirection: 'row',
       gap: tokens.spacing.xs,
+      justifyContent: 'center',
       marginBottom: tokens.spacing.xl,
     },
   });
 
-const createDotStyles = ({
-  colors,
-}: ReturnType<typeof useThemeTokens>) =>
+const createDotStyles = ({ colors }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     dot: {
-      width: 8,
-      height: 8,
-      borderRadius: 4,
       backgroundColor: colors.brand.primary,
+      borderRadius: 4,
+      height: 8,
+      width: 8,
     },
   });

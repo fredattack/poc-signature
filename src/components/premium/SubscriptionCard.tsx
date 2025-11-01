@@ -1,21 +1,27 @@
 // Subscription details card
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { Card } from '@/components/ui/Card';
 import { Button } from '@/components/ui/Button';
-import { Subscription, SubscriptionStatus, SubscriptionPlan } from '@/services/api/subscriptions';
+import {
+  Subscription,
+  SubscriptionPlan,
+  SubscriptionStatus,
+} from '@/services/api/subscriptions';
 import { usePremium } from '@/hooks/usePremium';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
-import { PREMIUM_MONTHLY_PRICE, PREMIUM_ANNUAL_PRICE } from '@/utils/constants';
+import { PREMIUM_ANNUAL_PRICE, PREMIUM_MONTHLY_PRICE } from '@/utils/constants';
 import { useThemeTokens } from '@/theme';
 
 export interface SubscriptionCardProps {
   subscription: Subscription;
 }
 
-export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription }) => {
+export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
+  subscription,
+}) => {
   const { cancelSubscription, isLoading } = usePremium();
   const { track } = useAnalytics();
   const theme = useThemeTokens();
@@ -101,9 +107,15 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription
     <Card>
       <View style={styles.header}>
         <Text style={styles.planName}>
-          {subscription.plan === SubscriptionPlan.Annual ? 'Annual' : 'Monthly'} Plan
+          {subscription.plan === SubscriptionPlan.Annual ? 'Annual' : 'Monthly'}{' '}
+          Plan
         </Text>
-        <View style={[styles.statusBadge, { backgroundColor: getStatusBadgeColor() }]}>
+        <View
+          style={[
+            styles.statusBadge,
+            { backgroundColor: getStatusBadgeColor() },
+          ]}
+        >
           <Text style={styles.statusText}>{getStatusLabel()}</Text>
         </View>
       </View>
@@ -114,7 +126,9 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription
         {subscription.trialEnd && (
           <View style={styles.detailRow}>
             <Text style={styles.detailLabel}>Trial ends:</Text>
-            <Text style={styles.detailValue}>{formatDate(subscription.trialEnd)}</Text>
+            <Text style={styles.detailValue}>
+              {formatDate(subscription.trialEnd)}
+            </Text>
           </View>
         )}
 
@@ -122,13 +136,16 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({ subscription
           <Text style={styles.detailLabel}>
             {subscription.cancelAtPeriodEnd ? 'Access until:' : 'Renews on:'}
           </Text>
-          <Text style={styles.detailValue}>{formatDate(subscription.currentPeriodEnd)}</Text>
+          <Text style={styles.detailValue}>
+            {formatDate(subscription.currentPeriodEnd)}
+          </Text>
         </View>
       </View>
 
       {subscription.cancelAtPeriodEnd ? (
         <Text style={styles.canceledText}>
-          Your subscription will end on {formatDate(subscription.currentPeriodEnd)}
+          Your subscription will end on{' '}
+          {formatDate(subscription.currentPeriodEnd)}
         </Text>
       ) : (
         <Button
@@ -177,9 +194,31 @@ const createStyles = ({
   };
 
   return StyleSheet.create({
-    header: {
+    canceledText: {
+      ...bodyTypography,
+      color: colors.feedback.critical,
+      textAlign: 'center',
+    },
+    detailLabel: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+    },
+    detailRow: {
       flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: tokens.spacing.xs,
+    },
+    detailValue: {
+      ...bodyTypography,
+      color: colors.text.primary,
+      fontWeight: '500',
+    },
+    detailsContainer: {
+      marginBottom: tokens.spacing.md,
+    },
+    header: {
       alignItems: 'center',
+      flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: tokens.spacing.sm,
     },
@@ -187,41 +226,19 @@ const createStyles = ({
       ...headingTypography,
       color: colors.text.primary,
     },
-    statusBadge: {
-      paddingHorizontal: tokens.spacing.sm,
-      paddingVertical: tokens.spacing.micro,
-      borderRadius: tokens.radii.mild,
-    },
-    statusText: {
-      ...captionTypography,
-      color: colors.text.inverse,
-    },
     price: {
       ...priceTypography,
       color: colors.text.primary,
       marginBottom: tokens.spacing.md,
     },
-    detailsContainer: {
-      marginBottom: tokens.spacing.md,
+    statusBadge: {
+      borderRadius: tokens.radii.mild,
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.micro,
     },
-    detailRow: {
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      marginBottom: tokens.spacing.xs,
-    },
-    detailLabel: {
-      ...bodyTypography,
-      color: colors.text.secondary,
-    },
-    detailValue: {
-      ...bodyTypography,
-      color: colors.text.primary,
-      fontWeight: '500',
-    },
-    canceledText: {
-      ...bodyTypography,
-      color: colors.feedback.critical,
-      textAlign: 'center',
+    statusText: {
+      ...captionTypography,
+      color: colors.text.inverse,
     },
   });
 };

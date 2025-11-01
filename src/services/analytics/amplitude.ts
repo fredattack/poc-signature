@@ -32,7 +32,9 @@ export class AmplitudeTracker implements AnalyticsTracker {
       console.error('[Amplitude] Init error:', error);
     }
     */
-    console.warn('[Amplitude] Not installed. Install @amplitude/analytics-react-native to enable.');
+    console.warn(
+      '[Amplitude] Not installed. Install @amplitude/analytics-react-native to enable.'
+    );
   }
 
   track(event: AnalyticsEvent): void {

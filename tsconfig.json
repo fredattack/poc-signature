@@ -1,6 +1,7 @@
 {
   "extends": "expo/tsconfig.base",
   "compilerOptions": {
+    // Strict type checking
     "strict": true,
     "noImplicitAny": true,
     "strictNullChecks": true,
@@ -9,13 +10,33 @@
     "strictPropertyInitialization": true,
     "noImplicitThis": true,
     "alwaysStrict": true,
+
+    // Additional checks
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
+    "noUncheckedIndexedAccess": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": false,
+    "allowUnusedLabels": false,
+    "allowUnreachableCode": false,
+    "exactOptionalPropertyTypes": false,
+
+    // Module resolution
     "esModuleInterop": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
+    "moduleResolution": "bundler",
+    "allowImportingTsExtensions": false,
+
+    // Code generation
+    "removeComments": false,
+    "declaration": true,
+    "declarationMap": true,
+    "sourceMap": true,
+
+    // Path aliases
     "paths": {
       "@/*": [
         "./src/*"
@@ -28,6 +49,10 @@
   ],
   "exclude": [
     "node_modules",
-    "temp_expo"
+    "temp_expo",
+    "dist",
+    "build",
+    ".expo",
+    "coverage"
   ]
 }

@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, ActivityIndicator, StyleSheet, ViewStyle } from 'react-native';
+import { ActivityIndicator, StyleSheet, View, ViewStyle } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
 export type SpinnerSize = 'small' | 'medium' | 'large';
@@ -47,20 +47,17 @@ export const LoadingSpinner: React.FC<LoadingSpinnerProps> = ({
   );
 };
 
-const createStyles = ({
-  colors,
-  tokens,
-}: ReturnType<typeof useThemeTokens>) =>
+const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     container: {
-      padding: tokens.spacing.sm,
       alignItems: 'center',
       justifyContent: 'center',
+      padding: tokens.spacing.sm,
     },
     fullScreenContainer: {
-      flex: 1,
       alignItems: 'center',
-      justifyContent: 'center',
       backgroundColor: colors.surface.background,
+      flex: 1,
+      justifyContent: 'center',
     },
   });

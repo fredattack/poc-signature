@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
 export interface HeaderProps {
@@ -55,39 +55,39 @@ const createStyles = ({
   mode,
 }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
+    action: {
+      padding: tokens.spacing.xs,
+    },
     container: {
-      height: tokens.layout.headerHeight,
-      flexDirection: 'row',
       alignItems: 'center',
-      justifyContent: 'space-between',
-      paddingHorizontal: tokens.spacing.md,
       backgroundColor: colors.surface.background,
-      borderBottomWidth: 1,
       borderBottomColor:
         mode === 'dark'
           ? 'rgba(244, 244, 244, 0.12)'
           : 'rgba(35, 35, 35, 0.08)',
+      borderBottomWidth: 1,
+      flexDirection: 'row',
+      height: tokens.layout.headerHeight,
+      justifyContent: 'space-between',
+      paddingHorizontal: tokens.spacing.md,
     },
     leftSlot: {
-      width: 60,
       alignItems: 'flex-start',
-    },
-    titleContainer: {
-      flex: 1,
-      alignItems: 'center',
+      width: 60,
     },
     rightSlot: {
-      width: 60,
       alignItems: 'flex-end',
+      width: 60,
     },
     title: {
+      color: colors.text.primary,
       fontSize: tokens.typography.headingM.fontSize,
-      lineHeight: tokens.typography.headingM.lineHeight,
       fontWeight: tokens.typography.headingM.fontWeight,
       letterSpacing: tokens.typography.headingM.letterSpacing,
-      color: colors.text.primary,
+      lineHeight: tokens.typography.headingM.lineHeight,
     },
-    action: {
-      padding: tokens.spacing.xs,
+    titleContainer: {
+      alignItems: 'center',
+      flex: 1,
     },
   });

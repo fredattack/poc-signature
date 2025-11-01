@@ -1,0 +1,25 @@
+# Dependencies
+node_modules/
+temp_expo/
+
+# Build outputs
+dist/
+build/
+.expo/
+ios/
+android/
+
+# Coverage
+coverage/
+
+# Misc
+*.log
+.DS_Store
+.env
+.env.local
+.env.*.local
+
+# Package manager
+package-lock.json
+yarn.lock
+pnpm-lock.yaml

@@ -1,7 +1,7 @@
 // GDPR consent modal for analytics opt-in/opt-out
 
-import React, { useState, useEffect, useMemo } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useMemo, useState } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { asyncStorage } from '@/services/storage/async-storage';
@@ -23,7 +23,9 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
 
   const checkConsentStatus = async () => {
     try {
-      const consent = await asyncStorage.get<boolean>(STORAGE_KEYS.ANALYTICS_CONSENT);
+      const consent = await asyncStorage.get<boolean>(
+        STORAGE_KEYS.ANALYTICS_CONSENT
+      );
       // If consent is null (never asked), show modal
       if (consent === null) {
         setVisible(true);
@@ -59,7 +61,8 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
     >
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.description}>
-          We use analytics to improve your experience and understand how you use the app.
+          We use analytics to improve your experience and understand how you use
+          the app.
         </Text>
 
         <View style={styles.dataList}>
@@ -127,10 +130,13 @@ const createStyles = ({
   };
 
   return StyleSheet.create({
-    description: {
+    buttons: {
+      gap: tokens.spacing.sm,
+    },
+    dataItem: {
       ...bodyTypography,
-      color: colors.text.primary,
-      marginBottom: tokens.spacing.md,
+      color: colors.text.secondary,
+      marginBottom: tokens.spacing.micro,
     },
     dataList: {
       marginBottom: tokens.spacing.md,
@@ -140,19 +146,16 @@ const createStyles = ({
       color: colors.text.primary,
       marginBottom: tokens.spacing.xs,
     },
-    dataItem: {
+    description: {
       ...bodyTypography,
-      color: colors.text.secondary,
-      marginBottom: tokens.spacing.micro,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.md,
     },
     note: {
       ...captionTypography,
       color: colors.text.secondary,
       fontStyle: 'italic',
       marginBottom: tokens.spacing.md,
-    },
-    buttons: {
-      gap: tokens.spacing.sm,
     },
   });
 };

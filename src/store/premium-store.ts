@@ -1,7 +1,11 @@
 // Premium subscription Zustand store
 
 import { create } from 'zustand';
-import { subscriptionService, Subscription, SubscriptionPlan } from '@/services/api/subscriptions';
+import {
+  Subscription,
+  SubscriptionPlan,
+  subscriptionService,
+} from '@/services/api/subscriptions';
 import { asyncStorage } from '@/services/storage/async-storage';
 
 const PREMIUM_CACHE_KEY = '@signature_app/premium_status';
@@ -38,7 +42,9 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
       }
 
       const subscription = response.data;
-      const isPremium = subscription ? await subscriptionService.checkPremiumStatus() : false;
+      const isPremium = subscription
+        ? await subscriptionService.checkPremiumStatus()
+        : false;
 
       // Cache premium status
       await asyncStorage.set(PREMIUM_CACHE_KEY, isPremium);
@@ -50,7 +56,10 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
       });
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to check premium status',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to check premium status',
         isLoading: false,
       });
     }
@@ -80,7 +89,8 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
       return true;
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to activate premium',
+        error:
+          error instanceof Error ? error.message : 'Failed to activate premium',
         isLoading: false,
       });
       return false;
@@ -112,7 +122,10 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
       return true;
     } catch (error) {
       set({
-        error: error instanceof Error ? error.message : 'Failed to cancel subscription',
+        error:
+          error instanceof Error
+            ? error.message
+            : 'Failed to cancel subscription',
         isLoading: false,
       });
       return false;

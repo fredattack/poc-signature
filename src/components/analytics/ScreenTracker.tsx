@@ -11,7 +11,10 @@ export const ScreenTracker: React.FC = () => {
   useEffect(() => {
     if (pathname) {
       // Extract screen name from pathname
-      const screenName = pathname === '/' ? 'Home' : pathname.replace(/^\//, '').replace(/-/g, ' ');
+      const screenName =
+        pathname === '/'
+          ? 'Home'
+          : pathname.replace(/^\//, '').replace(/-/g, ' ');
 
       screen(screenName, {
         path: pathname,

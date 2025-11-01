@@ -1,7 +1,7 @@
 // Premium subscription screen
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Header } from '@/components/shared/Header';
 import { Card } from '@/components/ui/Card';
@@ -87,7 +87,8 @@ export default function PremiumScreen() {
           <>
             <Text style={styles.title}>Unlock Premium Features</Text>
             <Text style={styles.subtitle}>
-              Get access to exclusive templates, HD export, and unlimited storage
+              Get access to exclusive templates, HD export, and unlimited
+              storage
             </Text>
 
             {/* Features Grid */}
@@ -96,7 +97,9 @@ export default function PremiumScreen() {
                 <Card key={index} style={styles.featureCard}>
                   <Text style={styles.featureIcon}>{feature.icon}</Text>
                   <Text style={styles.featureTitle}>{feature.title}</Text>
-                  <Text style={styles.featureDescription}>{feature.description}</Text>
+                  <Text style={styles.featureDescription}>
+                    {feature.description}
+                  </Text>
                 </Card>
               ))}
             </View>
@@ -126,51 +129,24 @@ export default function PremiumScreen() {
 }
 
 const styles = StyleSheet.create({
+  backText: {
+    ...typography.body,
+    color: colors.primary,
+  },
   container: {
-    flex: 1,
     backgroundColor: colors.backgroundSecondary,
-  },
-  scrollView: {
     flex: 1,
-  },
-  scrollContent: {
-    padding: spacing.lg,
-  },
-  statusTitle: {
-    ...typography.h1,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  statusSubtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.xl,
-  },
-  featuresGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.md,
-    marginBottom: spacing.xl,
   },
   featureCard: {
+    alignItems: 'center',
     flex: 1,
     minWidth: '45%',
-    alignItems: 'center',
     padding: spacing.md,
+  },
+  featureDescription: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
   },
   featureIcon: {
     fontSize: 40,
@@ -179,16 +155,43 @@ const styles = StyleSheet.create({
   featureTitle: {
     ...typography.h4,
     color: colors.text,
-    textAlign: 'center',
     marginBottom: spacing.xs,
-  },
-  featureDescription: {
-    ...typography.caption,
-    color: colors.textSecondary,
     textAlign: 'center',
   },
-  backText: {
+  featuresGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.md,
+    marginBottom: spacing.xl,
+  },
+  scrollContent: {
+    padding: spacing.lg,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  statusSubtitle: {
     ...typography.body,
-    color: colors.primary,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+    textAlign: 'center',
+  },
+  statusTitle: {
+    ...typography.h1,
+    color: colors.text,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
+  },
+  subtitle: {
+    ...typography.body,
+    color: colors.textSecondary,
+    marginBottom: spacing.xl,
+    textAlign: 'center',
+  },
+  title: {
+    ...typography.h1,
+    color: colors.text,
+    marginBottom: spacing.sm,
+    textAlign: 'center',
   },
 });

@@ -1,11 +1,11 @@
 import React, { useMemo } from 'react';
 import {
   Modal as RNModal,
-  View,
   StyleSheet,
-  TouchableWithoutFeedback,
-  ViewStyle,
   Text,
+  TouchableWithoutFeedback,
+  View,
+  ViewStyle,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
@@ -65,24 +65,24 @@ const createStyles = ({
 
   return StyleSheet.create({
     backdrop: {
-      flex: 1,
-      backgroundColor: colors.overlay.medium,
-      justifyContent: 'center',
       alignItems: 'center',
+      backgroundColor: colors.overlay.medium,
+      flex: 1,
+      justifyContent: 'center',
       padding: tokens.spacing.lg,
     },
     container: {
       backgroundColor: colors.surface.card,
       borderRadius: tokens.radii.generous,
+      maxWidth: 400,
       padding: tokens.spacing.lg,
       width: '100%',
-      maxWidth: 400,
       ...tokens.elevation.level3,
     },
     title: {
       ...titleTypography,
-      marginBottom: tokens.spacing.sm,
       color: colors.text.primary,
+      marginBottom: tokens.spacing.sm,
     },
   });
 };

@@ -25,7 +25,9 @@ export const isPermanentlyDeleted = (item: any): boolean => {
   return daysSinceDeleted >= SOFT_DELETE_RETENTION_DAYS;
 };
 
-export const filterActiveitems = <T extends { status?: string; deletedAt?: Date }>(
+export const filterActiveitems = <
+  T extends { status?: string; deletedAt?: Date },
+>(
   items: T[]
 ): T[] => {
   return items.filter(
@@ -35,7 +37,9 @@ export const filterActiveitems = <T extends { status?: string; deletedAt?: Date 
   );
 };
 
-export const filterSoftDeleted = <T extends { status?: string }>(items: T[]): T[] => {
+export const filterSoftDeleted = <T extends { status?: string }>(
+  items: T[]
+): T[] => {
   return items.filter((item) => item.status === SignatureStatus.SoftDeleted);
 };
 

@@ -1,8 +1,8 @@
 // Template renderer using react-native-svg
 
 import React, { useMemo } from 'react';
-import { View, Image, StyleSheet, Dimensions } from 'react-native';
-import Svg, { Text, Defs, LinearGradient, Stop, Rect } from 'react-native-svg';
+import { Dimensions, Image, StyleSheet, View } from 'react-native';
+import Svg, { Defs, LinearGradient, Rect, Stop, Text } from 'react-native-svg';
 import { Signature } from '@/types/signature.types';
 import { WallpaperOptions } from '@/types/wallpaper.types';
 import { Template, TemplateLayout } from '@/types/template.types';
@@ -36,7 +36,8 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
     return null;
   }
 
-  const backgroundColor = options.backgroundColor || template.style.backgroundColor;
+  const backgroundColor =
+    options.backgroundColor || template.style.backgroundColor;
   const textColor = options.textColor || template.style.textColor;
   const gradient = template.style.gradient;
 
@@ -129,7 +130,11 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
                   textAnchor="middle"
                   opacity={0.7}
                 >
-                  📍 {formatLocation(signature.location.city, signature.location.country)}
+                  📍{' '}
+                  {formatLocation(
+                    signature.location.city,
+                    signature.location.country
+                  )}
                 </Text>
               )}
             </Svg>
@@ -140,17 +145,21 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
   );
 };
 
-const createStyles = ({
-  tokens,
-}: ReturnType<typeof useThemeTokens>) =>
+const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
-    container: {
-      position: 'relative',
-      overflow: 'hidden',
-      borderRadius: tokens.radii.generous,
-    },
     background: {
       ...StyleSheet.absoluteFillObject,
+    },
+    container: {
+      borderRadius: tokens.radii.generous,
+      overflow: 'hidden',
+      position: 'relative',
+    },
+    metadataContainer: {
+      alignItems: 'center',
+    },
+    nameContainer: {
+      alignItems: 'center',
     },
     overlay: {
       flex: 1,
@@ -158,20 +167,14 @@ const createStyles = ({
       padding: tokens.spacing.md,
     },
     signatureContainer: {
-      position: 'absolute',
-      top: '30%',
-      left: '10%',
-      right: '10%',
       height: '40%',
+      left: '10%',
+      position: 'absolute',
+      right: '10%',
+      top: '30%',
     },
     signatureImage: {
-      width: '100%',
       height: '100%',
-    },
-    nameContainer: {
-      alignItems: 'center',
-    },
-    metadataContainer: {
-      alignItems: 'center',
+      width: '100%',
     },
   });

@@ -1,7 +1,7 @@
 // Signature card for grid display
 
 import React, { useMemo } from 'react';
-import { View, Text, TouchableOpacity, Image, StyleSheet } from 'react-native';
+import { Image, StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import { Signature } from '@/types/signature.types';
 import { SyncStatusBadge } from '@/components/ui/SyncStatusBadge';
 import { useThemeTokens } from '@/theme';
@@ -12,7 +12,10 @@ export interface SignatureCardProps {
   onPress: () => void;
 }
 
-export const SignatureCard: React.FC<SignatureCardProps> = ({ signature, onPress }) => {
+export const SignatureCard: React.FC<SignatureCardProps> = ({
+  signature,
+  onPress,
+}) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -74,52 +77,50 @@ const createStyles = ({
   };
 
   const borderColor =
-    mode === 'dark'
-      ? 'rgba(244, 244, 244, 0.12)'
-      : 'rgba(35, 35, 35, 0.08)';
+    mode === 'dark' ? 'rgba(244, 244, 244, 0.12)' : 'rgba(35, 35, 35, 0.08)';
 
   return StyleSheet.create({
-    container: {
-      flex: 1,
-      backgroundColor: colors.surface.card,
-      borderRadius: tokens.radii.regular,
-      overflow: 'hidden',
-      marginBottom: tokens.spacing.sm,
-      borderWidth: 1,
-      borderColor,
-      ...tokens.elevation.level2,
-    },
-    thumbnailContainer: {
-      width: '100%',
-      aspectRatio: 1,
-      backgroundColor: colors.surface.backgroundTint,
-      position: 'relative',
-    },
-    thumbnail: {
-      width: '100%',
-      height: '100%',
-    },
-    statusBadge: {
-      position: 'absolute',
-      top: tokens.spacing.xs,
-      right: tokens.spacing.xs,
-    },
-    infoContainer: {
-      padding: tokens.spacing.sm,
-    },
     celebrityName: {
       ...titleTypography,
       color: colors.text.primary,
       marginBottom: tokens.spacing.xs,
     },
+    container: {
+      backgroundColor: colors.surface.card,
+      borderColor,
+      borderRadius: tokens.radii.regular,
+      borderWidth: 1,
+      flex: 1,
+      marginBottom: tokens.spacing.sm,
+      overflow: 'hidden',
+      ...tokens.elevation.level2,
+    },
     date: {
       ...captionTypography,
       color: colors.text.secondary,
+    },
+    infoContainer: {
+      padding: tokens.spacing.sm,
     },
     location: {
       ...captionTypography,
       color: colors.text.secondary,
       marginTop: tokens.spacing.xs,
+    },
+    statusBadge: {
+      position: 'absolute',
+      right: tokens.spacing.xs,
+      top: tokens.spacing.xs,
+    },
+    thumbnail: {
+      height: '100%',
+      width: '100%',
+    },
+    thumbnailContainer: {
+      aspectRatio: 1,
+      backgroundColor: colors.surface.backgroundTint,
+      position: 'relative',
+      width: '100%',
     },
   });
 };

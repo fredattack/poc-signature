@@ -19,7 +19,7 @@ class SignaturesApiService {
    */
   async getAll(): Promise<ApiResponse<Signature[]>> {
     // Mock implementation - simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Return empty array for mock
     return {
@@ -37,7 +37,7 @@ class SignaturesApiService {
    */
   async create(signature: Signature): Promise<ApiResponse<Signature>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     return {
       data: {
@@ -55,9 +55,12 @@ class SignaturesApiService {
    * Update signature in cloud
    * TODO: Replace with actual API call
    */
-  async update(id: string, updates: Partial<Signature>): Promise<ApiResponse<Signature>> {
+  async update(
+    id: string,
+    updates: Partial<Signature>
+  ): Promise<ApiResponse<Signature>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 600));
+    await new Promise((resolve) => setTimeout(resolve, 600));
 
     return {
       data: { id, ...updates } as Signature,
@@ -74,7 +77,7 @@ class SignaturesApiService {
    */
   async delete(id: string): Promise<ApiResponse<void>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     return {
       status: 204,
@@ -90,13 +93,13 @@ class SignaturesApiService {
    */
   async batchSync(signatures: Signature[]): Promise<ApiResponse<SyncResponse>> {
     // Mock implementation - simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    await new Promise((resolve) => setTimeout(resolve, 2000));
 
     // Simulate 90% success rate
     const synced: string[] = [];
     const failed: string[] = [];
 
-    signatures.forEach(sig => {
+    signatures.forEach((sig) => {
       if (Math.random() > 0.1) {
         synced.push(sig.id);
       } else {

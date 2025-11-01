@@ -1,10 +1,14 @@
 // Wallpaper hook with template selection, customization, and generation
 
-import { useState, useCallback, useRef } from 'react';
+import { useCallback, useRef, useState } from 'react';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
-import { WallpaperOptions, WallpaperResolution, Wallpaper } from '@/types/wallpaper.types';
+import {
+  Wallpaper,
+  WallpaperOptions,
+  WallpaperResolution,
+} from '@/types/wallpaper.types';
 import { Signature } from '@/types/signature.types';
 import { fileSystem } from '@/services/storage/file-system';
 import { useAnalytics } from './useAnalytics';
@@ -34,7 +38,9 @@ interface UseWallpaperResult {
   setAsWallpaper: () => Promise<boolean>;
 }
 
-export const useWallpaper = (options: UseWallpaperOptions): UseWallpaperResult => {
+export const useWallpaper = (
+  options: UseWallpaperOptions
+): UseWallpaperResult => {
   const { signature, isPremium = false } = options;
 
   // State
@@ -47,45 +53,54 @@ export const useWallpaper = (options: UseWallpaperOptions): UseWallpaperResult =
   const [isGenerating, setIsGenerating] = useState(false);
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [wallpaperRef, setWallpaperRefState] = useState<React.RefObject<any> | null>(null);
-  const [generatedImageUri, setGeneratedImageUri] = useState<string | null>(null);
+  const [wallpaperRef, setWallpaperRefState] =
+    useState<React.RefObject<any> | null>(null);
+  const [generatedImageUri, setGeneratedImageUri] = useState<string | null>(
+    null
+  );
 
   // Analytics
   const { trackWallpaperEvent } = useAnalytics();
 
   // Actions
-  const selectTemplate = useCallback((templateId: string) => {
-    setSelectedTemplateId(templateId);
-    setWallpaperOptions((prev) => ({
-      ...prev,
-      templateId,
-    }));
-    trackWallpaperEvent('template_selected', {
-      template_id: templateId,
-    });
-  }, [trackWallpaperEvent]);
-
-  const updateOptions = useCallback((updates: Partial<WallpaperOptions>) => {
-    setWallpaperOptions((prev) => ({
-      ...prev,
-      ...updates,
-    }));
-
-    // Track color changes
-    if (updates.backgroundColor || updates.textColor) {
-      trackWallpaperEvent('color_changed', {
-        background_color: updates.backgroundColor,
-        text_color: updates.textColor,
+  const selectTemplate = useCallback(
+    (templateId: string) => {
+      setSelectedTemplateId(templateId);
+      setWallpaperOptions((prev) => ({
+        ...prev,
+        templateId,
+      }));
+      trackWallpaperEvent('template_selected', {
+        template_id: templateId,
       });
-    }
-  }, [trackWallpaperEvent]);
+    },
+    [trackWallpaperEvent]
+  );
+
+  const updateOptions = useCallback(
+    (updates: Partial<WallpaperOptions>) => {
+      setWallpaperOptions((prev) => ({
+        ...prev,
+        ...updates,
+      }));
+
+      // Track color changes
+      if (updates.backgroundColor || updates.textColor) {
+        trackWallpaperEvent('color_changed', {
+          background_color: updates.backgroundColor,
+          text_color: updates.textColor,
+        });
+      }
+    },
+    [trackWallpaperEvent]
+  );
 
   const setWallpaperRef = useCallback((ref: React.RefObject<any>) => {
     setWallpaperRefState(ref);
   }, []);
 
   const generateWallpaper = useCallback(async (): Promise<string | null> => {
-    if (!wallpaperRef || !wallpaperRef.current) {
+    if (!wallpaperRef?.current) {
       setError('Wallpaper preview not ready');
       return null;
     }
@@ -118,7 +133,8 @@ export const useWallpaper = (options: UseWallpaperOptions): UseWallpaperResult =
 
       return imageUri;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to generate wallpaper';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to generate wallpaper';
       setError(errorMessage);
       setIsGenerating(false);
       console.error('Generate wallpaper error:', err);
@@ -163,13 +179,18 @@ export const useWallpaper = (options: UseWallpaperOptions): UseWallpaperResult =
       if (album) {
         await MediaLibrary.addAssetsToAlbumAsync([asset], album, false);
       } else {
-        await MediaLibrary.createAlbumAsync('Signature Wallpapers', asset, false);
+        await MediaLibrary.createAlbumAsync(
+          'Signature Wallpapers',
+          asset,
+          false
+        );
       }
 
       setIsSaving(false);
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save to gallery';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to save to gallery';
       setError(errorMessage);
       setIsSaving(false);
       console.error('Save to gallery error:', err);
@@ -211,13 +232,19 @@ export const useWallpaper = (options: UseWallpaperOptions): UseWallpaperResult =
       setIsSaving(false);
       return true;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to set as wallpaper';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to set as wallpaper';
       setError(errorMessage);
       setIsSaving(false);
       console.error('Set as wallpaper error:', err);
       return false;
     }
-  }, [generatedImageUri, generateWallpaper, selectedTemplateId, trackWallpaperEvent]);
+  }, [
+    generatedImageUri,
+    generateWallpaper,
+    selectedTemplateId,
+    trackWallpaperEvent,
+  ]);
 
   return {
     // State

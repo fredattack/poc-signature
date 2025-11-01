@@ -1,7 +1,7 @@
 // Reusable onboarding slide component
 
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet, Dimensions } from 'react-native';
+import { Dimensions, StyleSheet, Text, View } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
 const { width } = Dimensions.get('window');
@@ -52,15 +52,20 @@ const createStyles = ({
 
   return StyleSheet.create({
     container: {
-      width,
-      flex: 1,
       alignItems: 'center',
+      flex: 1,
       justifyContent: 'center',
       paddingHorizontal: tokens.spacing.lg,
+      width,
+    },
+    description: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      textAlign: 'center',
     },
     illustrationContainer: {
-      flex: 1,
       alignItems: 'center',
+      flex: 1,
       justifyContent: 'center',
       marginBottom: tokens.spacing.lg,
     },
@@ -71,12 +76,7 @@ const createStyles = ({
     title: {
       ...titleTypography,
       color: colors.text.primary,
-      textAlign: 'center',
       marginBottom: tokens.spacing.md,
-    },
-    description: {
-      ...bodyTypography,
-      color: colors.text.secondary,
       textAlign: 'center',
     },
   });

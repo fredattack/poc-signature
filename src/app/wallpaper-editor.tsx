@@ -2,15 +2,15 @@
 
 import React, { useEffect, useState } from 'react';
 import {
-  View,
-  Text,
-  StyleSheet,
-  ScrollView,
-  Switch,
   Alert,
+  ScrollView,
+  StyleSheet,
+  Switch,
+  Text,
   TouchableOpacity,
+  View,
 } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { WallpaperPreview } from '@/components/wallpaper/WallpaperPreview';
 import { TemplateCarousel } from '@/components/wallpaper/TemplateCarousel';
 import { Button } from '@/components/ui/Button';
@@ -103,7 +103,7 @@ export default function WallpaperEditorScreen() {
     setShowPaywall(true);
   };
 
-  const handleColorSelect = (colorPreset: typeof templateColorPresets[0]) => {
+  const handleColorSelect = (colorPreset: (typeof templateColorPresets)[0]) => {
     updateOptions({ backgroundColor: colorPreset.value });
     setShowColorPicker(false);
   };
@@ -198,7 +198,10 @@ export default function WallpaperEditorScreen() {
             <View
               style={[
                 styles.colorPreview,
-                { backgroundColor: wallpaperOptions.backgroundColor || colors.background },
+                {
+                  backgroundColor:
+                    wallpaperOptions.backgroundColor || colors.background,
+                },
               ]}
             />
           </TouchableOpacity>
@@ -281,7 +284,8 @@ export default function WallpaperEditorScreen() {
 
         {/* Info Text */}
         <Text style={styles.infoText}>
-          💡 Tip: Premium users get HD quality wallpapers and access to 15+ exclusive templates
+          💡 Tip: Premium users get HD quality wallpapers and access to 15+
+          exclusive templates
         </Text>
       </ScrollView>
 
@@ -304,15 +308,73 @@ export default function WallpaperEditorScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
+  actionButton: {
+    marginBottom: 0,
   },
-  scrollView: {
+  actions: {
+    gap: spacing.md,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.md,
+  },
+  backText: {
+    ...typography.body,
+    color: colors.primary,
+  },
+  colorButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+  },
+  colorGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    gap: spacing.sm,
+    marginTop: spacing.md,
+  },
+  colorOption: {
+    borderColor: colors.border,
+    borderRadius: 25,
+    borderWidth: 2,
+    height: 50,
+    width: 50,
+  },
+  colorOptionSelected: {
+    borderColor: colors.primary,
+    borderWidth: 3,
+  },
+  colorPreview: {
+    borderColor: colors.border,
+    borderRadius: 20,
+    borderWidth: 2,
+    height: 40,
+    width: 40,
+  },
+  container: {
+    backgroundColor: colors.background,
     flex: 1,
+  },
+  errorContainer: {
+    alignItems: 'center',
+    flex: 1,
+    justifyContent: 'center',
+  },
+  errorText: {
+    ...typography.body,
+    color: colors.error,
+    textAlign: 'center',
+  },
+  infoText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.lg,
+    paddingHorizontal: spacing.lg,
+    textAlign: 'center',
   },
   scrollContent: {
     paddingBottom: spacing.xl,
+  },
+  scrollView: {
+    flex: 1,
   },
   section: {
     marginBottom: spacing.lg,
@@ -323,74 +385,16 @@ const styles = StyleSheet.create({
     color: colors.text,
     marginBottom: spacing.sm,
   },
-  colorButton: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-  },
-  colorPreview: {
-    width: 40,
-    height: 40,
-    borderRadius: 20,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  colorGrid: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: spacing.sm,
-    marginTop: spacing.md,
-  },
-  colorOption: {
-    width: 50,
-    height: 50,
-    borderRadius: 25,
-    borderWidth: 2,
-    borderColor: colors.border,
-  },
-  colorOptionSelected: {
-    borderColor: colors.primary,
-    borderWidth: 3,
-  },
-  toggleRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
   toggleLabel: {
     ...typography.body,
     color: colors.text,
   },
-  actions: {
-    paddingHorizontal: spacing.md,
-    gap: spacing.md,
-    marginTop: spacing.lg,
-  },
-  actionButton: {
-    marginBottom: 0,
-  },
-  infoText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.lg,
-    paddingHorizontal: spacing.lg,
-  },
-  errorContainer: {
-    flex: 1,
+  toggleRow: {
     alignItems: 'center',
-    justifyContent: 'center',
-  },
-  errorText: {
-    ...typography.body,
-    color: colors.error,
-    textAlign: 'center',
-  },
-  backText: {
-    ...typography.body,
-    color: colors.primary,
+    borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.sm,
   },
 });

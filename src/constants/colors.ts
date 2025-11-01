@@ -55,7 +55,11 @@ export const templateColorPresets = [
   { id: 'sage', name: 'Sauge', value: tokenColors.brand.primary },
   { id: 'beige', name: 'Beige', value: tokenColors.brand.secondary },
   { id: 'water', name: 'Eau', value: tokenColors.brand.accent },
-  { id: 'graphite', name: 'Graphite', value: tokenColors.surface.backgroundDark },
+  {
+    id: 'graphite',
+    name: 'Graphite',
+    value: tokenColors.surface.backgroundDark,
+  },
   { id: 'pearl', name: 'Perle', value: tokenColors.surface.background },
   { id: 'success', name: 'Succès', value: tokenColors.feedback.success },
   { id: 'warning', name: 'Alerte', value: tokenColors.feedback.warning },

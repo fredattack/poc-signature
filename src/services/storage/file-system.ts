@@ -24,7 +24,10 @@ export const fileSystem = {
   },
 
   // Signature image operations
-  async saveSignatureImage(imageUri: string, signatureId: string): Promise<string | null> {
+  async saveSignatureImage(
+    imageUri: string,
+    signatureId: string
+  ): Promise<string | null> {
     try {
       await this.ensureDirectoryExists(SIGNATURES_DIR);
       const fileName = `${signatureId}.png`;
@@ -73,7 +76,10 @@ export const fileSystem = {
   },
 
   // Wallpaper image operations
-  async saveWallpaperImage(imageUri: string, wallpaperId: string): Promise<string | null> {
+  async saveWallpaperImage(
+    imageUri: string,
+    wallpaperId: string
+  ): Promise<string | null> {
     try {
       await this.ensureDirectoryExists(WALLPAPERS_DIR);
       const fileName = `${wallpaperId}.png`;

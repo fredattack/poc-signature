@@ -70,7 +70,8 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
   const resolvedMode = resolveMode(mode, systemMode);
 
   const contextValue = useMemo<ThemeContextValue>(() => {
-    const themedColors = resolvedMode === 'dark' ? createDarkColors() : tokens.colors;
+    const themedColors =
+      resolvedMode === 'dark' ? createDarkColors() : tokens.colors;
 
     return {
       mode: resolvedMode,
@@ -79,7 +80,11 @@ export const ThemeProvider: React.FC<ThemeProviderProps> = ({
     };
   }, [resolvedMode]);
 
-  return <ThemeContext.Provider value={contextValue}>{children}</ThemeContext.Provider>;
+  return (
+    <ThemeContext.Provider value={contextValue}>
+      {children}
+    </ThemeContext.Provider>
+  );
 };
 
 export const useThemeTokens = (): ThemeContextValue => {
@@ -96,9 +101,8 @@ export const useThemeMode = (): ThemeMode => useThemeTokens().mode;
 
 export const withThemeProvider =
   <P extends object>(Component: React.ComponentType<P>) =>
-  (props: P) =>
-    (
-      <ThemeProvider>
-        <Component {...props} />
-      </ThemeProvider>
-    );
+  (props: P) => (
+    <ThemeProvider>
+      <Component {...props} />
+    </ThemeProvider>
+  );

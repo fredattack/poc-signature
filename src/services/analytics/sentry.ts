@@ -38,10 +38,15 @@ export const initSentry = (config: SentryConfig): void => {
     console.error('[Sentry] Init error:', error);
   }
   */
-  console.warn('[Sentry] Not installed. Install @sentry/react-native to enable error tracking.');
+  console.warn(
+    '[Sentry] Not installed. Install @sentry/react-native to enable error tracking.'
+  );
 };
 
-export const captureException = (error: Error, context?: Record<string, any>): void => {
+export const captureException = (
+  error: Error,
+  context?: Record<string, any>
+): void => {
   // Uncomment when Sentry is installed:
   /*
   try {
@@ -53,10 +58,17 @@ export const captureException = (error: Error, context?: Record<string, any>): v
     console.error('[Sentry] Capture exception error:', err);
   }
   */
-  console.error('[Sentry] Error captured (Sentry not installed):', error, context);
+  console.error(
+    '[Sentry] Error captured (Sentry not installed):',
+    error,
+    context
+  );
 };
 
-export const captureMessage = (message: string, level: 'info' | 'warning' | 'error' = 'info'): void => {
+export const captureMessage = (
+  message: string,
+  level: 'info' | 'warning' | 'error' = 'info'
+): void => {
   // Uncomment when Sentry is installed:
   /*
   try {
@@ -69,7 +81,11 @@ export const captureMessage = (message: string, level: 'info' | 'warning' | 'err
   console.log(`[Sentry] Message (${level}):`, message);
 };
 
-export const setUser = (user: { id: string; email?: string; username?: string }): void => {
+export const setUser = (user: {
+  id: string;
+  email?: string;
+  username?: string;
+}): void => {
   // Uncomment when Sentry is installed:
   /*
   try {
@@ -93,7 +109,12 @@ export const clearUser = (): void => {
   */
 };
 
-export const addBreadcrumb = (breadcrumb: { message: string; category?: string; level?: string; data?: any }): void => {
+export const addBreadcrumb = (breadcrumb: {
+  message: string;
+  category?: string;
+  level?: string;
+  data?: any;
+}): void => {
   // Uncomment when Sentry is installed:
   /*
   try {

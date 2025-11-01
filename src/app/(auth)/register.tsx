@@ -1,7 +1,7 @@
 // Registration screen
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, Alert } from 'react-native';
+import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -123,7 +123,8 @@ export default function RegisterScreen() {
 
         {/* Terms */}
         <Text style={styles.termsText}>
-          By creating an account, you agree to our Terms of Service and Privacy Policy
+          By creating an account, you agree to our Terms of Service and Privacy
+          Policy
         </Text>
 
         {/* Login Link */}
@@ -142,32 +143,21 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.background,
+  backText: {
+    ...typography.body,
+    color: colors.primary,
   },
-  scrollView: {
+  container: {
+    backgroundColor: colors.background,
     flex: 1,
   },
   content: {
-    padding: spacing.lg,
     gap: spacing.md,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  termsText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginTop: spacing.md,
+    padding: spacing.lg,
   },
   loginContainer: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     justifyContent: 'center',
     marginTop: spacing.lg,
   },
@@ -175,8 +165,19 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.textSecondary,
   },
-  backText: {
+  scrollView: {
+    flex: 1,
+  },
+  subtitle: {
     ...typography.body,
-    color: colors.primary,
+    color: colors.textSecondary,
+    marginBottom: spacing.lg,
+    textAlign: 'center',
+  },
+  termsText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    marginTop: spacing.md,
+    textAlign: 'center',
   },
 });

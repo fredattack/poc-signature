@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, StyleSheet, ViewStyle } from 'react-native';
+import { StyleSheet, View, ViewStyle } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
 export interface CardProps {
@@ -41,27 +41,27 @@ const createStyles = ({
   return StyleSheet.create({
     card: {
       backgroundColor: colors.surface.card,
-      borderRadius: tokens.radii.regular,
-      borderWidth: 1,
       borderColor:
         mode === 'dark'
           ? 'rgba(244, 244, 244, 0.12)'
           : 'rgba(35, 35, 35, 0.08)',
+      borderRadius: tokens.radii.regular,
+      borderWidth: 1,
     },
     elevated: {
       ...elevation,
+    },
+    paddingLarge: {
+      padding: tokens.spacing.md,
+    },
+    paddingMedium: {
+      padding: tokens.spacing.sm,
     },
     paddingNone: {
       padding: 0,
     },
     paddingSmall: {
       padding: tokens.spacing.xs,
-    },
-    paddingMedium: {
-      padding: tokens.spacing.sm,
-    },
-    paddingLarge: {
-      padding: tokens.spacing.md,
     },
   });
 };

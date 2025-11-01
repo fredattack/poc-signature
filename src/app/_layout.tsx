@@ -46,7 +46,6 @@ export default function RootLayout() {
                 name="signature-canvas"
                 options={{
                   headerShown: false,
-                  presentation: 'modal',
                 }}
               />
               <Stack.Screen

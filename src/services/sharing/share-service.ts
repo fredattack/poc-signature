@@ -57,7 +57,9 @@ export const shareImage = async (
  * Get platform-specific share options
  * iOS and Android have different share sheet behaviors
  */
-const getPlatformShareOptions = (options: ShareOptions): Sharing.SharingOptions => {
+const getPlatformShareOptions = (
+  options: ShareOptions
+): Sharing.SharingOptions => {
   const baseOptions: Sharing.SharingOptions = {
     mimeType: 'image/png',
     UTI: 'public.png',

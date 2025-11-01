@@ -1,7 +1,7 @@
 // Forgot password screen
 
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Alert } from 'react-native';
+import { Alert, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { Input } from '@/components/ui/Input';
 import { Button } from '@/components/ui/Button';
@@ -58,7 +58,8 @@ export default function ForgotPasswordScreen() {
 
       <View style={styles.content}>
         <Text style={styles.subtitle}>
-          Enter your email address and we'll send you instructions to reset your password
+          Enter your email address and we'll send you instructions to reset your
+          password
         </Text>
 
         <Input
@@ -85,21 +86,21 @@ export default function ForgotPasswordScreen() {
 }
 
 const styles = StyleSheet.create({
+  backText: {
+    ...typography.body,
+    color: colors.primary,
+  },
   container: {
-    flex: 1,
     backgroundColor: colors.background,
+    flex: 1,
   },
   content: {
-    padding: spacing.lg,
     gap: spacing.md,
+    padding: spacing.lg,
   },
   subtitle: {
     ...typography.body,
     color: colors.textSecondary,
     marginBottom: spacing.lg,
-  },
-  backText: {
-    ...typography.body,
-    color: colors.primary,
   },
 });

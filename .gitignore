@@ -22,11 +22,15 @@ yarn-error.log
 .env.*.local
 
 # IDE
-.vscode/
 .idea/
 *.swp
 *.swo
 *~
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+!.vscode/tasks.json
 
 # macOS
 .DS_Store

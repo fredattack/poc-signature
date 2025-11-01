@@ -15,7 +15,8 @@ export interface ApiError {
   status?: number;
 }
 
-const API_BASE_URL = process.env.EXPO_PUBLIC_API_URL || 'https://api.signature-app.com';
+const API_BASE_URL =
+  process.env.EXPO_PUBLIC_API_URL || 'https://api.signature-app.com';
 
 /**
  * HTTP client with automatic token injection
@@ -42,7 +43,9 @@ class ApiClient {
   /**
    * Build headers with auth token
    */
-  private async buildHeaders(customHeaders: Record<string, string> = {}): Promise<HeadersInit> {
+  private async buildHeaders(
+    customHeaders: Record<string, string> = {}
+  ): Promise<HeadersInit> {
     const headers: HeadersInit = {
       'Content-Type': 'application/json',
       ...customHeaders,

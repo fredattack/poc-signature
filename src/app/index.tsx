@@ -1,7 +1,7 @@
 // Initial route handler - checks onboarding status and redirects
 
 import { useEffect, useState } from 'react';
-import { View, ActivityIndicator, StyleSheet } from 'react-native';
+import { ActivityIndicator, StyleSheet, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { asyncStorage } from '@/services/storage/async-storage';
 import { STORAGE_KEYS } from '@/utils/constants';
@@ -48,9 +48,9 @@ export default function Index() {
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1,
     alignItems: 'center',
-    justifyContent: 'center',
     backgroundColor: colors.background,
+    flex: 1,
+    justifyContent: 'center',
   },
 });

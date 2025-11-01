@@ -1,6 +1,10 @@
 // Manual signature sync service
 
-import { Signature, SyncStatus, SignatureStatus } from '@/types/signature.types';
+import {
+  Signature,
+  SignatureStatus,
+  SyncStatus,
+} from '@/types/signature.types';
 import { signaturesApi } from '../api/signatures';
 import { asyncStorage } from '../storage/async-storage';
 import { STORAGE_KEYS } from '@/utils/constants';
@@ -27,7 +31,7 @@ class SignatureSyncService {
    */
   getPendingSync(signatures: Signature[]): Signature[] {
     return signatures.filter(
-      sig =>
+      (sig) =>
         sig.syncStatus === SyncStatus.Pending &&
         sig.status === SignatureStatus.Active
     );
@@ -57,7 +61,7 @@ class SignatureSyncService {
           success: false,
           syncedCount: 0,
           failedCount: pendingSignatures.length,
-          failedSignatures: pendingSignatures.map(s => s.id),
+          failedSignatures: pendingSignatures.map((s) => s.id),
         };
       }
 
@@ -78,7 +82,7 @@ class SignatureSyncService {
         success: false,
         syncedCount: 0,
         failedCount: pendingSignatures.length,
-        failedSignatures: pendingSignatures.map(s => s.id),
+        failedSignatures: pendingSignatures.map((s) => s.id),
       };
     }
   }
@@ -146,12 +150,12 @@ class SignatureSyncService {
       const mergedMap = new Map<string, Signature>();
 
       // Add local signatures
-      localSignatures.forEach(sig => {
+      localSignatures.forEach((sig) => {
         mergedMap.set(sig.id, sig);
       });
 
       // Override with cloud signatures
-      cloudSignatures.forEach(sig => {
+      cloudSignatures.forEach((sig) => {
         mergedMap.set(sig.id, {
           ...sig,
           syncStatus: SyncStatus.Synced,

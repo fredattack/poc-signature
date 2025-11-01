@@ -1,7 +1,12 @@
 // Authentication Zustand store
 
 import { create } from 'zustand';
-import { User, authService, RegisterRequest, LoginRequest } from '@/services/api/auth';
+import {
+  authService,
+  LoginRequest,
+  RegisterRequest,
+  User,
+} from '@/services/api/auth';
 
 interface AuthState {
   user: User | null;

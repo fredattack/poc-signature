@@ -1,7 +1,7 @@
 import {
-  spacing as tokenSpacing,
-  radii as tokenRadii,
   layout as tokenLayout,
+  radii as tokenRadii,
+  spacing as tokenSpacing,
 } from '../theme/tokens';
 
 export const spacing = {

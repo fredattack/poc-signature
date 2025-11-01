@@ -1,10 +1,10 @@
 import React, { useMemo, useState } from 'react';
 import {
-  TextInput,
-  View,
-  Text,
   StyleSheet,
+  Text,
+  TextInput,
   TextInputProps,
+  View,
   ViewStyle,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
@@ -47,7 +47,9 @@ export const Input: React.FC<InputProps> = ({
         {...textInputProps}
       />
       {error && <Text style={styles.errorText}>{error}</Text>}
-      {helperText && !error && <Text style={styles.helperText}>{helperText}</Text>}
+      {helperText && !error && (
+        <Text style={styles.helperText}>{helperText}</Text>
+      )}
     </View>
   );
 };
@@ -82,35 +84,6 @@ const createStyles = ({
     container: {
       marginBottom: tokens.spacing.sm,
     },
-    label: {
-      ...labelTypography,
-      color: colors.text.primary,
-      marginBottom: tokens.spacing.xs,
-    },
-    input: {
-      height: tokens.layout.inputHeight,
-      borderWidth: 1,
-      borderColor:
-        mode === 'dark'
-          ? 'rgba(244, 244, 244, 0.16)'
-          : 'rgba(35, 35, 35, 0.12)',
-      borderRadius: tokens.radii.mild,
-      paddingHorizontal: tokens.spacing.md,
-      ...bodyTypography,
-      color: colors.text.primary,
-      backgroundColor: colors.surface.card,
-    },
-    inputFocused: {
-      borderColor: colors.brand.primary,
-      shadowColor: colors.brand.primary,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 8,
-      elevation: 2,
-    },
-    inputError: {
-      borderColor: colors.feedback.critical,
-    },
     errorText: {
       ...captionTypography,
       color: colors.feedback.critical,
@@ -120,6 +93,35 @@ const createStyles = ({
       ...captionTypography,
       color: colors.text.secondary,
       marginTop: tokens.spacing.xs,
+    },
+    input: {
+      borderColor:
+        mode === 'dark'
+          ? 'rgba(244, 244, 244, 0.16)'
+          : 'rgba(35, 35, 35, 0.12)',
+      borderRadius: tokens.radii.mild,
+      borderWidth: 1,
+      height: tokens.layout.inputHeight,
+      paddingHorizontal: tokens.spacing.md,
+      ...bodyTypography,
+      backgroundColor: colors.surface.card,
+      color: colors.text.primary,
+    },
+    inputError: {
+      borderColor: colors.feedback.critical,
+    },
+    inputFocused: {
+      borderColor: colors.brand.primary,
+      elevation: 2,
+      shadowColor: colors.brand.primary,
+      shadowOffset: { width: 0, height: 2 },
+      shadowOpacity: 0.08,
+      shadowRadius: 8,
+    },
+    label: {
+      ...labelTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.xs,
     },
   });
 };

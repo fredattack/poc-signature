@@ -1,7 +1,13 @@
 // Gallery screen with 2-column grid, sorting, and management
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, TouchableOpacity, RefreshControl } from 'react-native';
+import {
+  RefreshControl,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { SignatureCard } from '@/components/signature/SignatureCard';
@@ -28,8 +34,12 @@ export default function GalleryScreen() {
   const router = useRouter();
   const { screen, track } = useAnalytics();
   const loadSignatures = useSignaturesStore((state) => state.loadSignatures);
-  const getSortedSignatures = useSignaturesStore((state) => state.getSortedSignatures);
-  const getActiveSignatures = useSignaturesStore((state) => state.getActiveSignatures);
+  const getSortedSignatures = useSignaturesStore(
+    (state) => state.getSortedSignatures
+  );
+  const getActiveSignatures = useSignaturesStore(
+    (state) => state.getActiveSignatures
+  );
 
   const [sortBy, setSortBy] = useState<SortOption>('recent');
   const [showSortMenu, setShowSortMenu] = useState(false);
@@ -164,49 +174,58 @@ export default function GalleryScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
+  cardWrapper: {
     flex: 1,
+    paddingHorizontal: spacing.xs,
+  },
+  checkmark: {
+    ...typography.body,
+    color: colors.primary,
+    fontWeight: 'bold',
+  },
+  container: {
     backgroundColor: colors.backgroundSecondary,
+    flex: 1,
+  },
+  emptyIcon: {
+    fontSize: 64,
   },
   listContent: {
     padding: spacing.md,
     paddingBottom: spacing.xl,
   },
-  cardWrapper: {
-    flex: 1,
-    paddingHorizontal: spacing.xs,
-  },
-  sortContainer: {
-    position: 'relative',
-  },
   sortButton: {
-    flexDirection: 'row',
     alignItems: 'center',
+    backgroundColor: colors.backgroundSecondary,
+    borderColor: colors.border,
+    borderRadius: 8,
+    borderWidth: 1,
+    flexDirection: 'row',
     gap: spacing.xs,
     paddingHorizontal: spacing.sm,
     paddingVertical: spacing.xs,
-    backgroundColor: colors.backgroundSecondary,
-    borderRadius: 8,
-    borderWidth: 1,
-    borderColor: colors.border,
   },
   sortButtonText: {
     ...typography.caption,
     color: colors.text,
     fontWeight: '600',
   },
+  sortContainer: {
+    position: 'relative',
+  },
   sortIcon: {
     ...typography.caption,
     color: colors.textSecondary,
   },
   sortMenu: {
-    position: 'absolute',
-    top: 40,
-    right: 0,
     backgroundColor: colors.background,
+    borderColor: colors.border,
     borderRadius: 8,
     borderWidth: 1,
-    borderColor: colors.border,
+    elevation: 5,
+    minWidth: 120,
+    position: 'absolute',
+    right: 0,
     shadowColor: '#000',
     shadowOffset: {
       width: 0,
@@ -214,18 +233,17 @@ const styles = StyleSheet.create({
     },
     shadowOpacity: 0.2,
     shadowRadius: 4,
-    elevation: 5,
-    minWidth: 120,
+    top: 40,
     zIndex: 1000,
   },
   sortMenuItem: {
-    flexDirection: 'row',
     alignItems: 'center',
+    borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
     justifyContent: 'space-between',
     paddingHorizontal: spacing.md,
     paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
   },
   sortMenuItemActive: {
     backgroundColor: colors.primaryLight,
@@ -237,13 +255,5 @@ const styles = StyleSheet.create({
   sortMenuItemTextActive: {
     color: colors.primary,
     fontWeight: '600',
-  },
-  checkmark: {
-    ...typography.body,
-    color: colors.primary,
-    fontWeight: 'bold',
-  },
-  emptyIcon: {
-    fontSize: 64,
   },
 });

@@ -1,7 +1,7 @@
 // Color picker for signature colors
 
 import React, { useMemo } from 'react';
-import { View, TouchableOpacity, StyleSheet } from 'react-native';
+import { StyleSheet, TouchableOpacity, View } from 'react-native';
 import { SignatureColor } from '@/types/signature.types';
 import { useThemeTokens } from '@/theme';
 
@@ -17,7 +17,10 @@ const colorOptions = [
   { value: SignatureColor.White, displayColor: '#FFFFFF' },
 ];
 
-export const ColorPicker: React.FC<ColorPickerProps> = ({ selectedColor, onColorSelect }) => {
+export const ColorPicker: React.FC<ColorPickerProps> = ({
+  selectedColor,
+  onColorSelect,
+}) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
@@ -49,29 +52,24 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({ selectedColor, onColor
   );
 };
 
-const createStyles = ({
-  tokens,
-  mode,
-}: ReturnType<typeof useThemeTokens>) => {
+const createStyles = ({ tokens, mode }: ReturnType<typeof useThemeTokens>) => {
   const defaultBorder =
-    mode === 'dark'
-      ? 'rgba(244, 244, 244, 0.16)'
-      : 'rgba(35, 35, 35, 0.12)';
+    mode === 'dark' ? 'rgba(244, 244, 244, 0.16)' : 'rgba(35, 35, 35, 0.12)';
 
   return StyleSheet.create({
-    container: {
-      flexDirection: 'row',
-      alignItems: 'center',
-      justifyContent: 'center',
-      gap: tokens.spacing.md,
-    },
     colorButton: {
-      width: 48,
-      height: 48,
-      borderRadius: 24,
       borderColor: defaultBorder,
+      borderRadius: 24,
       borderWidth: 1,
+      height: 48,
+      width: 48,
       ...tokens.elevation.level1,
+    },
+    container: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: tokens.spacing.md,
+      justifyContent: 'center',
     },
     whiteColor: {
       borderColor: defaultBorder,

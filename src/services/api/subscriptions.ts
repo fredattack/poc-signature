@@ -49,7 +49,7 @@ class SubscriptionService {
     request: CreateCheckoutSessionRequest
   ): Promise<ApiResponse<CheckoutSession>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     const session: CheckoutSession = {
       sessionId: `cs_test_${Date.now()}`,
@@ -71,7 +71,7 @@ class SubscriptionService {
    */
   async getSubscriptionStatus(): Promise<ApiResponse<Subscription | null>> {
     // Mock implementation - simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 800));
+    await new Promise((resolve) => setTimeout(resolve, 800));
 
     // Return null for free users (no subscription)
     return {
@@ -89,10 +89,13 @@ class SubscriptionService {
    */
   async cancelSubscription(): Promise<ApiResponse<{ message: string }>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return {
-      data: { message: 'Subscription will be canceled at the end of the billing period' },
+      data: {
+        message:
+          'Subscription will be canceled at the end of the billing period',
+      },
       status: 200,
     };
 
@@ -129,7 +132,7 @@ class SubscriptionService {
    * This simulates a successful subscription purchase
    */
   async mockActivatePremium(): Promise<ApiResponse<Subscription>> {
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     const trialEnd = new Date();
     trialEnd.setDate(trialEnd.getDate() + 7); // 7-day trial

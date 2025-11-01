@@ -78,7 +78,10 @@ export const formatFileSize = (bytes: number): string => {
   return `${(bytes / 1048576).toFixed(2)} MB`;
 };
 
-export const formatPrice = (amount: number, currency: string = 'USD'): string => {
+export const formatPrice = (
+  amount: number,
+  currency: string = 'USD'
+): string => {
   return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency,

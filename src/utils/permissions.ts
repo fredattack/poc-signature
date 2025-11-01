@@ -9,41 +9,46 @@ export interface PermissionResult {
   error?: string;
 }
 
-export const requestLocationPermission = async (): Promise<PermissionResult> => {
-  try {
-    const { status, canAskAgain } = await Location.requestForegroundPermissionsAsync();
+export const requestLocationPermission =
+  async (): Promise<PermissionResult> => {
+    try {
+      const { status, canAskAgain } =
+        await Location.requestForegroundPermissionsAsync();
 
-    return {
-      granted: status === 'granted',
-      canAskAgain,
-      error: status === 'denied' ? 'Location permission denied' : undefined,
-    };
-  } catch (error) {
-    return {
-      granted: false,
-      canAskAgain: false,
-      error: 'Failed to request location permission',
-    };
-  }
-};
+      return {
+        granted: status === 'granted',
+        canAskAgain,
+        error: status === 'denied' ? 'Location permission denied' : undefined,
+      };
+    } catch (error) {
+      return {
+        granted: false,
+        canAskAgain: false,
+        error: 'Failed to request location permission',
+      };
+    }
+  };
 
-export const requestPhotoLibraryPermission = async (): Promise<PermissionResult> => {
-  try {
-    const { status, canAskAgain } = await MediaLibrary.requestPermissionsAsync();
+export const requestPhotoLibraryPermission =
+  async (): Promise<PermissionResult> => {
+    try {
+      const { status, canAskAgain } =
+        await MediaLibrary.requestPermissionsAsync();
 
-    return {
-      granted: status === 'granted',
-      canAskAgain,
-      error: status === 'denied' ? 'Photo library permission denied' : undefined,
-    };
-  } catch (error) {
-    return {
-      granted: false,
-      canAskAgain: false,
-      error: 'Failed to request photo library permission',
-    };
-  }
-};
+      return {
+        granted: status === 'granted',
+        canAskAgain,
+        error:
+          status === 'denied' ? 'Photo library permission denied' : undefined,
+      };
+    } catch (error) {
+      return {
+        granted: false,
+        canAskAgain: false,
+        error: 'Failed to request photo library permission',
+      };
+    }
+  };
 
 export const checkLocationPermission = async (): Promise<boolean> => {
   try {

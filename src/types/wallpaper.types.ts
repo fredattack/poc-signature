@@ -21,8 +21,8 @@ export interface Wallpaper {
 
 export enum WallpaperResolution {
   Standard = 'standard', // 1080x1920
-  HD = 'hd',             // 1440x2560 (Premium)
-  UHD = 'uhd',           // 2160x3840 (Premium)
+  HD = 'hd', // 1440x2560 (Premium)
+  UHD = 'uhd', // 2160x3840 (Premium)
 }
 
 export interface WallpaperGenerationParams {

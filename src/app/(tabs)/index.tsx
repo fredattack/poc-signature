@@ -1,21 +1,27 @@
 // Home screen with "New Signature" CTA
 
-import React, { useEffect } from 'react';
-import { View, Text, StyleSheet, ScrollView } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAnalytics } from '@/hooks/useAnalytics';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
 import { formatRelativeTime } from '@/utils/formatters';
+import { useThemeTokens } from '@/theme';
 
 export default function HomeScreen() {
   const router = useRouter();
   const { screen } = useAnalytics();
-  const { signatures, loadSignatures, getActiveSignatures } = useSignaturesStore();
+  const { signatures, loadSignatures, getActiveSignatures } =
+    useSignaturesStore();
+  const theme = useThemeTokens();
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(
+    () => createStyles(theme, insets.top),
+    [theme, insets.top]
+  );
 
   useEffect(() => {
     screen('Home');
@@ -83,7 +89,9 @@ export default function HomeScreen() {
 
           {recentSignatures.map((signature) => (
             <Card key={signature.id} style={styles.signatureCard}>
-              <Text style={styles.signatureName}>{signature.celebrityName}</Text>
+              <Text style={styles.signatureName}>
+                {signature.celebrityName}
+              </Text>
               <Text style={styles.signatureDate}>
                 {formatRelativeTime(signature.capturedAt)}
               </Text>
@@ -122,7 +130,7 @@ export default function HomeScreen() {
             onPress={handleViewAll}
             variant="secondary"
             fullWidth
-            style={{ marginTop: spacing.sm }}
+            style={styles.galleryButton}
           />
         </View>
       </View>
@@ -130,105 +138,141 @@ export default function HomeScreen() {
   );
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
-  },
-  content: {
-    padding: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  hero: {
-    marginBottom: spacing.lg,
-  },
-  title: {
-    ...typography.h1,
-    color: colors.text,
-    textAlign: 'center',
-    marginBottom: spacing.sm,
-  },
-  subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-    marginBottom: spacing.lg,
-  },
-  ctaButton: {
-    marginTop: spacing.md,
-  },
-  statsCard: {
-    marginBottom: spacing.lg,
-  },
-  statsRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-around',
-  },
-  stat: {
-    flex: 1,
-    alignItems: 'center',
-  },
-  statValue: {
-    ...typography.h2,
-    color: colors.primary,
-    marginBottom: spacing.xs,
-  },
-  statLabel: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  statDivider: {
-    width: 1,
-    height: 40,
-    backgroundColor: colors.border,
-  },
-  section: {
-    marginBottom: spacing.lg,
-  },
-  sectionHeader: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    marginBottom: spacing.md,
-  },
-  sectionTitle: {
-    ...typography.h3,
-    color: colors.text,
-  },
-  signatureCard: {
-    marginBottom: spacing.sm,
-  },
-  signatureName: {
-    ...typography.h4,
-    color: colors.text,
-    marginBottom: spacing.xs,
-  },
-  signatureDate: {
-    ...typography.caption,
-    color: colors.textSecondary,
-  },
-  signatureLocation: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginTop: spacing.xs,
-  },
-  emptyCard: {
-    alignItems: 'center',
-    padding: spacing.xl,
-    marginBottom: spacing.lg,
-  },
-  emptyTitle: {
-    ...typography.h3,
-    color: colors.text,
-    marginBottom: spacing.sm,
-  },
-  emptyText: {
-    ...typography.body,
-    color: colors.textSecondary,
-    textAlign: 'center',
-  },
-  quickActions: {
-    marginTop: spacing.md,
-  },
-});
+const createStyles = (
+  { colors, tokens }: ReturnType<typeof useThemeTokens>,
+  topInset: number
+) =>
+  StyleSheet.create({
+    container: {
+      backgroundColor: colors.surface.background,
+      flex: 1,
+    },
+    content: {
+      paddingBottom: tokens.spacing.xl,
+      paddingHorizontal: tokens.spacing.md,
+      paddingTop: topInset + tokens.spacing.md,
+    },
+    ctaButton: {
+      marginTop: tokens.spacing.md,
+    },
+    emptyCard: {
+      alignItems: 'center',
+      marginBottom: tokens.spacing.lg,
+    },
+    emptyText: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: tokens.typography.body.fontWeight,
+      letterSpacing: tokens.typography.body.letterSpacing,
+      lineHeight: tokens.typography.body.lineHeight,
+      textAlign: 'center',
+    },
+    emptyTitle: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.headingS.fontSize,
+      fontWeight: tokens.typography.headingS.fontWeight,
+      letterSpacing: tokens.typography.headingS.letterSpacing,
+      lineHeight: tokens.typography.headingS.lineHeight,
+      marginBottom: tokens.spacing.xs,
+    },
+    galleryButton: {
+      marginTop: tokens.spacing.sm,
+    },
+    hero: {
+      marginBottom: tokens.spacing.lg,
+    },
+    quickActions: {
+      gap: tokens.spacing.sm,
+    },
+    section: {
+      marginBottom: tokens.spacing.lg,
+    },
+    sectionHeader: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-between',
+      marginBottom: tokens.spacing.md,
+    },
+    sectionTitle: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.headingM.fontSize,
+      fontWeight: tokens.typography.headingM.fontWeight,
+      letterSpacing: tokens.typography.headingM.letterSpacing,
+      lineHeight: tokens.typography.headingM.lineHeight,
+    },
+    signatureCard: {
+      marginBottom: tokens.spacing.sm,
+    },
+    signatureDate: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: tokens.typography.caption.fontWeight,
+      letterSpacing: tokens.typography.caption.letterSpacing,
+      lineHeight: tokens.typography.caption.lineHeight,
+    },
+    signatureLocation: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: tokens.typography.caption.fontWeight,
+      letterSpacing: tokens.typography.caption.letterSpacing,
+      lineHeight: tokens.typography.caption.lineHeight,
+      marginTop: tokens.spacing.xs,
+    },
+    signatureName: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.headingS.fontSize,
+      fontWeight: tokens.typography.headingS.fontWeight,
+      letterSpacing: tokens.typography.headingS.letterSpacing,
+      lineHeight: tokens.typography.headingS.lineHeight,
+    },
+    stat: {
+      alignItems: 'center',
+      flex: 1,
+    },
+    statDivider: {
+      backgroundColor: colors.overlay.light,
+      height: 40,
+      width: 1,
+    },
+    statLabel: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.caption.fontSize,
+      fontWeight: tokens.typography.caption.fontWeight,
+      letterSpacing: tokens.typography.caption.letterSpacing,
+      lineHeight: tokens.typography.caption.lineHeight,
+    },
+    statValue: {
+      color: colors.brand.primary,
+      fontSize: tokens.typography.headingL.fontSize,
+      fontWeight: tokens.typography.headingL.fontWeight,
+      letterSpacing: tokens.typography.headingL.letterSpacing,
+      lineHeight: tokens.typography.headingL.lineHeight,
+      marginBottom: tokens.spacing.xs,
+    },
+    statsCard: {
+      marginBottom: tokens.spacing.lg,
+    },
+    statsRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      justifyContent: 'space-around',
+    },
+    subtitle: {
+      color: colors.text.secondary,
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: tokens.typography.body.fontWeight,
+      letterSpacing: tokens.typography.body.letterSpacing,
+      lineHeight: tokens.typography.body.lineHeight,
+      marginBottom: tokens.spacing.lg,
+      textAlign: 'center',
+    },
+    title: {
+      color: colors.text.primary,
+      fontSize: tokens.typography.displayM.fontSize,
+      fontWeight: tokens.typography.displayM.fontWeight,
+      letterSpacing: tokens.typography.displayM.letterSpacing,
+      lineHeight: tokens.typography.displayM.lineHeight,
+      marginBottom: tokens.spacing.xs,
+      textAlign: 'center',
+    },
+  });

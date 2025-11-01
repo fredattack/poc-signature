@@ -1,7 +1,12 @@
 // Zustand store for signature management
 
 import { create } from 'zustand';
-import { Signature, SignatureColor, SignatureStatus, SyncStatus } from '@/types/signature.types';
+import {
+  Signature,
+  SignatureColor,
+  SignatureStatus,
+  SyncStatus,
+} from '@/types/signature.types';
 import { asyncStorage } from '@/services/storage/async-storage';
 import { STORAGE_KEYS } from '@/utils/constants';
 
@@ -19,7 +24,9 @@ interface SignaturesState {
   getAll: () => Signature[];
   getActiveSignatures: () => Signature[];
   clearAll: () => Promise<void>;
-  getSortedSignatures: (sortBy: 'recent' | 'oldest' | 'a-z' | 'z-a') => Signature[];
+  getSortedSignatures: (
+    sortBy: 'recent' | 'oldest' | 'a-z' | 'z-a'
+  ) => Signature[];
 
   // Sync methods
   markAsSynced: (id: string, cloudImageUrl: string) => Promise<void>;
@@ -35,7 +42,9 @@ export const useSignaturesStore = create<SignaturesState>((set, get) => ({
   loadSignatures: async () => {
     set({ isLoading: true, error: null });
     try {
-      const stored = await asyncStorage.get<Signature[]>(STORAGE_KEYS.SIGNATURES);
+      const stored = await asyncStorage.get<Signature[]>(
+        STORAGE_KEYS.SIGNATURES
+      );
       const signatures = stored || [];
 
       // Filter out permanently deleted signatures
@@ -113,7 +122,9 @@ export const useSignaturesStore = create<SignaturesState>((set, get) => ({
   },
 
   getActiveSignatures: () => {
-    return get().signatures.filter((sig) => sig.status === SignatureStatus.Active);
+    return get().signatures.filter(
+      (sig) => sig.status === SignatureStatus.Active
+    );
   },
 
   clearAll: async () => {
@@ -143,7 +154,9 @@ export const useSignaturesStore = create<SignaturesState>((set, get) => ({
 
   getPendingSyncSignatures: () => {
     return get().signatures.filter(
-      (sig) => sig.syncStatus === SyncStatus.Pending && sig.status === SignatureStatus.Active
+      (sig) =>
+        sig.syncStatus === SyncStatus.Pending &&
+        sig.status === SignatureStatus.Active
     );
   },
 
@@ -154,11 +167,13 @@ export const useSignaturesStore = create<SignaturesState>((set, get) => ({
     switch (sortBy) {
       case 'recent':
         return [...activeSignatures].sort(
-          (a, b) => new Date(b.capturedAt).getTime() - new Date(a.capturedAt).getTime()
+          (a, b) =>
+            new Date(b.capturedAt).getTime() - new Date(a.capturedAt).getTime()
         );
       case 'oldest':
         return [...activeSignatures].sort(
-          (a, b) => new Date(a.capturedAt).getTime() - new Date(b.capturedAt).getTime()
+          (a, b) =>
+            new Date(a.capturedAt).getTime() - new Date(b.capturedAt).getTime()
         );
       case 'a-z':
         return [...activeSignatures].sort((a, b) =>

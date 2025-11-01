@@ -1,8 +1,8 @@
 // Signature detail screen
 
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, ScrollView, Alert } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Header } from '@/components/shared/Header';
@@ -158,7 +158,9 @@ export default function SignatureDetailScreen() {
 
           <View style={styles.metadataRow}>
             <Text style={styles.label}>Date</Text>
-            <Text style={styles.value}>{formatDateTime(signature.capturedAt)}</Text>
+            <Text style={styles.value}>
+              {formatDateTime(signature.capturedAt)}
+            </Text>
           </View>
 
           <View style={styles.metadataRow}>
@@ -178,7 +180,10 @@ export default function SignatureDetailScreen() {
             <View style={styles.metadataRow}>
               <Text style={styles.label}>Location</Text>
               <Text style={styles.value}>
-                {formatLocation(signature.location.city, signature.location.country)}
+                {formatLocation(
+                  signature.location.city,
+                  signature.location.country
+                )}
               </Text>
             </View>
           )}
@@ -209,7 +214,8 @@ export default function SignatureDetailScreen() {
 
         {/* Info */}
         <Text style={styles.infoText}>
-          Transform this signature into a beautiful custom wallpaper or share it with your friends
+          Transform this signature into a beautiful custom wallpaper or share it
+          with your friends
         </Text>
       </ScrollView>
 
@@ -225,87 +231,87 @@ export default function SignatureDetailScreen() {
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: colors.backgroundSecondary,
+  actions: {
+    gap: spacing.sm,
+    marginBottom: spacing.md,
   },
-  scrollView: {
-    flex: 1,
-  },
-  scrollContent: {
-    padding: spacing.md,
-    paddingBottom: spacing.xl,
-  },
-  imageCard: {
-    marginBottom: spacing.lg,
-    minHeight: 300,
-    alignItems: 'center',
-    justifyContent: 'center',
-    backgroundColor: colors.background,
-  },
-  signatureImage: {
-    width: '100%',
-    height: 300,
-  },
-  metadataCard: {
-    marginBottom: spacing.lg,
-  },
-  metadataRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    paddingVertical: spacing.sm,
-    borderBottomWidth: 1,
-    borderBottomColor: colors.borderLight,
-  },
-  label: {
-    ...typography.label,
-    color: colors.textSecondary,
-  },
-  value: {
+  backText: {
     ...typography.body,
-    color: colors.text,
-    fontWeight: '500',
-    textAlign: 'right',
-    flex: 1,
-    marginLeft: spacing.md,
+    color: colors.primary,
   },
   colorIndicator: {
-    flexDirection: 'row',
     alignItems: 'center',
+    flexDirection: 'row',
     gap: spacing.sm,
   },
   colorSwatch: {
-    width: 24,
-    height: 24,
+    borderColor: colors.border,
     borderRadius: 12,
     borderWidth: 1,
-    borderColor: colors.border,
+    height: 24,
+    width: 24,
   },
-  actions: {
-    marginBottom: spacing.md,
-    gap: spacing.sm,
+  container: {
+    backgroundColor: colors.backgroundSecondary,
+    flex: 1,
   },
-  infoText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    textAlign: 'center',
+  deleteText: {
+    ...typography.body,
+    color: colors.error,
   },
   errorContainer: {
-    flex: 1,
     alignItems: 'center',
+    flex: 1,
     justifyContent: 'center',
   },
   errorText: {
     ...typography.body,
     color: colors.error,
   },
-  backText: {
-    ...typography.body,
-    color: colors.primary,
+  imageCard: {
+    alignItems: 'center',
+    backgroundColor: colors.background,
+    justifyContent: 'center',
+    marginBottom: spacing.lg,
+    minHeight: 300,
   },
-  deleteText: {
+  infoText: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    textAlign: 'center',
+  },
+  label: {
+    ...typography.label,
+    color: colors.textSecondary,
+  },
+  metadataCard: {
+    marginBottom: spacing.lg,
+  },
+  metadataRow: {
+    alignItems: 'center',
+    borderBottomColor: colors.borderLight,
+    borderBottomWidth: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    paddingVertical: spacing.sm,
+  },
+  scrollContent: {
+    padding: spacing.md,
+    paddingBottom: spacing.xl,
+  },
+  scrollView: {
+    flex: 1,
+  },
+  signatureImage: {
+    height: 300,
+    width: '100%',
+  },
+  value: {
     ...typography.body,
-    color: colors.error,
+    color: colors.text,
+    flex: 1,
+    fontWeight: '500',
+    marginLeft: spacing.md,
+    textAlign: 'right',
   },
 });

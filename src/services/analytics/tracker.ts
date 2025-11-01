@@ -1,6 +1,10 @@
 // Unified analytics tracking interface
 
-import { AnalyticsEvent, UserIdentity, PerformanceMetric } from '@/types/analytics.types';
+import {
+  AnalyticsEvent,
+  PerformanceMetric,
+  UserIdentity,
+} from '@/types/analytics.types';
 
 export interface AnalyticsTracker {
   init(apiKey: string, config?: any): Promise<void>;

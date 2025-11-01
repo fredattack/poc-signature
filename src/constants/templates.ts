@@ -198,4 +198,5 @@ export const templates: TemplateConfig[] = [
 
 export const getFreeTemplates = () => templates.filter((t) => !t.isPremium);
 export const getPremiumTemplates = () => templates.filter((t) => t.isPremium);
-export const getTemplateById = (id: string) => templates.find((t) => t.id === id);
+export const getTemplateById = (id: string) =>
+  templates.find((t) => t.id === id);

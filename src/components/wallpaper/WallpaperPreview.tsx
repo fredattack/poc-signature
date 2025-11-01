@@ -1,8 +1,11 @@
 // Wallpaper preview with real-time updates
 
-import React, { useRef, useEffect, useMemo } from 'react';
-import { View, StyleSheet, Dimensions } from 'react-native';
-import Animated, { useAnimatedStyle, withSpring } from 'react-native-reanimated';
+import React, { useEffect, useMemo, useRef } from 'react';
+import { Dimensions, StyleSheet, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  withSpring,
+} from 'react-native-reanimated';
 import { TemplateRenderer } from './TemplateRenderer';
 import { Signature } from '@/types/signature.types';
 import { WallpaperOptions } from '@/types/wallpaper.types';
@@ -62,19 +65,16 @@ export const WallpaperPreview: React.FC<WallpaperPreviewProps> = ({
   );
 };
 
-const createStyles = ({
-  colors,
-  tokens,
-}: ReturnType<typeof useThemeTokens>) =>
+const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     container: {
       alignItems: 'center',
       marginVertical: tokens.spacing.md,
     },
     previewContainer: {
+      backgroundColor: colors.surface.card,
       borderRadius: tokens.radii.generous,
       overflow: 'hidden',
-      backgroundColor: colors.surface.card,
       ...tokens.elevation.level3,
     },
   });

@@ -1,31 +1,46 @@
 // Signature canvas with 60fps Skia rendering
 
-import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from 'react';
 import {
-  View,
-  StyleSheet,
   Dimensions,
   type GestureResponderEvent,
   type View as RNView,
+  StyleSheet,
+  View,
 } from 'react-native';
 import { Canvas, Path, Skia } from '@shopify/react-native-skia';
-import { SignatureColor, CanvasPath } from '@/types/signature.types';
-import { CANVAS_WIDTH, CANVAS_HEIGHT, CANVAS_STROKE_WIDTH } from '@/utils/constants';
+import { CanvasPath, SignatureColor } from '@/types/signature.types';
+import {
+  CANVAS_HEIGHT,
+  CANVAS_STROKE_WIDTH,
+  CANVAS_WIDTH,
+} from '@/utils/constants';
 import { useThemeTokens } from '@/theme';
 
 export interface SignatureCanvasProps {
   color: SignatureColor;
   onStrokeComplete: (path: CanvasPath) => void;
-  captureRef?: React.RefObject<RNView>;
+  captureRef?:
+    | React.RefObject<RNView | null>
+    | React.MutableRefObject<RNView | null>;
   clearSignal?: number;
+  onBeginStroke?: () => void;
+  onEndStroke?: () => void;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');
 const CANVAS_ACTUAL_WIDTH = Math.min(SCREEN_WIDTH - 32, CANVAS_WIDTH);
 
-const getTouchPoint = (event: GestureResponderEvent): { x: number; y: number } | null => {
-  const touch =
-    event.nativeEvent.touches?.[0] ??
+const getTouchPoint = (
+  event: GestureResponderEvent
+): { x: number; y: number } | null => {
+  const touch = event.nativeEvent.touches?.[0] ??
     event.nativeEvent.changedTouches?.[0] ?? {
       locationX: event.nativeEvent.locationX,
       locationY: event.nativeEvent.locationY,
@@ -48,15 +63,19 @@ const SIGNATURE_HEX: Record<SignatureColor, string> = {
   [SignatureColor.White]: '#FFFFFF',
 };
 
-const getColorHex = (color: SignatureColor): string => SIGNATURE_HEX[color] ?? '#000000';
+const getColorHex = (color: SignatureColor): string =>
+  SIGNATURE_HEX[color] ?? '#000000';
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   color,
   onStrokeComplete,
   captureRef,
   clearSignal,
+  onBeginStroke,
+  onEndStroke,
 }) => {
   const [paths, setPaths] = useState<CanvasPath[]>([]);
+  const [isDrawing, setIsDrawing] = useState(false);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
   const theme = useThemeTokens();
@@ -67,6 +86,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       setPaths([]);
       currentPath.current = Skia.Path.Make();
       currentPoints.current = [];
+      setIsDrawing(false);
     }
   }, [clearSignal]);
 
@@ -85,18 +105,24 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
     currentPath.current = Skia.Path.Make();
     currentPoints.current = [];
+    setIsDrawing(false);
   }, [color, onStrokeComplete]);
 
-  const handleTouchStart = useCallback((event: GestureResponderEvent) => {
-    const point = getTouchPoint(event);
-    if (!point) {
-      return;
-    }
+  const handleTouchStart = useCallback(
+    (event: GestureResponderEvent) => {
+      const point = getTouchPoint(event);
+      if (!point) {
+        return;
+      }
 
-    currentPath.current = Skia.Path.Make();
-    currentPath.current.moveTo(point.x, point.y);
-    currentPoints.current = [point];
-  }, []);
+      currentPath.current = Skia.Path.Make();
+      currentPath.current.moveTo(point.x, point.y);
+      currentPoints.current = [point];
+      setIsDrawing(true);
+      onBeginStroke?.();
+    },
+    [onBeginStroke]
+  );
 
   const handleTouchMove = useCallback((event: GestureResponderEvent) => {
     const point = getTouchPoint(event);
@@ -107,13 +133,21 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     currentPath.current.lineTo(point.x, point.y);
     currentPoints.current.push(point);
 
-    // trigger repaint
-    setPaths((prev) => [...prev]);
+    // Force re-render to show current drawing path
+    setIsDrawing(true);
   }, []);
 
   const handleTouchEnd = useCallback(() => {
     completeStroke();
-  }, [completeStroke]);
+    onEndStroke?.();
+  }, [completeStroke, onEndStroke]);
+
+  const handleTouchCancel = useCallback(() => {
+    currentPoints.current = [];
+    currentPath.current = Skia.Path.Make();
+    setIsDrawing(false);
+    onEndStroke?.();
+  }, [onEndStroke]);
 
   const renderCompletedPaths = useMemo(
     () =>
@@ -142,7 +176,16 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   );
 
   return (
-    <View style={styles.container} ref={captureRef}>
+    <View
+      style={styles.container}
+      ref={captureRef}
+      onStartShouldSetResponder={() => true}
+      onMoveShouldSetResponder={() => true}
+      onResponderGrant={() => {
+        // Prevent parent scroll when touching canvas
+        return true;
+      }}
+    >
       <Canvas
         style={[
           styles.canvas,
@@ -154,9 +197,10 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         onTouchStart={handleTouchStart}
         onTouchMove={handleTouchMove}
         onTouchEnd={handleTouchEnd}
+        onTouchCancel={handleTouchCancel}
       >
         {renderCompletedPaths}
-        {currentPoints.current.length > 0 && (
+        {isDrawing && currentPoints.current.length > 0 && (
           <Path
             path={currentPath.current}
             color={getColorHex(color)}
@@ -177,23 +221,21 @@ const createStyles = ({
   mode,
 }: ReturnType<typeof useThemeTokens>) => {
   const borderColor =
-    mode === 'dark'
-      ? 'rgba(244, 244, 244, 0.16)'
-      : 'rgba(35, 35, 35, 0.12)';
+    mode === 'dark' ? 'rgba(244, 244, 244, 0.16)' : 'rgba(35, 35, 35, 0.12)';
 
   return StyleSheet.create({
-    container: {
-      alignItems: 'center',
-      justifyContent: 'center',
-      backgroundColor: colors.surface.card,
-      borderRadius: tokens.radii.generous,
-      borderWidth: 2,
-      borderColor,
-      overflow: 'hidden',
-      ...tokens.elevation.level1,
-    },
     canvas: {
       backgroundColor: colors.surface.background,
+    },
+    container: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.card,
+      borderColor,
+      borderRadius: tokens.radii.generous,
+      borderWidth: 2,
+      justifyContent: 'center',
+      overflow: 'hidden',
+      ...tokens.elevation.level1,
     },
   });
 };

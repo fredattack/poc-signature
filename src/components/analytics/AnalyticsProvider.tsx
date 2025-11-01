@@ -1,6 +1,12 @@
 // Analytics context provider
 
-import React, { createContext, useContext, useEffect, useState, ReactNode } from 'react';
+import React, {
+  createContext,
+  ReactNode,
+  useContext,
+  useEffect,
+  useState,
+} from 'react';
 import { analytics } from '@/services/analytics/tracker';
 import { AmplitudeTracker } from '@/services/analytics/amplitude';
 import { initSentry } from '@/services/analytics/sentry';
@@ -15,12 +21,16 @@ interface AnalyticsContextValue {
   setConsentGiven: (consent: boolean) => void;
 }
 
-const AnalyticsContext = createContext<AnalyticsContextValue | undefined>(undefined);
+const AnalyticsContext = createContext<AnalyticsContextValue | undefined>(
+  undefined
+);
 
 export const useAnalyticsContext = () => {
   const context = useContext(AnalyticsContext);
   if (!context) {
-    throw new Error('useAnalyticsContext must be used within AnalyticsProvider');
+    throw new Error(
+      'useAnalyticsContext must be used within AnalyticsProvider'
+    );
   }
   return context;
 };
@@ -29,7 +39,9 @@ interface AnalyticsProviderProps {
   children: ReactNode;
 }
 
-export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({ children }) => {
+export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
+  children,
+}) => {
   const [analyticsEnabled, setAnalyticsEnabledState] = useState(false);
   const [consentGiven, setConsentGivenState] = useState(false);
   const [initialized, setInitialized] = useState(false);
@@ -37,7 +49,9 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({ children }
   // Load analytics consent from storage
   useEffect(() => {
     const loadConsent = async () => {
-      const config = await asyncStorage.get<AnalyticsConfig>(STORAGE_KEYS.ANALYTICS_CONSENT);
+      const config = await asyncStorage.get<AnalyticsConfig>(
+        STORAGE_KEYS.ANALYTICS_CONSENT
+      );
 
       if (config) {
         setConsentGivenState(config.consentGiven);

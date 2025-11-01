@@ -1,7 +1,7 @@
 // Global error boundary component
 
 import React, { Component, ReactNode } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { useThemeTokens } from '@/theme';
 import type { Tokens } from '@/theme';
@@ -65,7 +65,9 @@ class ErrorBoundaryBase extends Component<ThemedProps, State> {
           {__DEV__ && this.state.error && (
             <View style={styles.errorDetails}>
               <Text style={styles.errorTitle}>Error Details (Dev Only):</Text>
-              <Text style={styles.errorText}>{this.state.error.toString()}</Text>
+              <Text style={styles.errorText}>
+                {this.state.error.toString()}
+              </Text>
             </View>
           )}
 
@@ -117,45 +119,45 @@ const createStyles = ({
 
   return StyleSheet.create({
     container: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.background,
       flex: 1,
       justifyContent: 'center',
-      alignItems: 'center',
       padding: tokens.spacing.lg,
-      backgroundColor: colors.surface.background,
     },
     emoji: {
       fontSize: 64,
       marginBottom: tokens.spacing.lg,
     },
-    title: {
-      ...titleTypography,
-      color: colors.text.primary,
-      marginBottom: tokens.spacing.md,
-      textAlign: 'center',
-    },
-    message: {
-      ...bodyTypography,
-      color: colors.text.secondary,
-      textAlign: 'center',
-      marginBottom: tokens.spacing.lg,
-    },
     errorDetails: {
       backgroundColor: colors.surface.card,
-      padding: tokens.spacing.md,
       borderRadius: tokens.radii.regular,
       marginBottom: tokens.spacing.lg,
+      padding: tokens.spacing.md,
       width: '100%',
       ...tokens.elevation.level1,
+    },
+    errorText: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      fontFamily: 'monospace',
     },
     errorTitle: {
       ...labelTypography,
       color: colors.feedback.critical,
       marginBottom: tokens.spacing.xs,
     },
-    errorText: {
-      ...captionTypography,
+    message: {
+      ...bodyTypography,
       color: colors.text.secondary,
-      fontFamily: 'monospace',
+      marginBottom: tokens.spacing.lg,
+      textAlign: 'center',
+    },
+    title: {
+      ...titleTypography,
+      color: colors.text.primary,
+      marginBottom: tokens.spacing.md,
+      textAlign: 'center',
     },
   });
 };

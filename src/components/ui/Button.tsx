@@ -1,12 +1,12 @@
 import React, { useMemo } from 'react';
 import {
-  TouchableOpacity,
-  Text,
-  StyleSheet,
   ActivityIndicator,
+  StyleSheet,
+  Text,
+  TextStyle,
+  TouchableOpacity,
   View,
   ViewStyle,
-  TextStyle,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
@@ -109,13 +109,13 @@ const createStyles = ({
   return StyleSheet.create({
     button: {
       alignItems: 'center',
-      justifyContent: 'center',
       borderRadius: tokens.radii.mild,
       flexDirection: 'row',
+      justifyContent: 'center',
     },
     content: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       justifyContent: 'center',
     },
     icon: {
@@ -133,11 +133,11 @@ const createStyles = ({
     },
     secondaryButton: {
       backgroundColor: colors.surface.card,
-      borderWidth: 1,
       borderColor:
         mode === 'dark'
           ? 'rgba(244, 244, 244, 0.16)'
           : 'rgba(35, 35, 35, 0.12)',
+      borderWidth: 1,
     },
     ghostButton: {
       backgroundColor: 'transparent',

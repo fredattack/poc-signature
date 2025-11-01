@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { useThemeTokens } from '@/theme';
 
@@ -55,10 +55,20 @@ const createStyles = ({
 
   return StyleSheet.create({
     container: {
-      flex: 1,
       alignItems: 'center',
+      flex: 1,
       justifyContent: 'center',
       padding: tokens.spacing.lg,
+    },
+    ctaContainer: {
+      marginTop: tokens.spacing.sm,
+      minWidth: 200,
+    },
+    description: {
+      ...bodyTypography,
+      color: colors.text.secondary,
+      marginBottom: tokens.spacing.md,
+      textAlign: 'center',
     },
     iconContainer: {
       marginBottom: tokens.spacing.md,
@@ -66,18 +76,8 @@ const createStyles = ({
     title: {
       ...titleTypography,
       color: colors.text.primary,
-      textAlign: 'center',
       marginBottom: tokens.spacing.xs,
-    },
-    description: {
-      ...bodyTypography,
-      color: colors.text.secondary,
       textAlign: 'center',
-      marginBottom: tokens.spacing.md,
-    },
-    ctaContainer: {
-      marginTop: tokens.spacing.sm,
-      minWidth: 200,
     },
   });
 };

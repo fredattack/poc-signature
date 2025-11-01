@@ -1,9 +1,12 @@
 // Manual sync hook for triggering cloud synchronization
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAuthStore } from '@/store/auth-store';
-import { signatureSyncService, SyncResult } from '@/services/sync/signature-sync';
+import {
+  signatureSyncService,
+  SyncResult,
+} from '@/services/sync/signature-sync';
 import { useAnalytics } from './useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
@@ -52,7 +55,7 @@ export const useManualSync = (): UseManualSyncResult => {
       if (result.success) {
         // Mark synced signatures
         const syncedSignatures = signatures.filter(
-          sig => !result.failedSignatures.includes(sig.id)
+          (sig) => !result.failedSignatures.includes(sig.id)
         );
 
         for (const sig of syncedSignatures) {
@@ -87,7 +90,8 @@ export const useManualSync = (): UseManualSyncResult => {
 
       return result;
     } catch (error) {
-      const errorMessage = error instanceof Error ? error.message : 'Sync failed';
+      const errorMessage =
+        error instanceof Error ? error.message : 'Sync failed';
       setSyncError(errorMessage);
 
       track(ANALYTICS_EVENTS.SYNC_FAILED, {

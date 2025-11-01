@@ -1,9 +1,19 @@
 // Template carousel with horizontal scroll
 
 import React, { useMemo } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, StyleSheet } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { TemplateConfig } from '@/types/template.types';
-import { templates, getFreeTemplates, getPremiumTemplates } from '@/constants/templates';
+import {
+  getFreeTemplates,
+  getPremiumTemplates,
+  templates,
+} from '@/constants/templates';
 import { useThemeTokens } from '@/theme';
 
 export interface TemplateCarouselProps {
@@ -39,10 +49,7 @@ export const TemplateCarousel: React.FC<TemplateCarouselProps> = ({
     return (
       <TouchableOpacity
         key={template.id}
-        style={[
-          styles.templateCard,
-          isSelected && styles.templateCardSelected,
-        ]}
+        style={[styles.templateCard, isSelected && styles.templateCardSelected]}
         onPress={() => handleTemplatePress(template)}
         activeOpacity={0.7}
       >
@@ -75,10 +82,7 @@ export const TemplateCarousel: React.FC<TemplateCarouselProps> = ({
 
           {/* Sample text */}
           <Text
-            style={[
-              styles.sampleText,
-              { color: template.style.textColor },
-            ]}
+            style={[styles.sampleText, { color: template.style.textColor }]}
           >
             Aa
           </Text>
@@ -161,13 +165,45 @@ const createStyles = ({
   };
 
   const borderColor =
-    mode === 'dark'
-      ? 'rgba(244, 244, 244, 0.16)'
-      : 'rgba(35, 35, 35, 0.12)';
+    mode === 'dark' ? 'rgba(244, 244, 244, 0.16)' : 'rgba(35, 35, 35, 0.12)';
 
   return StyleSheet.create({
     container: {
       marginVertical: tokens.spacing.md,
+    },
+    gradientPreview: {
+      ...StyleSheet.absoluteFillObject,
+    },
+    lockBadge: {
+      alignItems: 'center',
+      backgroundColor: colors.overlay.medium,
+      borderRadius: tokens.radii.full,
+      height: 28,
+      justifyContent: 'center',
+      position: 'absolute',
+      right: 8,
+      top: 8,
+      width: 28,
+    },
+    lockIcon: {
+      fontSize: 14,
+    },
+    premiumBadge: {
+      backgroundColor: colors.brand.primary,
+      borderRadius: tokens.radii.mild,
+      marginTop: tokens.spacing.xs,
+      paddingHorizontal: tokens.spacing.xs,
+      paddingVertical: 2,
+    },
+    premiumText: {
+      ...captionTypography,
+      color: colors.text.inverse,
+      fontSize: 10,
+      fontWeight: '700',
+    },
+    sampleText: {
+      ...headingTypography,
+      fontWeight: 'bold',
     },
     scrollContent: {
       paddingHorizontal: tokens.spacing.md,
@@ -180,51 +216,12 @@ const createStyles = ({
       color: colors.text.secondary,
       marginBottom: tokens.spacing.sm,
     },
-    templatesRow: {
-      flexDirection: 'row',
-      gap: tokens.spacing.sm,
-    },
     templateCard: {
-      width: 100,
       alignItems: 'center',
+      width: 100,
     },
     templateCardSelected: {
       transform: [{ scale: 1.05 }],
-    },
-    templatePreview: {
-      width: 90,
-      height: 120,
-      borderRadius: tokens.radii.regular,
-      justifyContent: 'center',
-      alignItems: 'center',
-      marginBottom: tokens.spacing.xs,
-      borderWidth: 2,
-      borderColor,
-      overflow: 'hidden',
-      position: 'relative',
-      backgroundColor: colors.surface.background,
-      ...tokens.elevation.level1,
-    },
-    gradientPreview: {
-      ...StyleSheet.absoluteFillObject,
-    },
-    sampleText: {
-      ...headingTypography,
-      fontWeight: 'bold',
-    },
-    lockBadge: {
-      position: 'absolute',
-      top: 8,
-      right: 8,
-      backgroundColor: colors.overlay.medium,
-      borderRadius: tokens.radii.full,
-      width: 28,
-      height: 28,
-      justifyContent: 'center',
-      alignItems: 'center',
-    },
-    lockIcon: {
-      fontSize: 14,
     },
     templateName: {
       ...captionTypography,
@@ -235,18 +232,23 @@ const createStyles = ({
       color: colors.brand.primary,
       fontWeight: '600',
     },
-    premiumBadge: {
-      marginTop: tokens.spacing.xs,
-      backgroundColor: colors.brand.primary,
-      paddingHorizontal: tokens.spacing.xs,
-      paddingVertical: 2,
-      borderRadius: tokens.radii.mild,
+    templatePreview: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.background,
+      borderColor,
+      borderRadius: tokens.radii.regular,
+      borderWidth: 2,
+      height: 120,
+      justifyContent: 'center',
+      marginBottom: tokens.spacing.xs,
+      overflow: 'hidden',
+      position: 'relative',
+      width: 90,
+      ...tokens.elevation.level1,
     },
-    premiumText: {
-      ...captionTypography,
-      color: colors.text.inverse,
-      fontSize: 10,
-      fontWeight: '700',
+    templatesRow: {
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
     },
   });
 };

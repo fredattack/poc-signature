@@ -38,9 +38,11 @@ class AuthService {
    * Register new user
    * TODO: Replace with actual API call
    */
-  async register(request: RegisterRequest): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
+  async register(
+    request: RegisterRequest
+  ): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
     // Mock implementation - simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Mock user creation
     const user: User = {
@@ -73,9 +75,11 @@ class AuthService {
    * Login with email/password
    * TODO: Replace with actual API call
    */
-  async login(request: LoginRequest): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
+  async login(
+    request: LoginRequest
+  ): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
     // Mock implementation - simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     // Mock user login
     const user: User = {
@@ -108,9 +112,11 @@ class AuthService {
    * Login with Google
    * TODO: Implement Google Sign-In
    */
-  async loginWithGoogle(): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
+  async loginWithGoogle(): Promise<
+    ApiResponse<{ user: User; tokens: AuthTokens }>
+  > {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     return {
       error: 'Google Sign-In not yet implemented',
@@ -127,9 +133,11 @@ class AuthService {
    * Login with Apple
    * TODO: Implement Apple Sign-In
    */
-  async loginWithApple(): Promise<ApiResponse<{ user: User; tokens: AuthTokens }>> {
+  async loginWithApple(): Promise<
+    ApiResponse<{ user: User; tokens: AuthTokens }>
+  > {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 1500));
+    await new Promise((resolve) => setTimeout(resolve, 1500));
 
     return {
       error: 'Apple Sign-In not yet implemented',
@@ -166,11 +174,11 @@ class AuthService {
     }
 
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 500));
+    await new Promise((resolve) => setTimeout(resolve, 500));
 
     const tokens: AuthTokens = {
       accessToken: `mock_refreshed_access_token_${Date.now()}`,
-      refreshToken: refreshToken,
+      refreshToken,
     };
 
     await this.storeTokens(tokens);
@@ -188,9 +196,11 @@ class AuthService {
    * Request password reset
    * TODO: Replace with actual API call
    */
-  async forgotPassword(email: string): Promise<ApiResponse<{ message: string }>> {
+  async forgotPassword(
+    email: string
+  ): Promise<ApiResponse<{ message: string }>> {
     // Mock implementation
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    await new Promise((resolve) => setTimeout(resolve, 1000));
 
     return {
       data: { message: 'Password reset email sent' },

@@ -1,14 +1,23 @@
 // Signature hook with canvas state, path storage, and save logic
 
-import { useState, useCallback } from 'react';
+import { useCallback, useState } from 'react';
 import { Platform } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
-import { Signature, SignatureColor, CanvasPath, SignatureStatus, SyncStatus } from '@/types/signature.types';
+import {
+  CanvasPath,
+  Signature,
+  SignatureColor,
+  SignatureStatus,
+  SyncStatus,
+} from '@/types/signature.types';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { fileSystem } from '@/services/storage/file-system';
 import { useLocation } from './useLocation';
 import { useAnalytics } from './useAnalytics';
-import { validateCelebrityName, validateSignaturePaths } from '@/utils/validators';
+import {
+  validateCelebrityName,
+  validateSignaturePaths,
+} from '@/utils/validators';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
 interface UseSignatureOptions {
@@ -44,12 +53,16 @@ interface UseSignatureResult {
   saveSignature: () => Promise<Signature | null>;
 }
 
-export const useSignature = (options: UseSignatureOptions = {}): UseSignatureResult => {
-  const { initialColor = SignatureColor.Black, enableLocation = true } = options;
+export const useSignature = (
+  options: UseSignatureOptions = {}
+): UseSignatureResult => {
+  const { initialColor = SignatureColor.Black, enableLocation = true } =
+    options;
 
   // Canvas state
   const [paths, setPaths] = useState<CanvasPath[]>([]);
-  const [currentColor, setCurrentColor] = useState<SignatureColor>(initialColor);
+  const [currentColor, setCurrentColor] =
+    useState<SignatureColor>(initialColor);
   const [canvasRef, setCanvasRef] = useState<React.RefObject<any> | null>(null);
 
   // Form state
@@ -66,15 +79,24 @@ export const useSignature = (options: UseSignatureOptions = {}): UseSignatureRes
   const { trackSignatureEvent } = useAnalytics();
 
   // Validation
-  const validateForm = useCallback((): { isValid: boolean; error: string | null } => {
+  const validateForm = useCallback((): {
+    isValid: boolean;
+    error: string | null;
+  } => {
     const nameValidation = validateCelebrityName(celebrityName);
     if (!nameValidation.isValid) {
-      return { isValid: false, error: nameValidation.error || 'Invalid celebrity name' };
+      return {
+        isValid: false,
+        error: nameValidation.error || 'Invalid celebrity name',
+      };
     }
 
     const pathsValidation = validateSignaturePaths(paths);
     if (!pathsValidation.isValid) {
-      return { isValid: false, error: pathsValidation.error || 'Please draw a signature' };
+      return {
+        isValid: false,
+        error: pathsValidation.error || 'Please draw a signature',
+      };
     }
 
     return { isValid: true, error: null };
@@ -123,7 +145,7 @@ export const useSignature = (options: UseSignatureOptions = {}): UseSignatureRes
       }
 
       // Capture canvas as image
-      if (!canvasRef || !canvasRef.current) {
+      if (!canvasRef?.current) {
         throw new Error('Canvas reference not available');
       }
 
@@ -134,7 +156,10 @@ export const useSignature = (options: UseSignatureOptions = {}): UseSignatureRes
       });
 
       // Save image to file system
-      const imagePath = await fileSystem.saveSignatureImage(imageUri, signatureId);
+      const imagePath = await fileSystem.saveSignatureImage(
+        imageUri,
+        signatureId
+      );
       if (!imagePath) {
         throw new Error('Failed to save signature image');
       }
@@ -165,7 +190,8 @@ export const useSignature = (options: UseSignatureOptions = {}): UseSignatureRes
       setIsSaving(false);
       return signature;
     } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : 'Failed to save signature';
+      const errorMessage =
+        err instanceof Error ? err.message : 'Failed to save signature';
       setError(errorMessage);
       setIsSaving(false);
       console.error('Save signature error:', err);

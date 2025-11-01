@@ -2,25 +2,25 @@
 
 import React, { useRef, useState } from 'react';
 import {
-  View,
-  StyleSheet,
   Dimensions,
-  TouchableOpacity,
-  Text,
   NativeScrollEvent,
   NativeSyntheticEvent,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import Animated, {
-  useSharedValue,
   useAnimatedScrollHandler,
+  useSharedValue,
 } from 'react-native-reanimated';
 import type { AnimatedScrollView } from 'react-native-reanimated';
 import { OnboardingSlide } from '@/components/onboarding/OnboardingSlide';
 import {
   CaptureIllustration,
-  WallpaperIllustration,
   CollectionIllustration,
+  WallpaperIllustration,
 } from '@/components/onboarding/OnboardingIllustrations';
 import { PaginationDots } from '@/components/onboarding/PaginationDots';
 import { Button } from '@/components/ui/Button';
@@ -172,31 +172,31 @@ export default function OnboardingScreen() {
 }
 
 const styles = StyleSheet.create({
+  buttonContainer: {
+    marginTop: spacing.md,
+  },
   container: {
-    flex: 1,
     backgroundColor: colors.background,
+    flex: 1,
+  },
+  footer: {
+    paddingBottom: spacing.xxl,
+    paddingHorizontal: spacing.xl,
+  },
+  scrollView: {
+    flex: 1,
   },
   skipButton: {
-    position: 'absolute',
-    top: 60,
-    right: spacing.lg,
-    zIndex: 10,
-    paddingVertical: spacing.xs,
     paddingHorizontal: spacing.md,
+    paddingVertical: spacing.xs,
+    position: 'absolute',
+    right: spacing.lg,
+    top: 60,
+    zIndex: 10,
   },
   skipText: {
     ...typography.body,
     color: colors.textSecondary,
     fontWeight: '600',
-  },
-  scrollView: {
-    flex: 1,
-  },
-  footer: {
-    paddingHorizontal: spacing.xl,
-    paddingBottom: spacing.xxl,
-  },
-  buttonContainer: {
-    marginTop: spacing.md,
   },
 });

@@ -1,29 +1,31 @@
-// Tab navigator configuration
+// Tab navigator configuration with theme tokens
 
 import React from 'react';
 import { Tabs } from 'expo-router';
 import { Text } from 'react-native';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
+import { useThemeTokens } from '@/theme';
 
 export default function TabsLayout() {
+  const { colors, tokens } = useThemeTokens();
+
   return (
     <Tabs
       screenOptions={{
         headerShown: false,
-        tabBarActiveTintColor: colors.primary,
-        tabBarInactiveTintColor: colors.textSecondary,
+        tabBarActiveTintColor: colors.brand.primary,
+        tabBarInactiveTintColor: colors.text.secondary,
         tabBarStyle: {
-          backgroundColor: colors.background,
-          borderTopColor: colors.border,
+          backgroundColor: colors.surface.card,
+          borderTopColor: colors.overlay.light,
           borderTopWidth: 1,
-          height: 60,
+          height: tokens.layout.tabBarHeight,
           paddingBottom: 8,
           paddingTop: 8,
         },
         tabBarLabelStyle: {
-          ...typography.caption,
+          fontSize: tokens.typography.caption.fontSize,
           fontWeight: '600',
+          letterSpacing: tokens.typography.caption.letterSpacing,
         },
       }}
     >

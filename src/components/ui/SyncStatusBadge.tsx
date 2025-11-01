@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { View, Text, StyleSheet } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { SyncStatus } from '@/types/sync.types';
 import { useThemeTokens } from '@/theme';
 
@@ -85,28 +85,28 @@ const createStyles = ({
 
   return StyleSheet.create({
     badge: {
-      borderRadius: tokens.radii.mild,
-      paddingVertical: tokens.spacing.xs / 2,
-      paddingHorizontal: tokens.spacing.xs,
       alignSelf: 'flex-start',
-    },
-    badgeSmall: {
-      paddingVertical: 2,
-      paddingHorizontal: tokens.spacing.micro,
+      borderRadius: tokens.radii.mild,
+      paddingHorizontal: tokens.spacing.xs,
+      paddingVertical: tokens.spacing.xs / 2,
     },
     badgeMedium: {
-      paddingVertical: tokens.spacing.micro,
       paddingHorizontal: tokens.spacing.xs,
+      paddingVertical: tokens.spacing.micro,
+    },
+    badgeSmall: {
+      paddingHorizontal: tokens.spacing.micro,
+      paddingVertical: 2,
     },
     text: {
       ...captionTypography,
       color: colors.text.inverse,
     },
-    textSmall: {
-      fontSize: 11,
-    },
     textMedium: {
       fontSize: 13,
+    },
+    textSmall: {
+      fontSize: 11,
     },
   });
 };

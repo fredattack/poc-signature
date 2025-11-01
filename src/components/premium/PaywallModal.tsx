@@ -1,14 +1,24 @@
 // Paywall modal for premium subscription
 
 import React, { useMemo, useState } from 'react';
-import { View, Text, StyleSheet, ScrollView, TouchableOpacity } from 'react-native';
+import {
+  ScrollView,
+  StyleSheet,
+  Text,
+  TouchableOpacity,
+  View,
+} from 'react-native';
 import { Modal } from '@/components/ui/Modal';
 import { Button } from '@/components/ui/Button';
 import { usePremium } from '@/hooks/usePremium';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { SubscriptionPlan } from '@/services/api/subscriptions';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
-import { PREMIUM_MONTHLY_PRICE, PREMIUM_ANNUAL_PRICE, TRIAL_DURATION_DAYS } from '@/utils/constants';
+import {
+  PREMIUM_ANNUAL_PRICE,
+  PREMIUM_MONTHLY_PRICE,
+  TRIAL_DURATION_DAYS,
+} from '@/utils/constants';
 import { useThemeTokens } from '@/theme';
 
 export interface PaywallModalProps {
@@ -38,7 +48,9 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
-  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(SubscriptionPlan.Annual);
+  const [selectedPlan, setSelectedPlan] = useState<SubscriptionPlan>(
+    SubscriptionPlan.Annual
+  );
 
   React.useEffect(() => {
     if (visible) {
@@ -51,7 +63,10 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
   const handleSubscribe = async () => {
     track(ANALYTICS_EVENTS.SUBSCRIPTION_STARTED, {
       plan_type: selectedPlan,
-      price: selectedPlan === SubscriptionPlan.Annual ? PREMIUM_ANNUAL_PRICE : PREMIUM_MONTHLY_PRICE,
+      price:
+        selectedPlan === SubscriptionPlan.Annual
+          ? PREMIUM_ANNUAL_PRICE
+          : PREMIUM_MONTHLY_PRICE,
     });
 
     // Mock subscription activation
@@ -68,13 +83,18 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
     }
   };
 
-  const annualSavings = ((PREMIUM_MONTHLY_PRICE * 12 - PREMIUM_ANNUAL_PRICE) / (PREMIUM_MONTHLY_PRICE * 12) * 100).toFixed(0);
+  const annualSavings = (
+    ((PREMIUM_MONTHLY_PRICE * 12 - PREMIUM_ANNUAL_PRICE) /
+      (PREMIUM_MONTHLY_PRICE * 12)) *
+    100
+  ).toFixed(0);
 
   return (
     <Modal visible={visible} onClose={onClose} title="Upgrade to Premium">
       <ScrollView showsVerticalScrollIndicator={false}>
         <Text style={styles.subtitle}>
-          Start your {TRIAL_DURATION_DAYS}-day free trial and unlock all premium features
+          Start your {TRIAL_DURATION_DAYS}-day free trial and unlock all premium
+          features
         </Text>
 
         {/* Benefits */}
@@ -93,7 +113,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           <TouchableOpacity
             style={[
               styles.planCard,
-              selectedPlan === SubscriptionPlan.Annual && styles.planCardSelected,
+              selectedPlan === SubscriptionPlan.Annual &&
+                styles.planCardSelected,
             ]}
             onPress={() => setSelectedPlan(SubscriptionPlan.Annual)}
             activeOpacity={0.7}
@@ -116,7 +137,8 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
           <TouchableOpacity
             style={[
               styles.planCard,
-              selectedPlan === SubscriptionPlan.Monthly && styles.planCardSelected,
+              selectedPlan === SubscriptionPlan.Monthly &&
+                styles.planCardSelected,
             ]}
             onPress={() => setSelectedPlan(SubscriptionPlan.Monthly)}
             activeOpacity={0.7}
@@ -141,7 +163,11 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
 
         {/* Fine Print */}
         <Text style={styles.finePrint}>
-          Cancel anytime during trial. ${selectedPlan === SubscriptionPlan.Annual ? PREMIUM_ANNUAL_PRICE : PREMIUM_MONTHLY_PRICE} will be charged after trial ends.
+          Cancel anytime during trial. $
+          {selectedPlan === SubscriptionPlan.Annual
+            ? PREMIUM_ANNUAL_PRICE
+            : PREMIUM_MONTHLY_PRICE}{' '}
+          will be charged after trial ends.
         </Text>
       </ScrollView>
     </Modal>
@@ -187,56 +213,54 @@ const createStyles = ({
   };
 
   const selectedBackground =
-    mode === 'dark'
-      ? 'rgba(129, 144, 85, 0.18)'
-      : 'rgba(138, 154, 91, 0.08)';
+    mode === 'dark' ? 'rgba(129, 144, 85, 0.18)' : 'rgba(138, 154, 91, 0.08)';
 
   return StyleSheet.create({
-    subtitle: {
-      ...bodyTypography,
-      color: colors.text.secondary,
-      textAlign: 'center',
-      marginBottom: tokens.spacing.md,
-    },
-    benefitsContainer: {
-      marginBottom: tokens.spacing.lg,
-    },
     benefitRow: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       marginBottom: tokens.spacing.sm,
-    },
-    checkmark: {
-      ...headingTypography,
-      color: colors.feedback.success,
-      marginRight: tokens.spacing.sm,
     },
     benefitText: {
       ...bodyTypography,
       color: colors.text.primary,
       flex: 1,
     },
-    pricingContainer: {
+    benefitsContainer: {
       marginBottom: tokens.spacing.lg,
-      gap: tokens.spacing.md,
+    },
+    checkmark: {
+      ...headingTypography,
+      color: colors.feedback.success,
+      marginRight: tokens.spacing.sm,
+    },
+    finePrint: {
+      ...captionTypography,
+      color: colors.text.secondary,
+      marginTop: tokens.spacing.md,
+      textAlign: 'center',
     },
     planCard: {
-      padding: tokens.spacing.md,
-      borderRadius: tokens.radii.regular,
-      borderWidth: 2,
+      backgroundColor: colors.surface.card,
       borderColor:
         mode === 'dark'
           ? 'rgba(244, 244, 244, 0.16)'
           : 'rgba(35, 35, 35, 0.12)',
-      backgroundColor: colors.surface.card,
+      borderRadius: tokens.radii.regular,
+      borderWidth: 2,
+      padding: tokens.spacing.md,
     },
     planCardSelected: {
-      borderColor: colors.brand.primary,
       backgroundColor: selectedBackground,
+      borderColor: colors.brand.primary,
+    },
+    planDetails: {
+      ...captionTypography,
+      color: colors.text.secondary,
     },
     planHeader: {
-      flexDirection: 'row',
       alignItems: 'center',
+      flexDirection: 'row',
       justifyContent: 'space-between',
       marginBottom: tokens.spacing.xs,
     },
@@ -244,30 +268,30 @@ const createStyles = ({
       ...headingTypography,
       color: colors.text.primary,
     },
-    savingsBadge: {
-      backgroundColor: colors.brand.accent,
-      paddingHorizontal: tokens.spacing.sm,
-      paddingVertical: tokens.spacing.micro,
-      borderRadius: tokens.radii.mild,
-    },
-    savingsText: {
-      ...captionBoldTypography,
-      color: colors.text.inverse,
-    },
     planPrice: {
       ...priceTypography,
       color: colors.text.primary,
       marginBottom: tokens.spacing.micro,
     },
-    planDetails: {
-      ...captionTypography,
-      color: colors.text.secondary,
+    pricingContainer: {
+      gap: tokens.spacing.md,
+      marginBottom: tokens.spacing.lg,
     },
-    finePrint: {
-      ...captionTypography,
+    savingsBadge: {
+      backgroundColor: colors.brand.accent,
+      borderRadius: tokens.radii.mild,
+      paddingHorizontal: tokens.spacing.sm,
+      paddingVertical: tokens.spacing.micro,
+    },
+    savingsText: {
+      ...captionBoldTypography,
+      color: colors.text.inverse,
+    },
+    subtitle: {
+      ...bodyTypography,
       color: colors.text.secondary,
+      marginBottom: tokens.spacing.md,
       textAlign: 'center',
-      marginTop: tokens.spacing.md,
     },
   });
 };

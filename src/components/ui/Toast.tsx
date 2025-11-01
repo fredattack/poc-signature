@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Text, StyleSheet, Animated } from 'react-native';
+import { Animated, StyleSheet, Text } from 'react-native';
 import { useThemeTokens } from '@/theme';
 
 export type ToastVariant = 'success' | 'error' | 'info';
@@ -95,39 +95,39 @@ const createStyles = ({
 
   return StyleSheet.create({
     container: {
-      position: 'absolute',
-      top: 50,
-      left: tokens.spacing.sm,
-      right: tokens.spacing.sm,
-      paddingVertical: tokens.spacing.sm,
-      paddingHorizontal: tokens.spacing.md,
       borderRadius: tokens.radii.regular,
+      left: tokens.spacing.sm,
+      paddingHorizontal: tokens.spacing.md,
+      paddingVertical: tokens.spacing.sm,
+      position: 'absolute',
+      right: tokens.spacing.sm,
+      top: 50,
       ...tokens.elevation.level2,
-      zIndex: 1000,
       backgroundColor: colors.surface.card,
+      zIndex: 1000,
     },
-    text: {
-      ...bodyTypography,
-      textAlign: 'center',
+    errorContainer: {
+      backgroundColor: colors.feedback.critical,
+    },
+    errorText: {
+      color: colors.text.inverse,
+    },
+    infoContainer: {
+      backgroundColor: colors.feedback.info,
+    },
+    infoText: {
       color: colors.text.inverse,
     },
     successContainer: {
       backgroundColor: colors.feedback.success,
     },
-    errorContainer: {
-      backgroundColor: colors.feedback.critical,
-    },
-    infoContainer: {
-      backgroundColor: colors.feedback.info,
-    },
     successText: {
       color: colors.text.inverse,
     },
-    errorText: {
+    text: {
+      ...bodyTypography,
       color: colors.text.inverse,
-    },
-    infoText: {
-      color: colors.text.inverse,
+      textAlign: 'center',
     },
   });
 };
