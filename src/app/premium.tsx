@@ -56,7 +56,7 @@ export default function PremiumScreen() {
 
   useEffect(() => {
     screen('Premium');
-    checkPremiumStatus();
+    void checkPremiumStatus();
   }, [screen, checkPremiumStatus]);
 
   return (
@@ -75,7 +75,7 @@ export default function PremiumScreen() {
         {isPremium && subscription ? (
           // Premium user - show subscription details
           <>
-            <Text style={styles.statusTitle}>You're Premium! 🎉</Text>
+            <Text style={styles.statusTitle}>You&apos;re Premium! 🎉</Text>
             <Text style={styles.statusSubtitle}>
               Enjoy all premium features and support the app
             </Text>
@@ -121,7 +121,7 @@ export default function PremiumScreen() {
         onClose={() => setShowPaywall(false)}
         onSuccess={() => {
           // Refresh premium status
-          checkPremiumStatus();
+          void checkPremiumStatus();
         }}
       />
     </View>

@@ -17,7 +17,7 @@ export interface SentryConfig {
   debug?: boolean;
 }
 
-export const initSentry = (config: SentryConfig): void => {
+export const initSentry = (_config: SentryConfig): void => {
   // Uncomment when Sentry is installed:
   /*
   try {
@@ -81,7 +81,7 @@ export const captureMessage = (
   console.log(`[Sentry] Message (${level}):`, message);
 };
 
-export const setUser = (user: {
+export const setUser = (_user: {
   id: string;
   email?: string;
   username?: string;
@@ -109,7 +109,7 @@ export const clearUser = (): void => {
   */
 };
 
-export const addBreadcrumb = (breadcrumb: {
+export const addBreadcrumb = (_breadcrumb: {
   message: string;
   category?: string;
   level?: string;

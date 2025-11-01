@@ -88,7 +88,7 @@ export default function SignatureDetailScreen() {
         setToastVisible(true);
       } else {
         setToastType('error');
-        setToastMessage(result.error || 'Failed to share signature');
+        setToastMessage(result.error ?? 'Failed to share signature');
         setToastVisible(true);
       }
     } catch (error) {
@@ -112,14 +112,15 @@ export default function SignatureDetailScreen() {
         {
           text: 'Delete',
           style: 'destructive',
-          onPress: async () => {
-            await removeSignature(signature.id);
-            track(ANALYTICS_EVENTS.SIGNATURE_DELETED, {
-              signature_id: signature.id,
-              celebrity_name: signature.celebrityName,
-            });
-            router.back();
-          },
+          onPress: () =>
+            void (async () => {
+              await removeSignature(signature.id);
+              track(ANALYTICS_EVENTS.SIGNATURE_DELETED, {
+                signature_id: signature.id,
+                celebrity_name: signature.celebrityName,
+              });
+              router.back();
+            })(),
         },
       ]
     );
@@ -204,7 +205,7 @@ export default function SignatureDetailScreen() {
           />
           <Button
             title="📤 Share Signature"
-            onPress={handleShare}
+            onPress={() => void handleShare()}
             variant="secondary"
             fullWidth
             loading={isSharing}

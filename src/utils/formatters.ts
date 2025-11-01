@@ -51,7 +51,7 @@ export const formatLocation = (city?: string, country?: string): string => {
   if (city && country) {
     return `${city}, ${country}`;
   }
-  return city || country || 'Unknown location';
+  return city ?? country ?? 'Unknown location';
 };
 
 export const truncateText = (text: string, maxLength: number): string => {

@@ -4,7 +4,7 @@ import React, { Component, ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
 import { useThemeTokens } from '@/theme';
-import type { Tokens } from '@/theme';
+import type { Tokens as _Tokens } from '@/theme';
 
 interface Props {
   children: ReactNode;
@@ -59,7 +59,8 @@ class ErrorBoundaryBase extends Component<ThemedProps, State> {
           <Text style={styles.emoji}>😞</Text>
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.message}>
-            We're sorry for the inconvenience. Please try restarting the app.
+            We&apos;re sorry for the inconvenience. Please try restarting the
+            app.
           </Text>
 
           {__DEV__ && this.state.error && (

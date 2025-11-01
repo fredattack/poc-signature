@@ -51,8 +51,8 @@ export const useLocation = (): UseLocationResult => {
         }
 
         const signatureLocation: SignatureLocation = {
-          city: geocode.city || geocode.subregion || 'Unknown City',
-          country: geocode.country || 'Unknown Country',
+          city: geocode.city ?? geocode.subregion ?? 'Unknown City',
+          country: geocode.country ?? 'Unknown Country',
           latitude: position.coords.latitude,
           longitude: position.coords.longitude,
         };

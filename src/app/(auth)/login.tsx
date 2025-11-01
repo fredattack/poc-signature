@@ -132,7 +132,7 @@ export default function LoginScreen() {
         {/* Login Button */}
         <Button
           title="Sign In"
-          onPress={handleLogin}
+          onPress={() => void handleLogin()}
           variant="primary"
           fullWidth
           loading={isLoading}
@@ -149,7 +149,7 @@ export default function LoginScreen() {
         {/* Social Login Buttons */}
         <Button
           title="Continue with Google"
-          onPress={handleGoogleLogin}
+          onPress={() => void handleGoogleLogin()}
           variant="secondary"
           fullWidth
           disabled={isLoading}
@@ -157,7 +157,7 @@ export default function LoginScreen() {
 
         <Button
           title="Continue with Apple"
-          onPress={handleAppleLogin}
+          onPress={() => void handleAppleLogin()}
           variant="secondary"
           fullWidth
           disabled={isLoading}
@@ -173,7 +173,7 @@ export default function LoginScreen() {
 
         {/* Sign Up Link */}
         <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Don't have an account? </Text>
+          <Text style={styles.signUpText}>Don&apos;t have an account? </Text>
           <Button
             title="Sign Up"
             onPress={handleSignUp}

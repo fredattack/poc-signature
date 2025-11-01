@@ -1,6 +1,6 @@
 // Subscription API service (mock Stripe integration for POC)
 
-import { apiClient, ApiResponse } from './client';
+import { apiClient as _apiClient, ApiResponse } from './client';
 
 export enum SubscriptionStatus {
   Active = 'active',
@@ -46,7 +46,7 @@ class SubscriptionService {
    * TODO: Replace with actual Stripe API call
    */
   async createCheckoutSession(
-    request: CreateCheckoutSessionRequest
+    _request: CreateCheckoutSessionRequest
   ): Promise<ApiResponse<CheckoutSession>> {
     // Mock implementation
     await new Promise((resolve) => setTimeout(resolve, 1000));
@@ -111,7 +111,7 @@ class SubscriptionService {
     try {
       const response = await this.getSubscriptionStatus();
 
-      if (response.error || !response.data) {
+      if (response.error ?? !response.data) {
         return false;
       }
 

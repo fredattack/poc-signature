@@ -47,7 +47,7 @@ export default function GalleryScreen() {
 
   useEffect(() => {
     screen('Gallery');
-    loadSignatures();
+    void loadSignatures();
   }, [screen, loadSignatures]);
 
   const signatures: Signature[] = getSortedSignatures(sortBy);
@@ -93,7 +93,7 @@ export default function GalleryScreen() {
           activeOpacity={0.7}
         >
           <Text style={styles.sortButtonText}>
-            Sort: {currentOption?.label || 'Recent'}
+            Sort: {currentOption?.label ?? 'Recent'}
           </Text>
           <Text style={styles.sortIcon}>{showSortMenu ? '▲' : '▼'}</Text>
         </TouchableOpacity>
@@ -162,7 +162,7 @@ export default function GalleryScreen() {
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
-              onRefresh={handleRefresh}
+              onRefresh={() => void handleRefresh()}
               tintColor={colors.primary}
               colors={[colors.primary]}
             />

@@ -154,7 +154,7 @@ export const PaywallModal: React.FC<PaywallModalProps> = ({
         {/* Subscribe Button */}
         <Button
           title={`Start ${TRIAL_DURATION_DAYS}-Day Free Trial`}
-          onPress={handleSubscribe}
+          onPress={() => void handleSubscribe()}
           variant="primary"
           fullWidth
           loading={isLoading}

@@ -12,7 +12,8 @@ export default function Index() {
   const [isChecking, setIsChecking] = useState(true);
 
   useEffect(() => {
-    checkOnboardingStatus();
+    void checkOnboardingStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkOnboardingStatus = async () => {

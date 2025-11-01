@@ -1,19 +1,19 @@
 // Wallpaper hook with template selection, customization, and generation
 
-import { useCallback, useRef, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { captureRef } from 'react-native-view-shot';
 import * as MediaLibrary from 'expo-media-library';
 import * as Sharing from 'expo-sharing';
 import {
-  Wallpaper,
+  Wallpaper as _Wallpaper,
   WallpaperOptions,
   WallpaperResolution,
 } from '@/types/wallpaper.types';
 import { Signature } from '@/types/signature.types';
-import { fileSystem } from '@/services/storage/file-system';
+import { fileSystem as _fileSystem } from '@/services/storage/file-system';
 import { useAnalytics } from './useAnalytics';
 import { requestPhotoLibraryPermission } from '@/utils/permissions';
-import { WALLPAPER_GENERATION_TIMEOUT } from '@/utils/constants';
+import { WALLPAPER_GENERATION_TIMEOUT as _WALLPAPER_GENERATION_TIMEOUT } from '@/utils/constants';
 
 interface UseWallpaperOptions {
   signature: Signature;
@@ -85,7 +85,7 @@ export const useWallpaper = (
       }));
 
       // Track color changes
-      if (updates.backgroundColor || updates.textColor) {
+      if (updates.backgroundColor ?? updates.textColor) {
         trackWallpaperEvent('color_changed', {
           background_color: updates.backgroundColor,
           text_color: updates.textColor,

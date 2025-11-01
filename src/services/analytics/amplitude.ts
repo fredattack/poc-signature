@@ -15,7 +15,7 @@ import { AnalyticsEvent, UserIdentity } from '@/types/analytics.types';
 export class AmplitudeTracker implements AnalyticsTracker {
   private initialized: boolean = false;
 
-  async init(apiKey: string, config?: any): Promise<void> {
+  async init(_apiKey: string, _config?: any): Promise<void> {
     // Uncomment when Amplitude is installed:
     /*
     try {
@@ -37,7 +37,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     );
   }
 
-  track(event: AnalyticsEvent): void {
+  track(_event: AnalyticsEvent): void {
     if (!this.initialized) {
       return;
     }
@@ -68,7 +68,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     });
   }
 
-  identify(user: UserIdentity): void {
+  identify(_user: UserIdentity): void {
     if (!this.initialized) {
       return;
     }
@@ -109,7 +109,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     */
   }
 
-  setUserProperty(key: string, value: any): void {
+  setUserProperty(_key: string, _value: any): void {
     if (!this.initialized) {
       return;
     }

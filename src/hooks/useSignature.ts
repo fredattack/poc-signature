@@ -1,7 +1,7 @@
 // Signature hook with canvas state, path storage, and save logic
 
 import { useCallback, useState } from 'react';
-import { Platform } from 'react-native';
+import { Platform as _Platform } from 'react-native';
 import { captureRef } from 'react-native-view-shot';
 import {
   CanvasPath,
@@ -18,7 +18,7 @@ import {
   validateCelebrityName,
   validateSignaturePaths,
 } from '@/utils/validators';
-import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
+import { ANALYTICS_EVENTS as _ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
 interface UseSignatureOptions {
   initialColor?: SignatureColor;
@@ -75,7 +75,7 @@ export const useSignature = (
 
   // Hooks
   const { addSignature } = useSignaturesStore();
-  const { location, requestLocation } = useLocation();
+  const { location: _location, requestLocation } = useLocation();
   const { trackSignatureEvent } = useAnalytics();
 
   // Validation
@@ -87,7 +87,7 @@ export const useSignature = (
     if (!nameValidation.isValid) {
       return {
         isValid: false,
-        error: nameValidation.error || 'Invalid celebrity name',
+        error: nameValidation.error ?? 'Invalid celebrity name',
       };
     }
 
@@ -95,7 +95,7 @@ export const useSignature = (
     if (!pathsValidation.isValid) {
       return {
         isValid: false,
-        error: pathsValidation.error || 'Please draw a signature',
+        error: pathsValidation.error ?? 'Please draw a signature',
       };
     }
 
@@ -171,7 +171,7 @@ export const useSignature = (
         signatureImagePath: imagePath,
         signatureColor: currentColor,
         capturedAt: new Date(),
-        location: signatureLocation || undefined,
+        location: signatureLocation ?? undefined,
         syncStatus: SyncStatus.Pending,
         status: SignatureStatus.Active,
       };

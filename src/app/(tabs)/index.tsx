@@ -14,8 +14,11 @@ import { useThemeTokens } from '@/theme';
 export default function HomeScreen() {
   const router = useRouter();
   const { screen } = useAnalytics();
-  const { signatures, loadSignatures, getActiveSignatures } =
-    useSignaturesStore();
+  const {
+    signatures: _signatures,
+    loadSignatures,
+    getActiveSignatures,
+  } = useSignaturesStore();
   const theme = useThemeTokens();
   const insets = useSafeAreaInsets();
   const styles = useMemo(
@@ -25,7 +28,7 @@ export default function HomeScreen() {
 
   useEffect(() => {
     screen('Home');
-    loadSignatures();
+    void loadSignatures();
   }, [screen, loadSignatures]);
 
   const activeSignatures = getActiveSignatures();

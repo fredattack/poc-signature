@@ -65,7 +65,7 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
     }
   },
 
-  activatePremium: async (plan: SubscriptionPlan) => {
+  activatePremium: async (_plan: SubscriptionPlan) => {
     set({ isLoading: true, error: null });
 
     try {
@@ -134,7 +134,7 @@ export const usePremiumStore = create<PremiumState>((set, get) => ({
 
   setIsPremium: (isPremium: boolean) => {
     set({ isPremium });
-    asyncStorage.set(PREMIUM_CACHE_KEY, isPremium);
+    void asyncStorage.set(PREMIUM_CACHE_KEY, isPremium);
   },
 
   loadCachedStatus: async () => {

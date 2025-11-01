@@ -5,10 +5,13 @@ import { Dimensions, Image, StyleSheet, View } from 'react-native';
 import Svg, { Defs, LinearGradient, Rect, Stop, Text } from 'react-native-svg';
 import { Signature } from '@/types/signature.types';
 import { WallpaperOptions } from '@/types/wallpaper.types';
-import { Template, TemplateLayout } from '@/types/template.types';
+import {
+  Template as _Template,
+  TemplateLayout as _TemplateLayout,
+} from '@/types/template.types';
 import { getTemplateById } from '@/constants/templates';
 import { formatDate, formatLocation } from '@/utils/formatters';
-import { WALLPAPER_STANDARD_RESOLUTION } from '@/utils/constants';
+import { WALLPAPER_STANDARD_RESOLUTION as _WALLPAPER_STANDARD_RESOLUTION } from '@/utils/constants';
 import { useThemeTokens } from '@/theme';
 
 export interface TemplateRendererProps {
@@ -37,8 +40,8 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
   }
 
   const backgroundColor =
-    options.backgroundColor || template.style.backgroundColor;
-  const textColor = options.textColor || template.style.textColor;
+    options.backgroundColor ?? template.style.backgroundColor;
+  const textColor = options.textColor ?? template.style.textColor;
   const gradient = template.style.gradient;
 
   const renderBackground = () => {

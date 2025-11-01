@@ -1,6 +1,6 @@
 // Signatures API service for cloud sync (mock implementation for POC)
 
-import { apiClient, ApiResponse } from './client';
+import { apiClient as _apiClient, ApiResponse } from './client';
 import { Signature } from '@/types/signature.types';
 
 export interface SyncResponse {
@@ -75,7 +75,7 @@ class SignaturesApiService {
    * Delete signature from cloud
    * TODO: Replace with actual API call
    */
-  async delete(id: string): Promise<ApiResponse<void>> {
+  async delete(_id: string): Promise<ApiResponse<void>> {
     // Mock implementation
     await new Promise((resolve) => setTimeout(resolve, 500));
 

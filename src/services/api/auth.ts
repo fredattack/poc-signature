@@ -1,6 +1,6 @@
 // Authentication API service (mock implementation for POC)
 
-import { apiClient, ApiResponse } from './client';
+import { apiClient as _apiClient, ApiResponse } from './client';
 import { secureStorage } from '../storage/secure-storage';
 import { asyncStorage } from '../storage/async-storage';
 import { STORAGE_KEYS } from '@/utils/constants';
@@ -197,7 +197,7 @@ class AuthService {
    * TODO: Replace with actual API call
    */
   async forgotPassword(
-    email: string
+    _email: string
   ): Promise<ApiResponse<{ message: string }>> {
     // Mock implementation
     await new Promise((resolve) => setTimeout(resolve, 1000));

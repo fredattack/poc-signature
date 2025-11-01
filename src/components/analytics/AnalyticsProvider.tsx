@@ -63,7 +63,7 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
       }
     };
 
-    loadConsent();
+    void loadConsent();
   }, []);
 
   // Initialize analytics services
@@ -95,7 +95,7 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
         setInitialized(true);
       };
 
-      initializeAnalytics();
+      void initializeAnalytics();
     } else if (!consentGiven && initialized) {
       // Disable analytics if consent is revoked
       analytics.setEnabled(false);

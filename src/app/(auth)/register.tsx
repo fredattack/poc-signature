@@ -114,7 +114,7 @@ export default function RegisterScreen() {
         {/* Register Button */}
         <Button
           title="Create Account"
-          onPress={handleRegister}
+          onPress={() => void handleRegister()}
           variant="primary"
           fullWidth
           loading={isLoading}

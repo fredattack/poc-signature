@@ -69,13 +69,13 @@ const getPlatformShareOptions = (
     // iOS-specific options
     return {
       ...baseOptions,
-      dialogTitle: options.dialogTitle || 'Share Signature',
+      dialogTitle: options.dialogTitle ?? 'Share Signature',
     };
   } else {
     // Android-specific options
     return {
       ...baseOptions,
-      dialogTitle: options.dialogTitle || 'Share via',
+      dialogTitle: options.dialogTitle ?? 'Share via',
     };
   }
 };

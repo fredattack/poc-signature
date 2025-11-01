@@ -18,7 +18,8 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   useEffect(() => {
-    checkConsentStatus();
+    void checkConsentStatus();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const checkConsentStatus = async () => {
@@ -88,13 +89,13 @@ export const ConsentModal: React.FC<ConsentModalProps> = ({ onConsent }) => {
         <View style={styles.buttons}>
           <Button
             title="Accept"
-            onPress={handleAccept}
+            onPress={() => void handleAccept()}
             variant="primary"
             fullWidth
           />
           <Button
             title="Decline"
-            onPress={handleDecline}
+            onPress={() => void handleDecline()}
             variant="secondary"
             fullWidth
           />

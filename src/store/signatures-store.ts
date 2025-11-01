@@ -3,7 +3,7 @@
 import { create } from 'zustand';
 import {
   Signature,
-  SignatureColor,
+  SignatureColor as _SignatureColor,
   SignatureStatus,
   SyncStatus,
 } from '@/types/signature.types';
@@ -45,7 +45,7 @@ export const useSignaturesStore = create<SignaturesState>((set, get) => ({
       const stored = await asyncStorage.get<Signature[]>(
         STORAGE_KEYS.SIGNATURES
       );
-      const signatures = stored || [];
+      const signatures = stored ?? [];
 
       // Filter out permanently deleted signatures
       const activeSignatures = signatures.filter(

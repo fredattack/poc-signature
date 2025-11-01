@@ -39,18 +39,19 @@ export const SubscriptionCard: React.FC<SubscriptionCardProps> = ({
         {
           text: 'Cancel',
           style: 'destructive',
-          onPress: async () => {
-            const success = await cancelSubscription();
-            if (success) {
-              track(ANALYTICS_EVENTS.SUBSCRIPTION_CANCELED, {
-                plan_type: subscription.plan,
-              });
-              Alert.alert(
-                'Subscription Canceled',
-                'Your subscription will remain active until the end of your billing period.'
-              );
-            }
-          },
+          onPress: () =>
+            void (async () => {
+              const success = await cancelSubscription();
+              if (success) {
+                track(ANALYTICS_EVENTS.SUBSCRIPTION_CANCELED, {
+                  plan_type: subscription.plan,
+                });
+                Alert.alert(
+                  'Subscription Canceled',
+                  'Your subscription will remain active until the end of your billing period.'
+                );
+              }
+            })(),
         },
       ]
     );

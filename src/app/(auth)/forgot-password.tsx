@@ -58,8 +58,8 @@ export default function ForgotPasswordScreen() {
 
       <View style={styles.content}>
         <Text style={styles.subtitle}>
-          Enter your email address and we'll send you instructions to reset your
-          password
+          Enter your email address and we&apos;ll send you instructions to reset
+          your password
         </Text>
 
         <Input
@@ -74,7 +74,7 @@ export default function ForgotPasswordScreen() {
 
         <Button
           title="Send Reset Instructions"
-          onPress={handleResetPassword}
+          onPress={() => void handleResetPassword()}
           variant="primary"
           fullWidth
           loading={isLoading}

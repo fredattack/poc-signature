@@ -19,12 +19,12 @@ const ThemeContext = createContext<ThemeContextValue | undefined>(undefined);
 const resolveMode = (
   requestedMode: ThemeProviderMode,
   systemMode: ColorSchemeName
-): ThemeMode =>
-  requestedMode === 'system'
-    ? systemMode === 'dark'
-      ? 'dark'
-      : 'light'
-    : requestedMode;
+): ThemeMode => {
+  if (requestedMode === 'system') {
+    return systemMode === 'dark' ? 'dark' : 'light';
+  }
+  return requestedMode;
+};
 
 const createDarkColors = (): ThemeColors => ({
   ...tokens.colors,

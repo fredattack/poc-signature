@@ -15,7 +15,7 @@ import { WallpaperPreview } from '@/components/wallpaper/WallpaperPreview';
 import { TemplateCarousel } from '@/components/wallpaper/TemplateCarousel';
 import { Button } from '@/components/ui/Button';
 import { Header } from '@/components/shared/Header';
-import { LoadingSpinner } from '@/components/shared/LoadingSpinner';
+import { LoadingSpinner as _LoadingSpinner } from '@/components/shared/LoadingSpinner';
 import { Toast } from '@/components/ui/Toast';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useWallpaper } from '@/hooks/useWallpaper';
@@ -256,7 +256,7 @@ export default function WallpaperEditorScreen() {
         <View style={styles.actions}>
           <Button
             title="📤 Share Wallpaper"
-            onPress={handleShare}
+            onPress={() => void handleShare()}
             variant="secondary"
             disabled={isGenerating || isSaving || isSharing}
             loading={isSharing}
@@ -265,7 +265,7 @@ export default function WallpaperEditorScreen() {
           />
           <Button
             title="Save to Gallery"
-            onPress={handleSaveToGallery}
+            onPress={() => void handleSaveToGallery()}
             variant="secondary"
             disabled={isGenerating || isSaving || isSharing}
             loading={isSaving}
@@ -274,7 +274,7 @@ export default function WallpaperEditorScreen() {
           />
           <Button
             title="Set as Wallpaper"
-            onPress={handleSetAsWallpaper}
+            onPress={() => void handleSetAsWallpaper()}
             variant="primary"
             disabled={isGenerating || isSaving || isSharing}
             fullWidth

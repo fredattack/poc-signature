@@ -131,7 +131,7 @@ export default function SignatureCanvasScreen() {
             scrollEnabled={scrollEnabled}
           >
             <Text style={styles.instructions}>
-              Draw the celebrity's signature on the canvas below
+              Draw the celebrity&apos;s signature on the canvas below
             </Text>
 
             <View style={styles.canvasContainer}>
@@ -203,7 +203,7 @@ export default function SignatureCanvasScreen() {
               />
               <Button
                 title={isSaving ? 'Saving...' : 'Save Signature'}
-                onPress={handleSave}
+                onPress={() => void handleSave()}
                 variant="primary"
                 disabled={!isValid || isSaving}
                 loading={isSaving}
@@ -213,7 +213,7 @@ export default function SignatureCanvasScreen() {
 
             {!isValid && (
               <Text style={styles.hintText}>
-                {validationError ||
+                {validationError ??
                   'Please draw a signature and enter celebrity name'}
               </Text>
             )}

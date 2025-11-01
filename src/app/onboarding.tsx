@@ -116,7 +116,7 @@ export default function OnboardingScreen() {
         animated: true,
       });
     } else {
-      handleComplete();
+      void handleComplete();
     }
   };
 
@@ -125,7 +125,10 @@ export default function OnboardingScreen() {
   return (
     <View style={styles.container}>
       {/* Skip button */}
-      <TouchableOpacity style={styles.skipButton} onPress={handleSkip}>
+      <TouchableOpacity
+        style={styles.skipButton}
+        onPress={() => void handleSkip()}
+      >
         <Text style={styles.skipText}>Skip</Text>
       </TouchableOpacity>
 

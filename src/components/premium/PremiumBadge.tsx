@@ -13,8 +13,14 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const iconSize = size === 'small' ? 16 : size === 'large' ? 32 : 24;
-  const containerSize = size === 'small' ? 32 : size === 'large' ? 56 : 40;
+
+  let iconSize = 24;
+  if (size === 'small') iconSize = 16;
+  else if (size === 'large') iconSize = 32;
+
+  let containerSize = 40;
+  if (size === 'small') containerSize = 32;
+  else if (size === 'large') containerSize = 56;
 
   return (
     <View

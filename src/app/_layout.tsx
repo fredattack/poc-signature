@@ -21,7 +21,7 @@ const queryClient = new QueryClient({
 export default function RootLayout() {
   // Initialize file system on app launch
   useEffect(() => {
-    fileSystem.init();
+    void fileSystem.init();
   }, []);
 
   return (

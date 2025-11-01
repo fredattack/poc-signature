@@ -139,7 +139,7 @@ class SignatureSyncService {
     try {
       const response = await signaturesApi.getAll();
 
-      if (response.error || !response.data) {
+      if (response.error ?? !response.data) {
         console.error('Failed to pull from cloud:', response.error);
         return localSignatures;
       }
