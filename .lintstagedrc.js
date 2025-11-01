@@ -1,10 +1,6 @@
 module.exports = {
   // TypeScript and TypeScript React files
-  '*.{ts,tsx}': [
-    // 'eslint --fix', // Temporarily disabled during ESLint error fixes
-    'prettier --write',
-    // 'bash -c "tsc --noEmit"', // Temporarily disabled for initial auto-fix commit
-  ],
+  '*.{ts,tsx}': ['eslint --fix', 'prettier --write', 'bash -c "tsc --noEmit"'],
 
   // JavaScript files (if any)
   '*.{js,jsx}': ['eslint --fix', 'prettier --write'],
