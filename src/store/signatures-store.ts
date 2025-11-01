@@ -2,8 +2,8 @@
 
 import { create } from 'zustand';
 import {
-  Signature,
   SignatureColor as _SignatureColor,
+  Signature,
   SignatureStatus,
   SyncStatus,
 } from '@/types/signature.types';

@@ -24,6 +24,19 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  const getColorButtonStyle = (optionValue: SignatureColor) => {
+    const isSelected = selectedColor === optionValue;
+    const defaultBorderColor =
+      theme.mode === 'dark'
+        ? 'rgba(244, 244, 244, 0.16)'
+        : 'rgba(35, 35, 35, 0.12)';
+
+    return {
+      borderColor: isSelected ? theme.colors.brand.primary : defaultBorderColor,
+      borderWidth: isSelected ? 3 : 1,
+    };
+  };
+
   return (
     <View style={styles.container}>
       {colorOptions.map((option) => (
@@ -33,13 +46,7 @@ export const ColorPicker: React.FC<ColorPickerProps> = ({
             styles.colorButton,
             {
               backgroundColor: option.displayColor,
-              borderColor:
-                selectedColor === option.value
-                  ? theme.colors.brand.primary
-                  : theme.mode === 'dark'
-                    ? 'rgba(244, 244, 244, 0.16)'
-                    : 'rgba(35, 35, 35, 0.12)',
-              borderWidth: selectedColor === option.value ? 3 : 1,
+              ...getColorButtonStyle(option.value),
             },
             // Add black border for white color for visibility
             option.value === SignatureColor.White && styles.whiteColor,

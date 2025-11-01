@@ -16,9 +16,12 @@ export const requestLocationPermission =
         await Location.requestForegroundPermissionsAsync();
 
       return {
-        granted: status === 'granted',
+        granted: status === Location.PermissionStatus.GRANTED,
         canAskAgain,
-        error: status === 'denied' ? 'Location permission denied' : undefined,
+        error:
+          status === Location.PermissionStatus.DENIED
+            ? 'Location permission denied'
+            : undefined,
       };
     } catch (error) {
       return {
@@ -36,10 +39,12 @@ export const requestPhotoLibraryPermission =
         await MediaLibrary.requestPermissionsAsync();
 
       return {
-        granted: status === 'granted',
+        granted: status === MediaLibrary.PermissionStatus.GRANTED,
         canAskAgain,
         error:
-          status === 'denied' ? 'Photo library permission denied' : undefined,
+          status === MediaLibrary.PermissionStatus.DENIED
+            ? 'Photo library permission denied'
+            : undefined,
       };
     } catch (error) {
       return {
@@ -53,7 +58,7 @@ export const requestPhotoLibraryPermission =
 export const checkLocationPermission = async (): Promise<boolean> => {
   try {
     const { status } = await Location.getForegroundPermissionsAsync();
-    return status === 'granted';
+    return status === Location.PermissionStatus.GRANTED;
   } catch (error) {
     return false;
   }
@@ -62,7 +67,7 @@ export const checkLocationPermission = async (): Promise<boolean> => {
 export const checkPhotoLibraryPermission = async (): Promise<boolean> => {
   try {
     const { status } = await MediaLibrary.getPermissionsAsync();
-    return status === 'granted';
+    return status === MediaLibrary.PermissionStatus.GRANTED;
   } catch (error) {
     return false;
   }

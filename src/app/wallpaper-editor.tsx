@@ -144,7 +144,7 @@ export default function WallpaperEditorScreen() {
         setToastVisible(true);
       } else {
         setToastType('error');
-        setToastMessage(result.error || 'Failed to share wallpaper');
+        setToastMessage(result.error ?? 'Failed to share wallpaper');
         setToastVisible(true);
       }
     } catch (error) {
@@ -200,7 +200,7 @@ export default function WallpaperEditorScreen() {
                 styles.colorPreview,
                 {
                   backgroundColor:
-                    wallpaperOptions.backgroundColor || colors.background,
+                    wallpaperOptions.backgroundColor ?? colors.background,
                 },
               ]}
             />

@@ -30,6 +30,7 @@ export const colors = {
 
   // Borders & overlays
   border: 'rgba(35, 35, 35, 0.12)',
+  borderLight: 'rgba(35, 35, 35, 0.08)',
   borderMuted: 'rgba(35, 35, 35, 0.08)',
   borderDark: 'rgba(244, 244, 244, 0.16)',
   overlay: tokenColors.overlay.medium,

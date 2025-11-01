@@ -1,6 +1,6 @@
 // API types
 
-export interface ApiResponse<T = any> {
+export interface ApiResponse<T = unknown> {
   data: T;
   message?: string;
   success: boolean;
@@ -27,15 +27,15 @@ export interface ErrorResponse {
   error: string;
   message: string;
   statusCode: number;
-  details?: any;
+  details?: Record<string, unknown>;
 }
 
 export interface ApiRequestConfig {
   url: string;
   method: 'GET' | 'POST' | 'PUT' | 'PATCH' | 'DELETE';
   headers?: Record<string, string>;
-  params?: Record<string, any>;
-  data?: any;
+  params?: Record<string, unknown>;
+  data?: unknown;
 }
 
 export interface ApiError {

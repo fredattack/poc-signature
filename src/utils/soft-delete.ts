@@ -3,7 +3,9 @@
 import { SignatureStatus } from '@/types/signature.types';
 import { SOFT_DELETE_RETENTION_DAYS } from './constants';
 
-export const markAsDeleted = (item: any): any => {
+export const markAsDeleted = <T extends { status?: string }>(
+  item: T
+): T & { deletedAt: Date; status: SignatureStatus } => {
   return {
     ...item,
     deletedAt: new Date(),
@@ -11,7 +13,9 @@ export const markAsDeleted = (item: any): any => {
   };
 };
 
-export const isPermanentlyDeleted = (item: any): boolean => {
+export const isPermanentlyDeleted = (item: {
+  deletedAt?: Date | string;
+}): boolean => {
   if (!item.deletedAt) {
     return false;
   }
@@ -43,7 +47,7 @@ export const filterSoftDeleted = <T extends { status?: string }>(
   return items.filter((item) => item.status === SignatureStatus.SoftDeleted);
 };
 
-export const canRestore = (item: any): boolean => {
+export const canRestore = (item: { deletedAt?: Date | string }): boolean => {
   if (!item.deletedAt) {
     return false;
   }
@@ -51,10 +55,12 @@ export const canRestore = (item: any): boolean => {
   return !isPermanentlyDeleted(item);
 };
 
-export const restoreItem = (item: any): any => {
+export const restoreItem = <T extends { status?: string; deletedAt?: Date }>(
+  item: T
+): Omit<T, 'deletedAt'> & { status: SignatureStatus } => {
+  const { deletedAt: _deletedAt, ...rest } = item;
   return {
-    ...item,
-    deletedAt: undefined,
+    ...rest,
     status: SignatureStatus.Active,
   };
 };

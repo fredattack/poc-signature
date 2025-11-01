@@ -15,7 +15,7 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
-import type { AnimatedScrollView } from 'react-native-reanimated';
+import type { AnimatedScrollView as _AnimatedScrollView } from 'react-native-reanimated';
 import { OnboardingSlide } from '@/components/onboarding/OnboardingSlide';
 import {
   CaptureIllustration,

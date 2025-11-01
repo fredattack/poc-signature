@@ -11,7 +11,7 @@ export interface SyncQueueItem {
   entityType: 'signature' | 'wallpaper' | 'user';
   entityId: string;
   action: 'create' | 'update' | 'delete';
-  payload: any;
+  payload: Record<string, unknown>;
   status: SyncStatus;
   retryCount: number;
   lastAttempt?: Date;

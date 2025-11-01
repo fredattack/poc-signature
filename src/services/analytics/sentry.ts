@@ -45,7 +45,7 @@ export const initSentry = (_config: SentryConfig): void => {
 
 export const captureException = (
   error: Error,
-  context?: Record<string, any>
+  context?: Record<string, unknown>
 ): void => {
   // Uncomment when Sentry is installed:
   /*
@@ -78,6 +78,7 @@ export const captureMessage = (
     console.error('[Sentry] Capture message error:', error);
   }
   */
+  // eslint-disable-next-line no-console
   console.log(`[Sentry] Message (${level}):`, message);
 };
 
@@ -113,7 +114,7 @@ export const addBreadcrumb = (_breadcrumb: {
   message: string;
   category?: string;
   level?: string;
-  data?: any;
+  data?: Record<string, unknown>;
 }): void => {
   // Uncomment when Sentry is installed:
   /*

@@ -7,12 +7,12 @@ import {
 } from '@/types/analytics.types';
 
 export interface AnalyticsTracker {
-  init(apiKey: string, config?: any): Promise<void>;
+  init(apiKey: string, config?: Record<string, unknown>): Promise<void>;
   track(event: AnalyticsEvent): void;
-  screen(screenName: string, properties?: Record<string, any>): void;
+  screen(screenName: string, properties?: Record<string, unknown>): void;
   identify(user: UserIdentity): void;
   reset(): void;
-  setUserProperty(key: string, value: any): void;
+  setUserProperty(key: string, value: unknown): void;
 }
 
 class UnifiedAnalyticsTracker {
@@ -37,7 +37,7 @@ class UnifiedAnalyticsTracker {
     this.debugMode = debugMode;
   }
 
-  track(eventName: string, properties?: Record<string, any>): void {
+  track(eventName: string, properties?: Record<string, unknown>): void {
     if (!this.enabled) {
       return;
     }
@@ -49,6 +49,7 @@ class UnifiedAnalyticsTracker {
     };
 
     if (this.debugMode) {
+      // eslint-disable-next-line no-console
       console.log('[Analytics] Track:', event);
     }
 
@@ -61,12 +62,13 @@ class UnifiedAnalyticsTracker {
     });
   }
 
-  screen(screenName: string, properties?: Record<string, any>): void {
+  screen(screenName: string, properties?: Record<string, unknown>): void {
     if (!this.enabled) {
       return;
     }
 
     if (this.debugMode) {
+      // eslint-disable-next-line no-console
       console.log('[Analytics] Screen:', screenName, properties);
     }
 
@@ -85,6 +87,7 @@ class UnifiedAnalyticsTracker {
     }
 
     if (this.debugMode) {
+      // eslint-disable-next-line no-console
       console.log('[Analytics] Identify:', user);
     }
 
@@ -99,6 +102,7 @@ class UnifiedAnalyticsTracker {
 
   reset(): void {
     if (this.debugMode) {
+      // eslint-disable-next-line no-console
       console.log('[Analytics] Reset');
     }
 
@@ -111,12 +115,13 @@ class UnifiedAnalyticsTracker {
     });
   }
 
-  setUserProperty(key: string, value: any): void {
+  setUserProperty(key: string, value: unknown): void {
     if (!this.enabled) {
       return;
     }
 
     if (this.debugMode) {
+      // eslint-disable-next-line no-console
       console.log('[Analytics] Set User Property:', key, value);
     }
 
@@ -141,7 +146,7 @@ class UnifiedAnalyticsTracker {
     });
   }
 
-  trackError(error: Error, context?: Record<string, any>): void {
+  trackError(error: Error, context?: Record<string, unknown>): void {
     if (!this.enabled) {
       return;
     }

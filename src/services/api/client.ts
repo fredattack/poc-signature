@@ -15,8 +15,9 @@ export interface ApiError {
   status?: number;
 }
 
-const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'https://api.signature-app.com';
+const API_BASE_URL = String(
+  process.env.EXPO_PUBLIC_API_URL ?? 'https://api.signature-app.com'
+);
 
 /**
  * HTTP client with automatic token injection
@@ -24,7 +25,7 @@ const API_BASE_URL =
 class ApiClient {
   private baseUrl: string;
 
-  constructor(baseUrl: string = API_BASE_URL) {
+  constructor(baseUrl = API_BASE_URL) {
     this.baseUrl = baseUrl;
   }
 
@@ -76,11 +77,12 @@ class ApiClient {
         headers,
       });
 
-      const data = await response.json();
+      const data = (await response.json()) as T;
 
       if (!response.ok) {
+        const errorData = data as unknown as { message?: string };
         return {
-          error: data.message || 'An error occurred',
+          error: errorData.message ?? 'An error occurred',
           status: response.status,
         };
       }
@@ -108,7 +110,7 @@ class ApiClient {
   /**
    * POST request
    */
-  async post<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(body),
@@ -118,7 +120,7 @@ class ApiClient {
   /**
    * PUT request
    */
-  async put<T>(endpoint: string, body: any): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, body: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(body),

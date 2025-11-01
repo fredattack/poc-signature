@@ -80,7 +80,7 @@ export const asyncStorage = {
     }
   },
 
-  async multiSet(keyValuePairs: [string, any][]): Promise<boolean> {
+  async multiSet(keyValuePairs: [string, unknown][]): Promise<boolean> {
     try {
       const serializedPairs: [string, string][] = keyValuePairs.map(
         ([key, value]) => [key, JSON.stringify(value)]

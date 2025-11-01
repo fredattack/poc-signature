@@ -86,7 +86,7 @@ export const validatePassword = (
 };
 
 export const validateSignaturePaths = (
-  paths: any[]
+  paths: unknown[]
 ): { isValid: boolean; error?: string } => {
   if (!paths || paths.length === 0) {
     return { isValid: false, error: 'Please draw at least one stroke' };

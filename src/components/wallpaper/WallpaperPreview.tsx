@@ -14,7 +14,7 @@ import { useThemeTokens } from '@/theme';
 export interface WallpaperPreviewProps {
   signature: Signature;
   options: WallpaperOptions;
-  onRefReady?: (ref: React.RefObject<any>) => void;
+  onRefReady?: (ref: React.RefObject<unknown>) => void;
 }
 
 const { width: SCREEN_WIDTH } = Dimensions.get('window');

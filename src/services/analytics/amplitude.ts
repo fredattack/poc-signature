@@ -15,7 +15,10 @@ import { AnalyticsEvent, UserIdentity } from '@/types/analytics.types';
 export class AmplitudeTracker implements AnalyticsTracker {
   private initialized: boolean = false;
 
-  async init(_apiKey: string, _config?: any): Promise<void> {
+  async init(
+    _apiKey: string,
+    _config?: Record<string, unknown>
+  ): Promise<void> {
     // Uncomment when Amplitude is installed:
     /*
     try {
@@ -35,6 +38,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     console.warn(
       '[Amplitude] Not installed. Install @amplitude/analytics-react-native to enable.'
     );
+    return Promise.resolve();
   }
 
   track(_event: AnalyticsEvent): void {
@@ -53,7 +57,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     */
   }
 
-  screen(screenName: string, properties?: Record<string, any>): void {
+  screen(screenName: string, properties?: Record<string, unknown>): void {
     if (!this.initialized) {
       return;
     }
@@ -109,7 +113,7 @@ export class AmplitudeTracker implements AnalyticsTracker {
     */
   }
 
-  setUserProperty(_key: string, _value: any): void {
+  setUserProperty(_key: string, _value: unknown): void {
     if (!this.initialized) {
       return;
     }

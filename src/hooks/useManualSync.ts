@@ -7,6 +7,7 @@ import {
   signatureSyncService,
   SyncResult,
 } from '@/services/sync/signature-sync';
+import { SyncStatus } from '@/types/sync.types';
 import { useAnalytics } from './useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
@@ -60,7 +61,7 @@ export const useManualSync = (): UseManualSyncResult => {
 
         for (const sig of syncedSignatures) {
           await updateSignature(sig.id, {
-            syncStatus: 'synced' as any,
+            syncStatus: SyncStatus.Synced,
             cloudImageUrl: `https://cdn.signature-app.com/${sig.id}.png`,
           });
         }
@@ -68,7 +69,7 @@ export const useManualSync = (): UseManualSyncResult => {
         // Mark failed signatures
         for (const failedId of result.failedSignatures) {
           await updateSignature(failedId, {
-            syncStatus: 'failed' as any,
+            syncStatus: SyncStatus.Failed,
           });
         }
 

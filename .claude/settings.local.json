@@ -6,7 +6,10 @@
       "Bash(git commit:*)",
       "Bash(npm run lint:*)",
       "Bash(cat:*)",
-      "Bash(grep:*)"
+      "Bash(grep:*)",
+      "Bash(wc:*)",
+      "Bash(npm test:*)",
+      "Bash(npx tsc:*)"
     ],
     "deny": [],
     "ask": []

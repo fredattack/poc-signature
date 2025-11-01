@@ -29,7 +29,7 @@ interface UseSignatureResult {
   // Canvas state
   paths: CanvasPath[];
   currentColor: SignatureColor;
-  canvasRef: React.RefObject<any> | null;
+  canvasRef: React.RefObject<unknown> | null;
 
   // Form state
   celebrityName: string;
@@ -48,7 +48,7 @@ interface UseSignatureResult {
   clearCanvas: () => void;
   setColor: (color: SignatureColor) => void;
   setCelebrityName: (name: string) => void;
-  setCanvasRef: (ref: React.RefObject<any>) => void;
+  setCanvasRef: (ref: React.RefObject<unknown>) => void;
   toggleLocationCapture: () => void;
   saveSignature: () => Promise<Signature | null>;
 }
@@ -63,7 +63,9 @@ export const useSignature = (
   const [paths, setPaths] = useState<CanvasPath[]>([]);
   const [currentColor, setCurrentColor] =
     useState<SignatureColor>(initialColor);
-  const [canvasRef, setCanvasRef] = useState<React.RefObject<any> | null>(null);
+  const [canvasRef, setCanvasRef] = useState<React.RefObject<unknown> | null>(
+    null
+  );
 
   // Form state
   const [celebrityName, setCelebrityName] = useState('');

@@ -27,12 +27,12 @@ interface UseWallpaperResult {
   isGenerating: boolean;
   isSaving: boolean;
   error: string | null;
-  wallpaperRef: React.RefObject<any> | null;
+  wallpaperRef: React.RefObject<unknown> | null;
 
   // Actions
   selectTemplate: (templateId: string) => void;
   updateOptions: (options: Partial<WallpaperOptions>) => void;
-  setWallpaperRef: (ref: React.RefObject<any>) => void;
+  setWallpaperRef: (ref: React.RefObject<unknown>) => void;
   generateWallpaper: () => Promise<string | null>;
   saveToGallery: () => Promise<boolean>;
   setAsWallpaper: () => Promise<boolean>;
@@ -54,7 +54,7 @@ export const useWallpaper = (
   const [isSaving, setIsSaving] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [wallpaperRef, setWallpaperRefState] =
-    useState<React.RefObject<any> | null>(null);
+    useState<React.RefObject<unknown> | null>(null);
   const [generatedImageUri, setGeneratedImageUri] = useState<string | null>(
     null
   );
@@ -95,7 +95,7 @@ export const useWallpaper = (
     [trackWallpaperEvent]
   );
 
-  const setWallpaperRef = useCallback((ref: React.RefObject<any>) => {
+  const setWallpaperRef = useCallback((ref: React.RefObject<unknown>) => {
     setWallpaperRefState(ref);
   }, []);
 

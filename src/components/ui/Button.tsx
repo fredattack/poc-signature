@@ -113,23 +113,42 @@ const createStyles = ({
       flexDirection: 'row',
       justifyContent: 'center',
     },
+    buttonText: baseTypography,
     content: {
       alignItems: 'center',
       flexDirection: 'row',
       justifyContent: 'center',
     },
-    icon: {
-      marginRight: tokens.spacing.xs,
+    disabled: {
+      opacity: 0.48,
     },
     fullWidth: {
       width: '100%',
     },
-    disabled: {
-      opacity: 0.48,
+    ghostButton: {
+      backgroundColor: 'transparent',
     },
-    // Variants
+    ghostText: {
+      color: colors.brand.primary,
+    },
+    icon: {
+      marginRight: tokens.spacing.xs,
+    },
+    largeButton: {
+      height: tokens.layout.buttonHeight,
+      paddingHorizontal: tokens.spacing.lg,
+    },
+    largeText: largeTypography,
+    mediumButton: {
+      height: tokens.layout.buttonHeight,
+      paddingHorizontal: tokens.spacing.md,
+    },
+    mediumText: baseTypography,
     primaryButton: {
       backgroundColor: colors.brand.primary,
+    },
+    primaryText: {
+      color: colors.text.inverse,
     },
     secondaryButton: {
       backgroundColor: colors.surface.card,
@@ -139,37 +158,13 @@ const createStyles = ({
           : 'rgba(35, 35, 35, 0.12)',
       borderWidth: 1,
     },
-    ghostButton: {
-      backgroundColor: 'transparent',
+    secondaryText: {
+      color: colors.text.primary,
     },
-
-    // Sizes
     smallButton: {
       height: tokens.layout.buttonHeightSmall,
       paddingHorizontal: tokens.spacing.sm,
     },
-    mediumButton: {
-      height: tokens.layout.buttonHeight,
-      paddingHorizontal: tokens.spacing.md,
-    },
-    largeButton: {
-      height: tokens.layout.buttonHeight,
-      paddingHorizontal: tokens.spacing.lg,
-    },
-
-    // Text
-    buttonText: baseTypography,
-    primaryText: {
-      color: colors.text.inverse,
-    },
-    secondaryText: {
-      color: colors.text.primary,
-    },
-    ghostText: {
-      color: colors.brand.primary,
-    },
     smallText: captionTypography,
-    mediumText: baseTypography,
-    largeText: largeTypography,
   });
 };

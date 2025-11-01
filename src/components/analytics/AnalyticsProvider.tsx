@@ -72,7 +72,9 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
       const initializeAnalytics = async () => {
         // Register Amplitude tracker
         const amplitudeTracker = new AmplitudeTracker();
-        const amplitudeApiKey = process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY || '';
+        const amplitudeApiKey: string = String(
+          process.env.EXPO_PUBLIC_AMPLITUDE_API_KEY ?? ''
+        );
 
         if (amplitudeApiKey) {
           await amplitudeTracker.init(amplitudeApiKey);
@@ -80,7 +82,9 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
         }
 
         // Initialize Sentry
-        const sentryDsn = process.env.EXPO_PUBLIC_SENTRY_DSN || '';
+        const sentryDsn: string = String(
+          process.env.EXPO_PUBLIC_SENTRY_DSN ?? ''
+        );
         if (sentryDsn) {
           initSentry({
             dsn: sentryDsn,
@@ -104,7 +108,7 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
     }
   }, [consentGiven, initialized]);
 
-  const setAnalyticsEnabled = async (enabled: boolean) => {
+  const setAnalyticsEnabled = (enabled: boolean): void => {
     setAnalyticsEnabledState(enabled);
     analytics.setEnabled(enabled);
 
@@ -114,10 +118,10 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
       consentGiven,
     };
 
-    await asyncStorage.set(STORAGE_KEYS.ANALYTICS_CONSENT, config);
+    void asyncStorage.set(STORAGE_KEYS.ANALYTICS_CONSENT, config);
   };
 
-  const setConsentGiven = async (consent: boolean) => {
+  const setConsentGiven = (consent: boolean): void => {
     setConsentGivenState(consent);
 
     const config: AnalyticsConfig = {
@@ -126,7 +130,7 @@ export const AnalyticsProvider: React.FC<AnalyticsProviderProps> = ({
       consentGiven: consent,
     };
 
-    await asyncStorage.set(STORAGE_KEYS.ANALYTICS_CONSENT, config);
+    void asyncStorage.set(STORAGE_KEYS.ANALYTICS_CONSENT, config);
 
     if (consent) {
       setAnalyticsEnabledState(true);

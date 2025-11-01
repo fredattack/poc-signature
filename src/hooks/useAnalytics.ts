@@ -6,14 +6,14 @@ import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
 export const useAnalytics = () => {
   const track = useCallback(
-    (eventName: string, properties?: Record<string, any>) => {
+    (eventName: string, properties?: Record<string, unknown>) => {
       analytics.track(eventName, properties);
     },
     []
   );
 
   const screen = useCallback(
-    (screenName: string, properties?: Record<string, any>) => {
+    (screenName: string, properties?: Record<string, unknown>) => {
       analytics.screen(screenName, properties);
     },
     []
@@ -27,7 +27,7 @@ export const useAnalytics = () => {
   );
 
   const trackError = useCallback(
-    (error: Error, context?: Record<string, any>) => {
+    (error: Error, context?: Record<string, unknown>) => {
       analytics.trackError(error, context);
     },
     []
@@ -37,7 +37,7 @@ export const useAnalytics = () => {
   const trackSignatureEvent = useCallback(
     (
       action: 'started' | 'saved' | 'cleared' | 'viewed' | 'deleted',
-      properties?: Record<string, any>
+      properties?: Record<string, unknown>
     ) => {
       const eventMap = {
         started: ANALYTICS_EVENTS.SIGNATURE_STARTED,
@@ -55,7 +55,7 @@ export const useAnalytics = () => {
   const trackWallpaperEvent = useCallback(
     (
       action: 'template_selected' | 'color_changed' | 'saved' | 'set',
-      properties?: Record<string, any>
+      properties?: Record<string, unknown>
     ) => {
       const eventMap = {
         template_selected: ANALYTICS_EVENTS.TEMPLATE_SELECTED,
@@ -77,7 +77,7 @@ export const useAnalytics = () => {
         | 'sync_triggered'
         | 'sync_completed'
         | 'sync_failed',
-      properties?: Record<string, any>
+      properties?: Record<string, unknown>
     ) => {
       const eventMap = {
         signup: ANALYTICS_EVENTS.SIGNUP_COMPLETED,
@@ -99,7 +99,7 @@ export const useAnalytics = () => {
         | 'subscription_started'
         | 'subscription_completed'
         | 'subscription_canceled',
-      properties?: Record<string, any>
+      properties?: Record<string, unknown>
     ) => {
       const eventMap = {
         paywall_viewed: ANALYTICS_EVENTS.PAYWALL_VIEWED,

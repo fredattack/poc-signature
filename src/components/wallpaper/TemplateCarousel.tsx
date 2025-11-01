@@ -9,11 +9,7 @@ import {
   View,
 } from 'react-native';
 import { TemplateConfig } from '@/types/template.types';
-import {
-  getFreeTemplates,
-  getPremiumTemplates,
-  templates,
-} from '@/constants/templates';
+import { getFreeTemplates, getPremiumTemplates } from '@/constants/templates';
 import { useThemeTokens } from '@/theme';
 
 export interface TemplateCarouselProps {
