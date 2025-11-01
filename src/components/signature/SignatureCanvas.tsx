@@ -90,6 +90,9 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasStartedDrawing, setHasStartedDrawing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
+  const [currentDrawingPath, setCurrentDrawingPath] = useState<
+    { x: number; y: number }[]
+  >([]);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
   const theme = useThemeTokens();
@@ -117,6 +120,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       setPaths([]);
       currentPath.current = Skia.Path.Make();
       currentPoints.current = [];
+      setCurrentDrawingPath([]);
       setIsDrawing(false);
       setHasStartedDrawing(false);
       setIsComplete(false);
@@ -139,6 +143,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
     currentPath.current = Skia.Path.Make();
     currentPoints.current = [];
+    setCurrentDrawingPath([]);
     setIsDrawing(false);
   }, [color, onStrokeComplete]);
 
@@ -156,6 +161,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       currentPath.current = Skia.Path.Make();
       currentPath.current.moveTo(point.x, point.y);
       currentPoints.current = [point];
+      setCurrentDrawingPath([point]);
       setIsDrawing(true);
       onBeginStroke?.();
     },
@@ -171,8 +177,8 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     currentPath.current.lineTo(point.x, point.y);
     currentPoints.current.push(point);
 
-    // Force re-render to show current drawing path
-    setIsDrawing(true);
+    // Force re-render by updating state with current drawing path
+    setCurrentDrawingPath([...currentPoints.current]);
   }, []);
 
   const handleTouchEnd = useCallback(() => {
@@ -183,6 +189,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   const handleTouchCancel = useCallback(() => {
     currentPoints.current = [];
     currentPath.current = Skia.Path.Make();
+    setCurrentDrawingPath([]);
     setIsDrawing(false);
     onEndStroke?.();
   }, [onEndStroke]);
@@ -245,7 +252,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         onTouchCancel={handleTouchCancel}
       >
         {renderCompletedPaths}
-        {isDrawing && currentPoints.current.length > 0 && (
+        {isDrawing && currentDrawingPath.length > 0 && (
           <Path
             path={currentPath.current}
             color={getColorHex(color)}
