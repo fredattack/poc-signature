@@ -71,6 +71,7 @@ const SIGNATURE_HEX: Record<SignatureColor, string> = {
   [SignatureColor.Blue]: '#2563EB',
   [SignatureColor.Red]: '#DC2626',
   [SignatureColor.White]: '#FFFFFF',
+  [SignatureColor.SageGreen]: '#8A9A5B',
 };
 
 const getColorHex = (color: SignatureColor): string =>

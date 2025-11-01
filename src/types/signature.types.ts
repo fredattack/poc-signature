@@ -5,6 +5,7 @@ export enum SignatureColor {
   Blue = 'blue',
   Red = 'red',
   White = 'white',
+  SageGreen = 'sage_green',
 }
 
 export enum SyncStatus {

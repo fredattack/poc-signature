@@ -28,7 +28,7 @@ const COLOR_OPTIONS: ColorOption[] = [
   { name: 'Black', value: SignatureColor.Black, hex: '#000000' },
   { name: 'Blue', value: SignatureColor.Blue, hex: '#2563EB' },
   { name: 'Red', value: SignatureColor.Red, hex: '#DC2626' },
-  { name: 'Sage Green', value: SignatureColor.White, hex: '#8A9A5B' },
+  { name: 'Sage Green', value: SignatureColor.SageGreen, hex: '#8A9A5B' },
 ];
 
 export interface ColorPickerDropdownProps {
@@ -99,7 +99,8 @@ export const ColorPickerDropdown: React.FC<ColorPickerDropdownProps> = ({
             style={[
               styles.swatch,
               { backgroundColor: selectedOption?.hex ?? '#000000' },
-              selectedOption?.value === SignatureColor.White &&
+              (selectedOption?.value === SignatureColor.White ||
+                selectedOption?.value === SignatureColor.SageGreen) &&
                 styles.swatchBorder,
             ]}
           />
@@ -147,7 +148,8 @@ export const ColorPickerDropdown: React.FC<ColorPickerDropdownProps> = ({
                           style={[
                             styles.optionSwatch,
                             { backgroundColor: option.hex },
-                            option.value === SignatureColor.White &&
+                            (option.value === SignatureColor.White ||
+                              option.value === SignatureColor.SageGreen) &&
                               styles.swatchBorder,
                           ]}
                         />
