@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
 import { Animated, Pressable, StyleSheet, Text, ViewStyle } from 'react-native';
 import { useThemeTokens } from '@/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export interface ToggleProps {
   value: boolean;
@@ -31,6 +32,7 @@ export const Toggle: React.FC<ToggleProps> = ({
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const haptics = useHaptics();
 
   const translateX = useRef(new Animated.Value(value ? 20 : 0)).current;
   const scaleAnim = useRef(new Animated.Value(1)).current;
@@ -49,6 +51,9 @@ export const Toggle: React.FC<ToggleProps> = ({
     if (disabled) {
       return;
     }
+
+    // Haptic feedback on toggle
+    haptics.triggerSelection();
 
     // Scale animation on press
     Animated.sequence([

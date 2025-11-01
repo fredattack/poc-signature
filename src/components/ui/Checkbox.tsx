@@ -8,6 +8,7 @@ import {
   ViewStyle,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export interface CheckboxProps {
   checked: boolean;
@@ -40,6 +41,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const haptics = useHaptics();
 
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const checkAnim = useRef(new Animated.Value(0)).current;
@@ -58,6 +60,9 @@ export const Checkbox: React.FC<CheckboxProps> = ({
     if (disabled) {
       return;
     }
+
+    // Haptic feedback on check/uncheck
+    haptics.triggerSelection();
 
     // Scale animation on press
     Animated.sequence([

@@ -9,6 +9,12 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, {
+  SlideInUp,
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignatureCanvas } from '@/components/signature/SignatureCanvas';
@@ -17,6 +23,7 @@ import { Button } from '@/components/ui/Button';
 import { Input } from '@/components/ui/Input';
 import { useSignature } from '@/hooks/useSignature';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useHaptics } from '@/hooks/useHaptics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { useThemeTokens } from '@/theme';
 
@@ -28,6 +35,7 @@ export default function SignatureCanvasScreen() {
   const canvasRef = useRef<View | null>(null);
   const [clearSignal, setClearSignal] = useState(0);
   const { track } = useAnalytics();
+  const haptics = useHaptics();
   const theme = useThemeTokens();
   const { colors, tokens } = theme;
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -54,11 +62,31 @@ export default function SignatureCanvasScreen() {
     setCanvasRef(canvasRef);
   }, [setCanvasRef]);
 
+  // Page entrance animation
+  const contentOpacity = useSharedValue(0);
+  const contentTranslateY = useSharedValue(20);
+
   useEffect(() => {
     track(ANALYTICS_EVENTS.SIGNATURE_STARTED);
-  }, [track]);
+
+    // Entrance animation
+    contentOpacity.value = withSpring(1, {
+      damping: 18,
+      stiffness: 200,
+    });
+    contentTranslateY.value = withSpring(0, {
+      damping: 18,
+      stiffness: 200,
+    });
+  }, [track, contentOpacity, contentTranslateY]);
+
+  const animatedContentStyle = useAnimatedStyle(() => ({
+    opacity: contentOpacity.value,
+    transform: [{ translateY: contentTranslateY.value }],
+  }));
 
   const handleClear = () => {
+    haptics.triggerMedium();
     clearCanvas();
     setClearSignal((value) => value + 1);
   };
@@ -67,6 +95,7 @@ export default function SignatureCanvasScreen() {
     const signature = await saveSignature();
 
     if (signature) {
+      haptics.triggerSuccess();
       Alert.alert('Success', 'Signature saved successfully!', [
         {
           text: 'OK',
@@ -74,6 +103,7 @@ export default function SignatureCanvasScreen() {
         },
       ]);
     } else if (error) {
+      haptics.triggerError();
       Alert.alert('Error', error);
     }
   };
@@ -141,7 +171,7 @@ export default function SignatureCanvasScreen() {
       </View>
 
       {/* Main Content - NO SCROLL */}
-      <View style={styles.content}>
+      <Animated.View style={[styles.content, animatedContentStyle]}>
         {/* Canvas Hint */}
         <Text style={[styles.canvasHint, { color: colors.text.secondary }]}>
           ✍️ Draw the signature
@@ -164,6 +194,9 @@ export default function SignatureCanvasScreen() {
             captureRef={canvasRef}
             clearSignal={clearSignal}
             height={COMPACT_CANVAS_HEIGHT}
+            onBeginStroke={() => {
+              haptics.triggerLight();
+            }}
           />
 
           {/* Canvas Controls - Integrated */}
@@ -271,10 +304,11 @@ export default function SignatureCanvasScreen() {
             {error}
           </Text>
         )}
-      </View>
+      </Animated.View>
 
       {/* Action Buttons - Sticky Footer */}
-      <View
+      <Animated.View
+        entering={SlideInUp.delay(300).duration(300).springify()}
         style={[
           styles.buttonContainer,
           { borderTopColor: colors.overlay.light },
@@ -295,7 +329,7 @@ export default function SignatureCanvasScreen() {
           loading={isSaving}
           style={styles.actionButton}
         />
-      </View>
+      </Animated.View>
     </SafeAreaView>
   );
 }

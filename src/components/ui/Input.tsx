@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import {
   StyleSheet,
   Text,
@@ -7,6 +7,11 @@ import {
   View,
   ViewStyle,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useThemeTokens } from '@/theme';
 
 export interface InputProps extends TextInputProps {
@@ -53,6 +58,10 @@ export const Input: React.FC<InputProps> = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const placeholderColor = theme.colors.text.tertiary;
 
+  // Animated values for focus state
+  const scale = useSharedValue(1);
+  const labelTranslateY = useSharedValue(0);
+
   const inputContainerStyles = [
     styles.inputContainer,
     isFocused && styles.inputContainerFocused,
@@ -69,11 +78,48 @@ export const Input: React.FC<InputProps> = ({
   const errorId = error ? `${label}-error` : undefined;
   const helperId = helperText ? `${label}-helper` : undefined;
 
+  // Animate container on focus
+  const animatedContainerStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
+  // Animate label on focus
+  const animatedLabelStyle = useAnimatedStyle(() => ({
+    transform: [{ translateY: labelTranslateY.value }],
+    opacity: withSpring(isFocused ? 1 : 0.8),
+  }));
+
+  useEffect(() => {
+    if (isFocused) {
+      scale.value = withSpring(1.02, {
+        damping: 18,
+        stiffness: 200,
+      });
+      labelTranslateY.value = withSpring(-2, {
+        damping: 18,
+        stiffness: 200,
+      });
+    } else {
+      scale.value = withSpring(1, {
+        damping: 18,
+        stiffness: 200,
+      });
+      labelTranslateY.value = withSpring(0, {
+        damping: 18,
+        stiffness: 200,
+      });
+    }
+  }, [isFocused, scale, labelTranslateY]);
+
   return (
     <View style={[styles.container, containerStyle]}>
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label && (
+        <Animated.Text style={[styles.label, animatedLabelStyle]}>
+          {label}
+        </Animated.Text>
+      )}
 
-      <View style={inputContainerStyles}>
+      <Animated.View style={[inputContainerStyles, animatedContainerStyle]}>
         {prefixIcon && <View style={styles.prefixIcon}>{prefixIcon}</View>}
 
         <TextInput
@@ -91,7 +137,7 @@ export const Input: React.FC<InputProps> = ({
         />
 
         {suffixIcon && <View style={styles.suffixIcon}>{suffixIcon}</View>}
-      </View>
+      </Animated.View>
 
       {error && (
         <Text

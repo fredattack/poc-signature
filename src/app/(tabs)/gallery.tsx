@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
+import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
 import { useRouter } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { SignatureCard } from '@/components/signature/SignatureCard';
@@ -15,6 +16,7 @@ import { EmptyState } from '@/components/shared/EmptyState';
 import { Header } from '@/components/shared/Header';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAnalytics } from '@/hooks/useAnalytics';
+import { useHaptics } from '@/hooks/useHaptics';
 import { useThemeTokens } from '@/theme';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { Signature } from '@/types/signature.types';
@@ -31,6 +33,7 @@ const sortOptions: { value: SortOption; label: string }[] = [
 export default function GalleryScreen() {
   const router = useRouter();
   const { screen, track } = useAnalytics();
+  const haptics = useHaptics();
   const theme = useThemeTokens();
   const { colors } = theme;
   const styles = React.useMemo(() => createStyles(theme), [theme]);
@@ -63,6 +66,7 @@ export default function GalleryScreen() {
   const activeCount = getActiveSignatures().length;
 
   const handleSortChange = (option: SortOption) => {
+    haptics.triggerSelection();
     setSortBy(option);
     setShowSortMenu(false);
     track(ANALYTICS_EVENTS.GALLERY_SORTED, {
@@ -72,6 +76,7 @@ export default function GalleryScreen() {
   };
 
   const handleSignaturePress = (signatureId: string) => {
+    haptics.triggerLight();
     router.push({
       pathname: '/signature-detail',
       params: { signatureId },
@@ -108,31 +113,45 @@ export default function GalleryScreen() {
         </TouchableOpacity>
 
         {showSortMenu && (
-          <View style={styles.sortMenu}>
-            {sortOptions.map((option) => (
-              <TouchableOpacity
+          <Animated.View
+            entering={FadeIn.duration(200).springify()}
+            style={styles.sortMenu}
+          >
+            {sortOptions.map((option, index) => (
+              <Animated.View
                 key={option.value}
-                style={[
-                  styles.sortMenuItem,
-                  sortBy === option.value && styles.sortMenuItemActive,
-                ]}
-                onPress={() => handleSortChange(option.value)}
-                activeOpacity={0.7}
+                entering={SlideInDown.delay(index * 50)
+                  .duration(200)
+                  .springify()}
               >
-                <Text
+                <TouchableOpacity
                   style={[
-                    styles.sortMenuItemText,
-                    sortBy === option.value && styles.sortMenuItemTextActive,
+                    styles.sortMenuItem,
+                    sortBy === option.value && styles.sortMenuItemActive,
                   ]}
+                  onPress={() => handleSortChange(option.value)}
+                  activeOpacity={0.7}
                 >
-                  {option.label}
-                </Text>
-                {sortBy === option.value && (
-                  <Text style={styles.checkmark}>✓</Text>
-                )}
-              </TouchableOpacity>
+                  <Text
+                    style={[
+                      styles.sortMenuItemText,
+                      sortBy === option.value && styles.sortMenuItemTextActive,
+                    ]}
+                  >
+                    {option.label}
+                  </Text>
+                  {sortBy === option.value && (
+                    <Animated.Text
+                      entering={FadeIn.duration(150).springify()}
+                      style={styles.checkmark}
+                    >
+                      ✓
+                    </Animated.Text>
+                  )}
+                </TouchableOpacity>
+              </Animated.View>
             ))}
-          </View>
+          </Animated.View>
         )}
       </View>
     );

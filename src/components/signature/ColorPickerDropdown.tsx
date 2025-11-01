@@ -9,9 +9,14 @@ import {
   TouchableOpacity,
   View,
 } from 'react-native';
-import Animated, { FadeIn, FadeOut } from 'react-native-reanimated';
+import Animated, {
+  FadeIn,
+  FadeOut,
+  SlideInDown,
+} from 'react-native-reanimated';
 import { SignatureColor } from '@/types/signature.types';
 import { useThemeTokens } from '@/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export interface ColorOption {
   name: string;
@@ -57,11 +62,23 @@ export const ColorPickerDropdown: React.FC<ColorPickerDropdownProps> = ({
   const [isOpen, setIsOpen] = useState(false);
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const haptics = useHaptics();
 
   const selectedOption =
     COLOR_OPTIONS.find((opt) => opt.value === value) ?? COLOR_OPTIONS[0];
 
+  const handleOpen = () => {
+    haptics.triggerLight();
+    setIsOpen(true);
+  };
+
+  const handleClose = () => {
+    haptics.triggerLight();
+    setIsOpen(false);
+  };
+
   const handleSelect = (color: SignatureColor) => {
+    haptics.triggerSelection();
     onChange(color);
     setIsOpen(false);
   };
@@ -71,7 +88,7 @@ export const ColorPickerDropdown: React.FC<ColorPickerDropdownProps> = ({
       {/* Trigger Button */}
       <TouchableOpacity
         style={[styles.trigger, disabled && styles.triggerDisabled]}
-        onPress={() => setIsOpen(true)}
+        onPress={handleOpen}
         disabled={disabled}
         accessibilityRole="button"
         accessibilityLabel={`Select color. Current: ${selectedOption?.name ?? 'Unknown'}`}
@@ -98,39 +115,55 @@ export const ColorPickerDropdown: React.FC<ColorPickerDropdownProps> = ({
         visible={isOpen}
         transparent
         animationType="fade"
-        onRequestClose={() => setIsOpen(false)}
+        onRequestClose={handleClose}
       >
-        <Pressable style={styles.overlay} onPress={() => setIsOpen(false)}>
+        <Pressable style={styles.overlay} onPress={handleClose}>
           <Animated.View
             entering={FadeIn.duration(200)}
             exiting={FadeOut.duration(200)}
             style={styles.dropdown}
           >
-            {COLOR_OPTIONS.map((option) => {
+            {COLOR_OPTIONS.map((option, index) => {
               const isSelected = option.value === value;
 
               return (
-                <TouchableOpacity
+                <Animated.View
                   key={option.value}
-                  style={[styles.option, isSelected && styles.optionSelected]}
-                  onPress={() => handleSelect(option.value)}
-                  accessibilityRole="radio"
-                  accessibilityState={{ checked: isSelected }}
-                  accessibilityLabel={option.name}
+                  entering={SlideInDown.delay(index * 50)
+                    .duration(200)
+                    .springify()}
                 >
-                  <View style={styles.optionContent}>
-                    <View
-                      style={[
-                        styles.optionSwatch,
-                        { backgroundColor: option.hex },
-                        option.value === SignatureColor.White &&
-                          styles.swatchBorder,
-                      ]}
-                    />
-                    <Text style={styles.optionText}>{option.name}</Text>
-                  </View>
-                  {isSelected && <Text style={styles.checkmark}>✓</Text>}
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={[styles.option, isSelected && styles.optionSelected]}
+                    onPress={() => handleSelect(option.value)}
+                    activeOpacity={0.7}
+                    accessibilityRole="radio"
+                    accessibilityState={{ checked: isSelected }}
+                    accessibilityLabel={option.name}
+                  >
+                    <View style={styles.optionContent}>
+                      <View style={styles.optionSwatchContainer}>
+                        <View
+                          style={[
+                            styles.optionSwatch,
+                            { backgroundColor: option.hex },
+                            option.value === SignatureColor.White &&
+                              styles.swatchBorder,
+                          ]}
+                        />
+                        <Text style={styles.optionText}>{option.name}</Text>
+                      </View>
+                      {isSelected && (
+                        <Animated.Text
+                          entering={FadeIn.duration(150).springify()}
+                          style={styles.checkmark}
+                        >
+                          ✓
+                        </Animated.Text>
+                      )}
+                    </View>
+                  </TouchableOpacity>
+                </Animated.View>
               );
             })}
           </Animated.View>
@@ -169,18 +202,15 @@ const createStyles = ({
       ...tokens.elevation.level3,
     },
     option: {
-      alignItems: 'center',
       borderBottomColor: borderColor,
       borderBottomWidth: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
       paddingHorizontal: tokens.spacing.md,
       paddingVertical: tokens.spacing.sm,
     },
     optionContent: {
       alignItems: 'center',
       flexDirection: 'row',
-      gap: tokens.spacing.sm,
+      justifyContent: 'space-between',
     },
     optionSelected: {
       backgroundColor:
@@ -192,6 +222,11 @@ const createStyles = ({
       borderRadius: 12,
       height: 24,
       width: 24,
+    },
+    optionSwatchContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
     },
     optionText: {
       color: colors.text.primary,

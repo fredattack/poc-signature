@@ -1,14 +1,19 @@
-import React, { useMemo, useRef } from 'react';
+import React, { useMemo } from 'react';
 import {
   ActivityIndicator,
-  Animated,
   Pressable,
   StyleSheet,
   Text,
   TextStyle,
   ViewStyle,
 } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useThemeTokens } from '@/theme';
+import { useHaptics } from '@/hooks/useHaptics';
 
 export type ButtonVariant = 'primary' | 'secondary' | 'ghost';
 export type ButtonSize = 'small' | 'medium' | 'large';
@@ -61,7 +66,8 @@ export const Button: React.FC<ButtonProps> = ({
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
-  const scaleAnim = useRef(new Animated.Value(1)).current;
+  const scale = useSharedValue(1);
+  const haptics = useHaptics();
 
   const indicatorColor =
     variant === 'primary'
@@ -84,25 +90,44 @@ export const Button: React.FC<ButtonProps> = ({
     textStyle,
   ];
 
+  // Animated style with spring physics for organic feel
+  const animatedStyle = useAnimatedStyle(() => ({
+    transform: [{ scale: scale.value }],
+  }));
+
   const handlePressIn = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 0.98,
-      useNativeDriver: true,
-    }).start();
+    // Light haptic on press start
+    haptics.triggerLight();
+
+    // Smooth scale down with spring physics
+    scale.value = withSpring(0.95, {
+      damping: 15,
+      stiffness: 250,
+    });
   };
 
   const handlePressOut = () => {
-    Animated.spring(scaleAnim, {
-      toValue: 1,
-      useNativeDriver: true,
-      tension: 50,
-      friction: 7,
-    }).start();
+    // Smooth scale up with spring physics
+    scale.value = withSpring(1, {
+      damping: 15,
+      stiffness: 250,
+    });
+  };
+
+  const handlePress = () => {
+    // Medium haptic for primary, light for others
+    if (variant === 'primary') {
+      haptics.triggerMedium();
+    } else {
+      haptics.triggerLight();
+    }
+
+    onPress();
   };
 
   return (
     <Pressable
-      onPress={onPress}
+      onPress={handlePress}
       onPressIn={handlePressIn}
       onPressOut={handlePressOut}
       disabled={disabled || loading}
@@ -115,14 +140,7 @@ export const Button: React.FC<ButtonProps> = ({
         busy: loading,
       }}
     >
-      <Animated.View
-        style={[
-          buttonStyles,
-          {
-            transform: [{ scale: scaleAnim }],
-          },
-        ]}
-      >
+      <Animated.View style={[buttonStyles, animatedStyle]}>
         {loading ? (
           <ActivityIndicator color={indicatorColor} />
         ) : (

@@ -1,5 +1,10 @@
-import React, { useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
+import React, { useEffect, useMemo } from 'react';
+import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { useThemeTokens } from '@/theme';
 
 export interface HeaderProps {
@@ -20,9 +25,29 @@ export const Header: React.FC<HeaderProps> = ({
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  // Entrance animation
+  const opacity = useSharedValue(0);
+  const translateY = useSharedValue(-20);
+
+  useEffect(() => {
+    opacity.value = withSpring(1, {
+      damping: 18,
+      stiffness: 200,
+    });
+    translateY.value = withSpring(0, {
+      damping: 18,
+      stiffness: 200,
+    });
+  }, [opacity, translateY]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ translateY: translateY.value }],
+  }));
+
   return (
-    <View style={styles.container}>
-      <View style={styles.leftSlot}>
+    <Animated.View style={[styles.container, animatedStyle]}>
+      <Animated.View style={styles.leftSlot}>
         {leftAction && onLeftPress ? (
           <TouchableOpacity onPress={onLeftPress} style={styles.action}>
             {leftAction}
@@ -30,13 +55,13 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           leftAction
         )}
-      </View>
-      <View style={styles.titleContainer}>
+      </Animated.View>
+      <Animated.View style={styles.titleContainer}>
         <Text style={styles.title} numberOfLines={1}>
           {title}
         </Text>
-      </View>
-      <View style={styles.rightSlot}>
+      </Animated.View>
+      <Animated.View style={styles.rightSlot}>
         {rightAction && onRightPress ? (
           <TouchableOpacity onPress={onRightPress} style={styles.action}>
             {rightAction}
@@ -44,8 +69,8 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           rightAction
         )}
-      </View>
-    </View>
+      </Animated.View>
+    </Animated.View>
   );
 };
 

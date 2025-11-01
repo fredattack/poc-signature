@@ -1,5 +1,10 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
+import Animated, {
+  useAnimatedStyle,
+  useSharedValue,
+  withSpring,
+} from 'react-native-reanimated';
 import { Button } from '@/components/ui/Button';
 import { useThemeTokens } from '@/theme';
 
@@ -21,8 +26,28 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
 
+  // Entrance animation
+  const opacity = useSharedValue(0);
+  const scale = useSharedValue(0.95);
+
+  useEffect(() => {
+    opacity.value = withSpring(1, {
+      damping: 18,
+      stiffness: 200,
+    });
+    scale.value = withSpring(1, {
+      damping: 18,
+      stiffness: 200,
+    });
+  }, [opacity, scale]);
+
+  const animatedStyle = useAnimatedStyle(() => ({
+    opacity: opacity.value,
+    transform: [{ scale: scale.value }],
+  }));
+
   return (
-    <View style={styles.container}>
+    <Animated.View style={[styles.container, animatedStyle]}>
       {icon && <View style={styles.iconContainer}>{icon}</View>}
       <Text style={styles.title}>{title}</Text>
       {description && <Text style={styles.description}>{description}</Text>}
@@ -31,7 +56,7 @@ export const EmptyState: React.FC<EmptyStateProps> = ({
           <Button title={ctaLabel} onPress={onCtaPress} variant="primary" />
         </View>
       )}
-    </View>
+    </Animated.View>
   );
 };
 
