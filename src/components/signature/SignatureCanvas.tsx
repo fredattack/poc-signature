@@ -35,6 +35,7 @@ import { useThemeTokens } from '@/theme';
 
 export interface SignatureCanvasProps {
   color: SignatureColor;
+  paths?: CanvasPath[];
   onStrokeComplete: (path: CanvasPath) => void;
   captureRef?:
     | React.RefObject<RNView | null>
@@ -80,6 +81,7 @@ const getColorHex = (color: SignatureColor): string =>
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   color,
+  paths = [],
   onStrokeComplete,
   captureRef,
   clearSignal,
@@ -88,7 +90,6 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   height = CANVAS_HEIGHT,
   width,
 }) => {
-  const [paths, setPaths] = useState<CanvasPath[]>([]);
   const [isDrawing, setIsDrawing] = useState(false);
   const [hasStartedDrawing, setHasStartedDrawing] = useState(false);
   const [isComplete, setIsComplete] = useState(false);
@@ -103,7 +104,8 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
   // Pulse animation for hint overlay
   useEffect(() => {
-    if (!hasStartedDrawing) {
+    const hasContent = hasStartedDrawing || paths.length > 0;
+    if (!hasContent) {
       hintOpacity.value = withRepeat(
         withSequence(
           withTiming(0.8, { duration: 1500 }),
@@ -115,11 +117,10 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     } else {
       hintOpacity.value = withTiming(0, { duration: 300 });
     }
-  }, [hasStartedDrawing, hintOpacity]);
+  }, [hasStartedDrawing, paths.length, hintOpacity]);
 
   useEffect(() => {
     if (clearSignal !== undefined) {
-      setPaths([]);
       currentPath.current = Skia.Path.Make();
       currentPoints.current = [];
       setCurrentDrawingPath([]);
@@ -139,7 +140,6 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       color,
     };
 
-    setPaths((prev) => [...prev, newPath]);
     onStrokeComplete(newPath);
     setIsComplete(true);
 
@@ -303,7 +303,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
       />
 
       {/* Hint Overlay - Shows when canvas is empty, doesn't interfere with touches */}
-      {!hasStartedDrawing && (
+      {!hasStartedDrawing && paths.length === 0 && (
         <Animated.View
           style={[styles.hintOverlay, animatedHintStyle]}
           pointerEvents="none"

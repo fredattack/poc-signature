@@ -150,6 +150,7 @@ export default function SignatureCanvasScreen() {
         <View style={styles.landscapeCanvasWrapper}>
           <SignatureCanvas
             color={currentColor}
+            paths={paths}
             onStrokeComplete={addPath}
             captureRef={canvasRef}
             clearSignal={clearSignal}
@@ -282,6 +283,7 @@ export default function SignatureCanvasScreen() {
         >
           <SignatureCanvas
             color={currentColor}
+            paths={paths}
             onStrokeComplete={addPath}
             captureRef={canvasRef}
             clearSignal={clearSignal}
