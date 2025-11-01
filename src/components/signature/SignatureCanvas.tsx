@@ -98,6 +98,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   >([]);
   const currentPath = useRef(Skia.Path.Make());
   const currentPoints = useRef<{ x: number; y: number }[]>([]);
+  const centeringOffsetRef = useRef({ offsetX: 0, offsetY: 0 });
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
   const hintOpacity = useSharedValue(0.5);
@@ -151,13 +152,18 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
 
   const handleTouchStart = useCallback(
     (event: GestureResponderEvent) => {
-      const point = getTouchPoint(event);
-      console.log('[SignatureCanvas] Touch START:', point);
+      const rawPoint = getTouchPoint(event);
+      console.log('[SignatureCanvas] Touch START:', rawPoint);
 
-      if (!point) {
+      if (!rawPoint) {
         console.log('[SignatureCanvas] Touch START - no valid point, aborting');
         return;
       }
+
+      const point = {
+        x: rawPoint.x - centeringOffsetRef.current.offsetX,
+        y: rawPoint.y - centeringOffsetRef.current.offsetY,
+      };
 
       if (!hasStartedDrawing) {
         console.log('[SignatureCanvas] First stroke - hiding hint');
@@ -176,12 +182,17 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   );
 
   const handleTouchMove = useCallback((event: GestureResponderEvent) => {
-    const point = getTouchPoint(event);
+    const rawPoint = getTouchPoint(event);
 
-    if (!point) {
+    if (!rawPoint) {
       console.log('[SignatureCanvas] Touch MOVE - no valid point, skipping');
       return;
     }
+
+    const point = {
+      x: rawPoint.x - centeringOffsetRef.current.offsetX,
+      y: rawPoint.y - centeringOffsetRef.current.offsetY,
+    };
 
     currentPath.current.lineTo(point.x, point.y);
     currentPoints.current.push(point);
@@ -213,16 +224,82 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     onEndStroke?.();
   }, [onEndStroke]);
 
+  const calculatePathsBounds = useCallback(
+    (
+      allPaths: CanvasPath[]
+    ): { minX: number; maxX: number; minY: number; maxY: number } | null => {
+      if (allPaths.length === 0) {
+        return null;
+      }
+
+      let minX = Infinity;
+      let maxX = -Infinity;
+      let minY = Infinity;
+      let maxY = -Infinity;
+
+      for (const pathData of allPaths) {
+        for (const point of pathData.points) {
+          minX = Math.min(minX, point.x);
+          maxX = Math.max(maxX, point.x);
+          minY = Math.min(minY, point.y);
+          maxY = Math.max(maxY, point.y);
+        }
+      }
+
+      return { minX, maxX, minY, maxY };
+    },
+    []
+  );
+
+  const getCenteringOffset = useCallback(
+    (canvasWidth: number, canvasHeight: number) => {
+      const bounds = calculatePathsBounds(paths);
+      if (!bounds) {
+        return { offsetX: 0, offsetY: 0 };
+      }
+
+      const signatureWidth = bounds.maxX - bounds.minX;
+      const signatureHeight = bounds.maxY - bounds.minY;
+      const signatureCenterX = bounds.minX + signatureWidth / 2;
+      const signatureCenterY = bounds.minY + signatureHeight / 2;
+
+      const canvasCenterX = canvasWidth / 2;
+      const canvasCenterY = canvasHeight / 2;
+
+      return {
+        offsetX: canvasCenterX - signatureCenterX,
+        offsetY: canvasCenterY - signatureCenterY,
+      };
+    },
+    [paths, calculatePathsBounds]
+  );
+
+  const centeringOffset = useMemo(
+    () => getCenteringOffset(width ?? CANVAS_ACTUAL_WIDTH, height),
+    [width, height, getCenteringOffset]
+  );
+
+  useEffect(() => {
+    centeringOffsetRef.current = centeringOffset;
+  }, [centeringOffset]);
+
   const renderCompletedPaths = useMemo(
     () =>
       paths.map((pathData, index) => {
         const skiaPath = Skia.Path.Make();
         if (pathData.points.length > 0 && pathData.points[0]) {
-          skiaPath.moveTo(pathData.points[0].x, pathData.points[0].y);
+          const firstPoint = pathData.points[0];
+          skiaPath.moveTo(
+            firstPoint.x + centeringOffset.offsetX,
+            firstPoint.y + centeringOffset.offsetY
+          );
           for (let i = 1; i < pathData.points.length; i++) {
             const point = pathData.points[i];
             if (point) {
-              skiaPath.lineTo(point.x, point.y);
+              skiaPath.lineTo(
+                point.x + centeringOffset.offsetX,
+                point.y + centeringOffset.offsetY
+              );
             }
           }
         }
@@ -239,7 +316,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           />
         );
       }),
-    [paths]
+    [paths, centeringOffset]
   );
 
   const animatedHintStyle = useAnimatedStyle(() => ({
@@ -263,16 +340,37 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
         ]}
       >
         {renderCompletedPaths}
-        {isDrawing && currentDrawingPath.length > 0 && (
-          <Path
-            path={currentPath.current}
-            color={getColorHex(color)}
-            style="stroke"
-            strokeWidth={CANVAS_STROKE_WIDTH}
-            strokeCap="round"
-            strokeJoin="round"
-          />
-        )}
+        {isDrawing &&
+          currentDrawingPath.length > 0 &&
+          (() => {
+            const renderPath = Skia.Path.Make();
+            if (currentPoints.current.length > 0 && currentPoints.current[0]) {
+              const firstPoint = currentPoints.current[0];
+              renderPath.moveTo(
+                firstPoint.x + centeringOffset.offsetX,
+                firstPoint.y + centeringOffset.offsetY
+              );
+              for (let i = 1; i < currentPoints.current.length; i++) {
+                const point = currentPoints.current[i];
+                if (point) {
+                  renderPath.lineTo(
+                    point.x + centeringOffset.offsetX,
+                    point.y + centeringOffset.offsetY
+                  );
+                }
+              }
+            }
+            return (
+              <Path
+                path={renderPath}
+                color={getColorHex(color)}
+                style="stroke"
+                strokeWidth={CANVAS_STROKE_WIDTH}
+                strokeCap="round"
+                strokeJoin="round"
+              />
+            );
+          })()}
       </Canvas>
 
       {/* TRANSPARENT TOUCH OVERLAY - Captures all touch events */}
