@@ -338,6 +338,7 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
     actionButton: {
       flex: 1,
+      minHeight: 56,
     },
     backButton: {
       fontSize: tokens.typography.body.fontSize,
