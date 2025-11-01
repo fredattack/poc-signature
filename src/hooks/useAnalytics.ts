@@ -36,7 +36,13 @@ export const useAnalytics = () => {
   // Convenience methods for common events
   const trackSignatureEvent = useCallback(
     (
-      action: 'started' | 'saved' | 'cleared' | 'viewed' | 'deleted',
+      action:
+        | 'started'
+        | 'saved'
+        | 'cleared'
+        | 'viewed'
+        | 'deleted'
+        | 'save_failed',
       properties?: Record<string, unknown>
     ) => {
       const eventMap = {
@@ -45,6 +51,7 @@ export const useAnalytics = () => {
         cleared: ANALYTICS_EVENTS.SIGNATURE_CLEARED,
         viewed: ANALYTICS_EVENTS.SIGNATURE_VIEWED,
         deleted: ANALYTICS_EVENTS.SIGNATURE_DELETED,
+        save_failed: ANALYTICS_EVENTS.ERROR_OCCURRED,
       };
 
       track(eventMap[action], properties);

@@ -103,7 +103,9 @@ export default function WallpaperEditorScreen() {
     setShowPaywall(true);
   };
 
-  const handleColorSelect = (colorPreset: (typeof templateColorPresets)[0]) => {
+  const handleColorSelect = (
+    colorPreset: (typeof templateColorPresets)[number]
+  ) => {
     updateOptions({ backgroundColor: colorPreset.value });
     setShowColorPicker(false);
   };

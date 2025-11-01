@@ -33,12 +33,19 @@ const sortOptions: { value: SortOption; label: string }[] = [
 export default function GalleryScreen() {
   const router = useRouter();
   const { screen, track } = useAnalytics();
-  const loadSignatures = useSignaturesStore((state) => state.loadSignatures);
+  const loadSignatures = useSignaturesStore(
+    (state: { loadSignatures: () => Promise<void> }) => state.loadSignatures
+  );
   const getSortedSignatures = useSignaturesStore(
-    (state) => state.getSortedSignatures
+    (state: {
+      getSortedSignatures: (
+        sortBy: 'recent' | 'oldest' | 'a-z' | 'z-a'
+      ) => Signature[];
+    }) => state.getSortedSignatures
   );
   const getActiveSignatures = useSignaturesStore(
-    (state) => state.getActiveSignatures
+    (state: { getActiveSignatures: () => Signature[] }) =>
+      state.getActiveSignatures
   );
 
   const [sortBy, setSortBy] = useState<SortOption>('recent');

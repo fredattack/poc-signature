@@ -6,7 +6,55 @@ type ThemeMode = 'light' | 'dark';
 
 type ThemeProviderMode = ThemeMode | 'system';
 
-type ThemeColors = typeof tokens.colors;
+// Make ThemeColors flexible to support both light and dark theme values
+type ThemeColors = {
+  brand: {
+    primary: string;
+    primaryTint: string;
+    primaryShade: string;
+    secondary: string;
+    secondaryTint: string;
+    secondaryShade: string;
+    accent: string;
+    accentTint: string;
+    accentShade: string;
+  };
+  surface: {
+    background: string;
+    backgroundTint: string;
+    backgroundShade: string;
+    backgroundDark: string;
+    backgroundDarkTint: string;
+    backgroundDarkShade: string;
+    card: string;
+    cardDark: string;
+  };
+  text: {
+    primary: string;
+    secondary: string;
+    tertiary: string;
+    inverse: string;
+    inverseSecondary: string;
+    inverseTertiary: string;
+  };
+  feedback: {
+    success: string;
+    successTint: string;
+    successShade: string;
+    warning: string;
+    warningTint: string;
+    warningShade: string;
+    critical: string;
+    criticalTint: string;
+    criticalShade: string;
+    info: string;
+  };
+  overlay: {
+    light: string;
+    medium: string;
+    dark: string;
+  };
+};
 
 type ThemeContextValue = {
   mode: ThemeMode;

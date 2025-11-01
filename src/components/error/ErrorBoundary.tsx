@@ -20,7 +20,7 @@ type ThemedProps = Props & {
 };
 
 class ErrorBoundaryBase extends Component<ThemedProps, State> {
-  constructor(props: Props) {
+  constructor(props: ThemedProps) {
     super(props);
     this.state = {
       hasError: false,
@@ -35,7 +35,7 @@ class ErrorBoundaryBase extends Component<ThemedProps, State> {
     };
   }
 
-  componentDidCatch(error: Error, errorInfo: React.ErrorInfo) {
+  override componentDidCatch(error: Error, errorInfo: React.ErrorInfo): void {
     // Log error to error tracking service (e.g., Sentry)
     console.error('Error caught by boundary:', error, errorInfo);
 
@@ -50,7 +50,7 @@ class ErrorBoundaryBase extends Component<ThemedProps, State> {
     });
   };
 
-  render() {
+  override render() {
     if (this.state.hasError) {
       const styles = createStyles(this.props.theme);
 

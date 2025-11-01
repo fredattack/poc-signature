@@ -44,7 +44,10 @@ class UnifiedAnalyticsTracker {
 
     const event: AnalyticsEvent = {
       name: eventName,
-      properties,
+      properties: properties as Record<
+        string,
+        string | number | boolean | undefined
+      >,
       timestamp: new Date(),
     };
 

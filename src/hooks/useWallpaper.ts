@@ -115,7 +115,7 @@ export const useWallpaper = (
         : WallpaperResolution.Standard;
 
       // Capture wallpaper preview as image
-      const imageUri = await captureRef(wallpaperRef.current, {
+      const imageUri = await captureRef(wallpaperRef, {
         format: 'png',
         quality: 1.0,
         result: 'tmpfile',

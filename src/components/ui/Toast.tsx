@@ -60,6 +60,8 @@ export const Toast: React.FC<ToastProps> = ({
 
       return () => clearTimeout(timer);
     }
+
+    return undefined;
   }, [visible, duration, fadeAnim, translateY, onHide]);
 
   if (!visible) {

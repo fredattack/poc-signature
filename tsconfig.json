@@ -29,6 +29,7 @@
     "resolveJsonModule": true,
     "moduleResolution": "bundler",
     "allowImportingTsExtensions": false,
+    "baseUrl": ".",
 
     // Code generation
     "removeComments": false,
@@ -38,21 +39,9 @@
 
     // Path aliases
     "paths": {
-      "@/*": [
-        "./src/*"
-      ]
+      "@/*": ["./src/*"]
     }
   },
-  "include": [
-    "**/*.ts",
-    "**/*.tsx"
-  ],
-  "exclude": [
-    "node_modules",
-    "temp_expo",
-    "dist",
-    "build",
-    ".expo",
-    "coverage"
-  ]
+  "include": ["**/*.ts", "**/*.tsx"],
+  "exclude": ["node_modules", "temp_expo", "dist", "build", ".expo", "coverage"]
 }

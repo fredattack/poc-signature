@@ -151,7 +151,7 @@ export const useSignature = (
         throw new Error('Canvas reference not available');
       }
 
-      const imageUri = await captureRef(canvasRef.current, {
+      const imageUri = await captureRef(canvasRef, {
         format: 'png',
         quality: 0.9,
         result: 'tmpfile',

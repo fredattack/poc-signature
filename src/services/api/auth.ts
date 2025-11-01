@@ -85,7 +85,7 @@ class AuthService {
     const user: User = {
       id: `user_${Date.now()}`,
       email: request.email,
-      name: request.email.split('@')[0],
+      name: request.email.split('@')[0] ?? 'user',
       isPremium: false,
       createdAt: new Date(),
     };

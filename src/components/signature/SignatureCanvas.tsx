@@ -153,10 +153,13 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
     () =>
       paths.map((pathData, index) => {
         const skiaPath = Skia.Path.Make();
-        if (pathData.points.length > 0) {
+        if (pathData.points.length > 0 && pathData.points[0]) {
           skiaPath.moveTo(pathData.points[0].x, pathData.points[0].y);
           for (let i = 1; i < pathData.points.length; i++) {
-            skiaPath.lineTo(pathData.points[i].x, pathData.points[i].y);
+            const point = pathData.points[i];
+            if (point) {
+              skiaPath.lineTo(point.x, point.y);
+            }
           }
         }
 

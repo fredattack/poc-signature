@@ -15,7 +15,6 @@ import Animated, {
   useAnimatedScrollHandler,
   useSharedValue,
 } from 'react-native-reanimated';
-import type { AnimatedScrollView as _AnimatedScrollView } from 'react-native-reanimated';
 import { OnboardingSlide } from '@/components/onboarding/OnboardingSlide';
 import {
   CaptureIllustration,
@@ -78,7 +77,7 @@ export default function OnboardingScreen() {
     const offsetX = event.nativeEvent.contentOffset.x;
     const index = Math.round(offsetX / width);
 
-    if (index !== currentIndex) {
+    if (index !== currentIndex && slides[index]) {
       setCurrentIndex(index);
       track(ANALYTICS_EVENTS.ONBOARDING_SLIDE_VIEWED, {
         slide_number: index + 1,
