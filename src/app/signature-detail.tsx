@@ -271,7 +271,7 @@ const styles = StyleSheet.create({
   },
   imageCard: {
     alignItems: 'center',
-    backgroundColor: colors.background,
+    backgroundColor: colors.card,
     justifyContent: 'center',
     marginBottom: spacing.lg,
     minHeight: 300,

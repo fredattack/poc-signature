@@ -15,10 +15,11 @@ export const colors = {
 
   // Background colors
   background: tokenColors.surface.background,
-  backgroundSecondary: tokenColors.surface.card,
+  backgroundSecondary: tokenColors.surface.background, // Pearl gray #E6E6E6 (not white!)
   backgroundTertiary: tokenColors.surface.backgroundShade,
   backgroundDark: tokenColors.surface.backgroundDark,
   backgroundDarkCard: tokenColors.surface.cardDark,
+  card: tokenColors.surface.card, // White #FFFFFF for cards only
 
   // Text colors
   text: tokenColors.text.primary,

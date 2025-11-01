@@ -180,7 +180,7 @@ const styles = StyleSheet.create({
     marginTop: spacing.md,
   },
   container: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundSecondary,
     flex: 1,
   },
   footer: {

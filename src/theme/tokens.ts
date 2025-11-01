@@ -55,9 +55,9 @@ export const colors = {
     accentShade: '#9BB3AD',
   },
   surface: {
-    background: '#E6E6E6',
-    backgroundTint: '#E8E8E8',
-    backgroundShade: '#D4D4D4',
+    background: '#F2F4ED',
+    backgroundTint: '#F4F6F0',
+    backgroundShade: '#E8EAE3',
     backgroundDark: '#232323',
     backgroundDarkTint: '#353535',
     backgroundDarkShade: '#202020',

@@ -91,7 +91,7 @@ const styles = StyleSheet.create({
     color: colors.primary,
   },
   container: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundSecondary,
     flex: 1,
   },
   content: {

@@ -92,6 +92,7 @@ export default function ThemeSandboxScreen() {
     const messages: Record<ToastVariant, string> = {
       success: 'Action réussie',
       error: 'Une erreur est survenue',
+      warning: 'Attention',
       info: 'Information importante',
     };
 

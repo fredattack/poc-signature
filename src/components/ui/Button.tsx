@@ -1,11 +1,11 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useRef } from 'react';
 import {
   ActivityIndicator,
+  Animated,
+  Pressable,
   StyleSheet,
   Text,
   TextStyle,
-  TouchableOpacity,
-  View,
   ViewStyle,
 } from 'react-native';
 import { useThemeTokens } from '@/theme';
@@ -24,8 +24,27 @@ export interface ButtonProps {
   style?: ViewStyle;
   textStyle?: TextStyle;
   icon?: React.ReactNode;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }
 
+/**
+ * Button component with animations and accessibility
+ *
+ * Features:
+ * - Scale animation on press (0.98)
+ * - Loading state with spinner
+ * - Three variants: primary, secondary, ghost
+ * - Full accessibility support
+ *
+ * @example
+ * <Button
+ *   title="Save"
+ *   onPress={handleSave}
+ *   variant="primary"
+ *   loading={isSaving}
+ * />
+ */
 export const Button: React.FC<ButtonProps> = ({
   title,
   onPress,
@@ -37,9 +56,13 @@ export const Button: React.FC<ButtonProps> = ({
   style,
   textStyle,
   icon,
+  accessibilityLabel,
+  accessibilityHint,
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
+  const scaleAnim = useRef(new Animated.Value(1)).current;
+
   const indicatorColor =
     variant === 'primary'
       ? theme.colors.text.inverse
@@ -61,22 +84,55 @@ export const Button: React.FC<ButtonProps> = ({
     textStyle,
   ];
 
+  const handlePressIn = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 0.98,
+      useNativeDriver: true,
+    }).start();
+  };
+
+  const handlePressOut = () => {
+    Animated.spring(scaleAnim, {
+      toValue: 1,
+      useNativeDriver: true,
+      tension: 50,
+      friction: 7,
+    }).start();
+  };
+
   return (
-    <TouchableOpacity
-      style={buttonStyles}
+    <Pressable
       onPress={onPress}
+      onPressIn={handlePressIn}
+      onPressOut={handlePressOut}
       disabled={disabled || loading}
-      activeOpacity={0.7}
+      accessible
+      accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel ?? title}
+      accessibilityHint={accessibilityHint}
+      accessibilityState={{
+        disabled: disabled || loading,
+        busy: loading,
+      }}
     >
-      {loading ? (
-        <ActivityIndicator color={indicatorColor} />
-      ) : (
-        <View style={styles.content}>
-          {icon && <View style={styles.icon}>{icon}</View>}
-          <Text style={textStyles}>{title}</Text>
-        </View>
-      )}
-    </TouchableOpacity>
+      <Animated.View
+        style={[
+          buttonStyles,
+          {
+            transform: [{ scale: scaleAnim }],
+          },
+        ]}
+      >
+        {loading ? (
+          <ActivityIndicator color={indicatorColor} />
+        ) : (
+          <Animated.View style={styles.content}>
+            {icon && <Animated.View style={styles.icon}>{icon}</Animated.View>}
+            <Text style={textStyles}>{title}</Text>
+          </Animated.View>
+        )}
+      </Animated.View>
+    </Pressable>
   );
 };
 

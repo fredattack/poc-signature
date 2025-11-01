@@ -17,8 +17,28 @@ export interface ModalProps {
   dismissable?: boolean;
   animationType?: 'none' | 'slide' | 'fade';
   title?: string;
+  accessibilityLabel?: string;
 }
 
+/**
+ * Modal component with blur background and accessibility
+ *
+ * Features:
+ * - Slide or fade animation
+ * - Dismissable by tapping overlay (optional)
+ * - Hardware back button support (Android)
+ * - Full accessibility support (aria-modal)
+ * - Optional title header
+ *
+ * @example
+ * <Modal
+ *   visible={showModal}
+ *   onClose={() => setShowModal(false)}
+ *   title="Confirm Action"
+ * >
+ *   <Text>Are you sure?</Text>
+ * </Modal>
+ */
 export const Modal: React.FC<ModalProps> = ({
   visible,
   onClose,
@@ -27,6 +47,7 @@ export const Modal: React.FC<ModalProps> = ({
   dismissable = true,
   animationType = 'slide',
   title,
+  accessibilityLabel,
 }) => {
   const theme = useThemeTokens();
   const styles = useMemo(() => createStyles(theme), [theme]);
@@ -37,11 +58,17 @@ export const Modal: React.FC<ModalProps> = ({
       transparent
       animationType={animationType}
       onRequestClose={onClose}
+      statusBarTranslucent
     >
       <TouchableWithoutFeedback onPress={dismissable ? onClose : undefined}>
         <View style={styles.backdrop}>
           <TouchableWithoutFeedback>
-            <View style={[styles.container, containerStyle]}>
+            <View
+              style={[styles.container, containerStyle]}
+              accessible
+              accessibilityViewIsModal
+              accessibilityLabel={accessibilityLabel ?? title ?? 'Modal'}
+            >
               {title ? <Text style={styles.title}>{title}</Text> : null}
               {children}
             </View>

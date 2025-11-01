@@ -14,13 +14,37 @@ export interface InputProps extends TextInputProps {
   error?: string;
   helperText?: string;
   containerStyle?: ViewStyle;
+  prefixIcon?: React.ReactNode;
+  suffixIcon?: React.ReactNode;
+  accessibilityLabel?: string;
 }
 
+/**
+ * Input component with prefix/suffix icons and accessibility
+ *
+ * Features:
+ * - Focus states with sage green border
+ * - Error state with validation message
+ * - Helper text for additional context
+ * - Prefix/suffix icon support
+ * - Full accessibility support
+ *
+ * @example
+ * <Input
+ *   label="Email"
+ *   placeholder="you@example.com"
+ *   error={errors.email}
+ *   prefixIcon={<EmailIcon />}
+ * />
+ */
 export const Input: React.FC<InputProps> = ({
   label,
   error,
   helperText,
   containerStyle,
+  prefixIcon,
+  suffixIcon,
+  accessibilityLabel,
   style,
   ...textInputProps
 }) => {
@@ -29,26 +53,60 @@ export const Input: React.FC<InputProps> = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
   const placeholderColor = theme.colors.text.tertiary;
 
+  const inputContainerStyles = [
+    styles.inputContainer,
+    isFocused && styles.inputContainerFocused,
+    error && styles.inputContainerError,
+  ];
+
   const inputStyles = [
     styles.input,
-    isFocused && styles.inputFocused,
-    error && styles.inputError,
+    prefixIcon ? styles.inputWithPrefix : null,
+    suffixIcon ? styles.inputWithSuffix : null,
     style,
-  ];
+  ].filter(Boolean);
+
+  const errorId = error ? `${label}-error` : undefined;
+  const helperId = helperText ? `${label}-helper` : undefined;
 
   return (
     <View style={[styles.container, containerStyle]}>
       {label && <Text style={styles.label}>{label}</Text>}
-      <TextInput
-        style={inputStyles}
-        placeholderTextColor={placeholderColor}
-        onFocus={() => setIsFocused(true)}
-        onBlur={() => setIsFocused(false)}
-        {...textInputProps}
-      />
-      {error && <Text style={styles.errorText}>{error}</Text>}
+
+      <View style={inputContainerStyles}>
+        {prefixIcon && <View style={styles.prefixIcon}>{prefixIcon}</View>}
+
+        <TextInput
+          style={inputStyles}
+          placeholderTextColor={placeholderColor}
+          onFocus={() => setIsFocused(true)}
+          onBlur={() => setIsFocused(false)}
+          accessible
+          accessibilityLabel={accessibilityLabel ?? label}
+          accessibilityState={{
+            disabled: textInputProps.editable === false,
+          }}
+          aria-describedby={errorId ?? helperId}
+          {...textInputProps}
+        />
+
+        {suffixIcon && <View style={styles.suffixIcon}>{suffixIcon}</View>}
+      </View>
+
+      {error && (
+        <Text
+          style={styles.errorText}
+          accessible
+          accessibilityRole="alert"
+          nativeID={errorId}
+        >
+          {error}
+        </Text>
+      )}
       {helperText && !error && (
-        <Text style={styles.helperText}>{helperText}</Text>
+        <Text style={styles.helperText} nativeID={helperId}>
+          {helperText}
+        </Text>
       )}
     </View>
   );
@@ -95,33 +153,53 @@ const createStyles = ({
       marginTop: tokens.spacing.xs,
     },
     input: {
+      ...bodyTypography,
+      backgroundColor: 'transparent',
+      color: colors.text.primary,
+      flex: 1,
+      height: tokens.layout.inputHeight,
+      paddingHorizontal: tokens.spacing.md,
+    },
+    inputContainer: {
+      alignItems: 'center',
+      backgroundColor: colors.surface.card,
       borderColor:
         mode === 'dark'
           ? 'rgba(244, 244, 244, 0.16)'
           : 'rgba(35, 35, 35, 0.12)',
       borderRadius: tokens.radii.mild,
       borderWidth: 1,
+      flexDirection: 'row',
       height: tokens.layout.inputHeight,
-      paddingHorizontal: tokens.spacing.md,
-      ...bodyTypography,
-      backgroundColor: colors.surface.card,
-      color: colors.text.primary,
     },
-    inputError: {
+    inputContainerError: {
       borderColor: colors.feedback.critical,
     },
-    inputFocused: {
+    inputContainerFocused: {
       borderColor: colors.brand.primary,
-      elevation: 2,
+      ...tokens.elevation.level2,
       shadowColor: colors.brand.primary,
-      shadowOffset: { width: 0, height: 2 },
-      shadowOpacity: 0.08,
-      shadowRadius: 8,
+    },
+    inputWithPrefix: {
+      paddingLeft: tokens.spacing.xs,
+    },
+    inputWithSuffix: {
+      paddingRight: tokens.spacing.xs,
     },
     label: {
       ...labelTypography,
       color: colors.text.primary,
       marginBottom: tokens.spacing.xs,
+    },
+    prefixIcon: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginLeft: tokens.spacing.md,
+    },
+    suffixIcon: {
+      alignItems: 'center',
+      justifyContent: 'center',
+      marginRight: tokens.spacing.md,
     },
   });
 };

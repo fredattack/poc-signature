@@ -202,7 +202,8 @@ export default function WallpaperEditorScreen() {
                 styles.colorPreview,
                 {
                   backgroundColor:
-                    wallpaperOptions.backgroundColor ?? colors.background,
+                    wallpaperOptions.backgroundColor ??
+                    colors.backgroundSecondary,
                 },
               ]}
             />
@@ -352,7 +353,7 @@ const styles = StyleSheet.create({
     width: 40,
   },
   container: {
-    backgroundColor: colors.background,
+    backgroundColor: colors.backgroundSecondary,
     flex: 1,
   },
   errorContainer: {
