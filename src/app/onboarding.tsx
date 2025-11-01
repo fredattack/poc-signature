@@ -62,7 +62,9 @@ const slides = [
 export default function OnboardingScreen() {
   const router = useRouter();
   const { track } = useAnalytics();
-  const scrollViewRef = useRef<AnimatedScrollView | null>(null);
+  const scrollViewRef = useRef<React.ElementRef<
+    typeof Animated.ScrollView
+  > | null>(null);
   const scrollX = useSharedValue(0);
   const [currentIndex, setCurrentIndex] = useState(0);
 
