@@ -133,7 +133,6 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
                   textAnchor="middle"
                   opacity={0.7}
                 >
-                  📍{' '}
                   {formatLocation(
                     signature.location.city,
                     signature.location.country

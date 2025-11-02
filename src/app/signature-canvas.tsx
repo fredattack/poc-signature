@@ -15,7 +15,9 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignatureCanvas } from '@/components/signature/SignatureCanvas';
 import { ColorPickerDropdown } from '@/components/signature/ColorPickerDropdown';
+import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { Input } from '@/components/ui/Input';
 import { useSignature } from '@/hooks/useSignature';
 import { useAnalytics } from '@/hooks/useAnalytics';
@@ -234,34 +236,30 @@ export default function SignatureCanvasScreen() {
   return (
     <SafeAreaView
       style={[styles.container, { backgroundColor: colors.surface.background }]}
-      edges={['top', 'left', 'right', 'bottom']}
+      edges={['left', 'right', 'bottom']}
     >
       {/* Header */}
-      <View
-        style={[styles.header, { borderBottomColor: colors.overlay.light }]}
-      >
-        <TouchableOpacity
-          onPress={handleBack}
-          accessibilityRole="button"
-          accessibilityLabel="Go back"
-        >
-          <Text style={[styles.backButton, { color: colors.brand.primary }]}>
-            ← Back
-          </Text>
-        </TouchableOpacity>
-        <Text style={[styles.headerTitle, { color: colors.text.primary }]}>
-          Capture Signature
-        </Text>
-        <TouchableOpacity
-          onPress={handleInfo}
-          accessibilityRole="button"
-          accessibilityLabel="Information"
-        >
-          <Text style={[styles.infoIcon, { color: colors.text.secondary }]}>
-            ⓘ
-          </Text>
-        </TouchableOpacity>
-      </View>
+      <Header
+        title="Capture Signature"
+        leftAction={
+          <View style={styles.backButtonContainer}>
+            <Icon name="chevron-left" size="sm" color={colors.brand.primary} />
+            <Text
+              style={[styles.backButtonText, { color: colors.brand.primary }]}
+            >
+              Back
+            </Text>
+          </View>
+        }
+        onLeftPress={handleBack}
+        rightAction={
+          <TouchableOpacity onPress={handleInfo} style={styles.infoButton}>
+            <Text style={[styles.infoIcon, { color: colors.text.secondary }]}>
+              ⓘ
+            </Text>
+          </TouchableOpacity>
+        }
+      />
 
       {/* Main Content - NO SCROLL */}
       <View style={styles.content}>
@@ -366,11 +364,14 @@ export default function SignatureCanvasScreen() {
           {/* Location Toggle - Compact Row */}
           <View style={styles.locationRow}>
             <View style={styles.locationLabelContainer}>
-              <Text
-                style={[styles.locationLabel, { color: colors.text.primary }]}
-              >
-                📍 Location
-              </Text>
+              <View style={styles.locationLabelWithIcon}>
+                <Icon name="map-pin" size="xs" color={colors.text.primary} />
+                <Text
+                  style={[styles.locationLabel, { color: colors.text.primary }]}
+                >
+                  Location
+                </Text>
+              </View>
               <Text
                 style={[styles.locationHint, { color: colors.text.secondary }]}
               >
@@ -422,7 +423,12 @@ export default function SignatureCanvasScreen() {
 
 const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
-    backButton: {
+    backButtonContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 4,
+    },
+    backButtonText: {
       fontSize: tokens.typography.body.fontSize,
       fontWeight: '500' as const,
     },
@@ -483,17 +489,8 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
     formSection: {
       gap: tokens.spacing.md,
     },
-    header: {
-      alignItems: 'center',
-      borderBottomWidth: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingHorizontal: tokens.spacing.md,
-      paddingVertical: tokens.spacing.sm,
-    },
-    headerTitle: {
-      fontSize: tokens.typography.headingM.fontSize,
-      fontWeight: tokens.typography.headingM.fontWeight,
+    infoButton: {
+      padding: tokens.spacing.xs,
     },
     infoIcon: {
       fontSize: 20,
@@ -548,9 +545,14 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
     locationLabel: {
       fontSize: tokens.typography.body.fontSize,
       fontWeight: '500' as const,
+      marginLeft: tokens.spacing.xs,
     },
     locationLabelContainer: {
       flex: 1,
+    },
+    locationLabelWithIcon: {
+      alignItems: 'center',
+      flexDirection: 'row',
     },
     locationRow: {
       alignItems: 'center',

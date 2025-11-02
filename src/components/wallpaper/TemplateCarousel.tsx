@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import { TemplateConfig } from '@/types/template.types';
 import { getFreeTemplates, getPremiumTemplates } from '@/constants/templates';
+import { Icon } from '@/components/ui/Icon';
 import { useThemeTokens } from '@/theme';
 
 export interface TemplateCarouselProps {
@@ -72,7 +73,7 @@ export const TemplateCarousel: React.FC<TemplateCarouselProps> = ({
           {/* Lock icon for premium templates */}
           {isLocked && (
             <View style={styles.lockBadge}>
-              <Text style={styles.lockIcon}>🔒</Text>
+              <Icon name="lock" size={16} color="#FFFFFF" weight="fill" />
             </View>
           )}
 
@@ -180,9 +181,6 @@ const createStyles = ({
       right: 8,
       top: 8,
       width: 28,
-    },
-    lockIcon: {
-      fontSize: 14,
     },
     premiumBadge: {
       backgroundColor: colors.brand.primary,

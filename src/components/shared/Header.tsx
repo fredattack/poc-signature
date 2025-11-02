@@ -1,10 +1,11 @@
 import React, { useEffect, useMemo } from 'react';
-import { StyleSheet, Text, TouchableOpacity } from 'react-native';
+import { StyleSheet, TouchableOpacity } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { useThemeTokens } from '@/theme';
 
 export interface HeaderProps {
@@ -23,7 +24,11 @@ export const Header: React.FC<HeaderProps> = ({
   onRightPress,
 }) => {
   const theme = useThemeTokens();
-  const styles = useMemo(() => createStyles(theme), [theme]);
+  const insets = useSafeAreaInsets();
+  const styles = useMemo(
+    () => createStyles(theme, insets.top),
+    [theme, insets.top]
+  );
 
   // Entrance animation
   const opacity = useSharedValue(0);
@@ -57,9 +62,9 @@ export const Header: React.FC<HeaderProps> = ({
         )}
       </Animated.View>
       <Animated.View style={styles.titleContainer}>
-        <Text style={styles.title} numberOfLines={1}>
+        <Animated.Text style={styles.title} numberOfLines={1}>
           {title}
-        </Text>
+        </Animated.Text>
       </Animated.View>
       <Animated.View style={styles.rightSlot}>
         {rightAction && onRightPress ? (
@@ -74,11 +79,10 @@ export const Header: React.FC<HeaderProps> = ({
   );
 };
 
-const createStyles = ({
-  colors,
-  tokens,
-  mode,
-}: ReturnType<typeof useThemeTokens>) =>
+const createStyles = (
+  { colors, tokens, mode }: ReturnType<typeof useThemeTokens>,
+  safeAreaTop: number
+) =>
   StyleSheet.create({
     action: {
       padding: tokens.spacing.xs,
@@ -92,9 +96,10 @@ const createStyles = ({
           : 'rgba(35, 35, 35, 0.08)',
       borderBottomWidth: 1,
       flexDirection: 'row',
-      height: tokens.layout.headerHeight,
       justifyContent: 'space-between',
+      minHeight: tokens.layout.headerHeight + safeAreaTop,
       paddingHorizontal: tokens.spacing.md,
+      paddingTop: safeAreaTop,
     },
     leftSlot: {
       alignItems: 'flex-start',

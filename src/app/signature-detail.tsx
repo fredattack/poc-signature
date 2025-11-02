@@ -2,10 +2,12 @@
 
 import React, { useEffect, useState } from 'react';
 import { Alert, Image, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
 import { Header } from '@/components/shared/Header';
+import { Icon } from '@/components/ui/Icon';
 import { SyncStatusBadge } from '@/components/ui/SyncStatusBadge';
 import { Toast } from '@/components/ui/Toast';
 import { useSignaturesStore } from '@/store/signatures-store';
@@ -43,16 +45,24 @@ export default function SignatureDetailScreen() {
 
   if (!signature) {
     return (
-      <View style={styles.container}>
+      <SafeAreaView
+        style={styles.container}
+        edges={['bottom', 'left', 'right']}
+      >
         <Header
           title="Signature"
-          leftAction={<Text style={styles.backText}>Back</Text>}
+          leftAction={
+            <View style={styles.backButton}>
+              <Icon name="chevron-left" size="sm" color={colors.primary} />
+              <Text style={styles.backText}>Back</Text>
+            </View>
+          }
           onLeftPress={() => router.back()}
         />
         <View style={styles.errorContainer}>
           <Text style={styles.errorText}>Signature not found</Text>
         </View>
-      </View>
+      </SafeAreaView>
     );
   }
 
@@ -127,12 +137,17 @@ export default function SignatureDetailScreen() {
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <Header
         title="Signature Details"
-        leftAction={<Text style={styles.backText}>Back</Text>}
+        leftAction={
+          <View style={styles.backButton}>
+            <Icon name="chevron-left" size="sm" color={colors.primary} />
+            <Text style={styles.backText}>Back</Text>
+          </View>
+        }
         onLeftPress={() => router.back()}
-        rightAction={<Text style={styles.deleteText}>Delete</Text>}
+        rightAction={<Icon name="trash" size="sm" color={colors.error} />}
         onRightPress={handleDelete}
       />
 
@@ -227,7 +242,7 @@ export default function SignatureDetailScreen() {
         variant={toastType}
         onHide={() => setToastVisible(false)}
       />
-    </View>
+    </SafeAreaView>
   );
 }
 
@@ -236,9 +251,15 @@ const styles = StyleSheet.create({
     gap: spacing.sm,
     marginBottom: spacing.md,
   },
+  backButton: {
+    alignItems: 'center',
+    flexDirection: 'row',
+    gap: 4,
+  },
   backText: {
     ...typography.body,
     color: colors.primary,
+    fontWeight: '500',
   },
   colorIndicator: {
     alignItems: 'center',

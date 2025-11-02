@@ -3,6 +3,7 @@
 import React, { Component, ReactNode } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
 import { Button } from '@/components/ui/Button';
+import { Icon } from '@/components/ui/Icon';
 import { useThemeTokens } from '@/theme';
 import type { Tokens as _Tokens } from '@/theme';
 
@@ -56,7 +57,13 @@ class ErrorBoundaryBase extends Component<ThemedProps, State> {
 
       return (
         <View style={styles.container}>
-          <Text style={styles.emoji}>😞</Text>
+          <View style={styles.iconContainer}>
+            <Icon
+              name="smiley-x-eyes"
+              size={64}
+              color={this.props.theme.colors.feedback.critical}
+            />
+          </View>
           <Text style={styles.title}>Something went wrong</Text>
           <Text style={styles.message}>
             We&apos;re sorry for the inconvenience. Please try restarting the
@@ -126,10 +133,6 @@ const createStyles = ({
       justifyContent: 'center',
       padding: tokens.spacing.lg,
     },
-    emoji: {
-      fontSize: 64,
-      marginBottom: tokens.spacing.lg,
-    },
     errorDetails: {
       backgroundColor: colors.surface.card,
       borderRadius: tokens.radii.regular,
@@ -147,6 +150,9 @@ const createStyles = ({
       ...labelTypography,
       color: colors.feedback.critical,
       marginBottom: tokens.spacing.xs,
+    },
+    iconContainer: {
+      marginBottom: tokens.spacing.lg,
     },
     message: {
       ...bodyTypography,

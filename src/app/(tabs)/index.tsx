@@ -6,6 +6,7 @@ import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/Button';
 import { Card } from '@/components/ui/Card';
+import { Icon } from '@/components/ui/Icon';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { formatRelativeTime } from '@/utils/formatters';
@@ -52,11 +53,18 @@ export default function HomeScreen() {
         </Text>
 
         <Button
-          title="✍️ New Signature"
+          title="New Signature"
           onPress={handleNewSignature}
           variant="primary"
           fullWidth
           style={styles.ctaButton}
+          icon={
+            <Icon
+              name="pencil-line"
+              size="sm"
+              color={theme.colors.text.inverse}
+            />
+          }
         />
       </View>
 
@@ -99,9 +107,16 @@ export default function HomeScreen() {
                 {formatRelativeTime(signature.capturedAt)}
               </Text>
               {signature.location && (
-                <Text style={styles.signatureLocation}>
-                  📍 {signature.location.city}, {signature.location.country}
-                </Text>
+                <View style={styles.signatureLocationContainer}>
+                  <Icon
+                    name="map-pin"
+                    size="xs"
+                    color={theme.colors.text.tertiary}
+                  />
+                  <Text style={styles.signatureLocation}>
+                    {signature.location.city}, {signature.location.country}
+                  </Text>
+                </View>
               )}
             </Card>
           ))}
@@ -123,17 +138,23 @@ export default function HomeScreen() {
         <Text style={styles.sectionTitle}>Quick Actions</Text>
         <View style={styles.quickActions}>
           <Button
-            title="📸 Capture Signature"
+            title="Capture Signature"
             onPress={handleNewSignature}
             variant="secondary"
             fullWidth
+            icon={
+              <Icon name="camera" size="sm" color={theme.colors.text.primary} />
+            }
           />
           <Button
-            title="📚 View Gallery"
+            title="View Gallery"
             onPress={handleViewAll}
             variant="secondary"
             fullWidth
             style={styles.galleryButton}
+            icon={
+              <Icon name="books" size="sm" color={theme.colors.text.primary} />
+            }
           />
         </View>
       </View>
@@ -219,6 +240,11 @@ const createStyles = (
       fontWeight: tokens.typography.caption.fontWeight,
       letterSpacing: tokens.typography.caption.letterSpacing,
       lineHeight: tokens.typography.caption.lineHeight,
+      marginLeft: tokens.spacing.xs,
+    },
+    signatureLocationContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
       marginTop: tokens.spacing.xs,
     },
     signatureName: {

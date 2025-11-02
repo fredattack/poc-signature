@@ -1,34 +1,20 @@
-// Gallery screen with 2-column grid, sorting, and management
+// Gallery screen with 2-column grid
 
 import React, { useEffect, useState } from 'react';
-import {
-  RefreshControl,
-  StyleSheet,
-  Text,
-  TouchableOpacity,
-  View,
-} from 'react-native';
-import Animated, { FadeIn, SlideInDown } from 'react-native-reanimated';
+import { RefreshControl, StyleSheet, Text, View } from 'react-native';
+import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { FlashList } from '@shopify/flash-list';
 import { SignatureCard } from '@/components/signature/SignatureCard';
 import { EmptyState } from '@/components/shared/EmptyState';
 import { Header } from '@/components/shared/Header';
+import { Icon } from '@/components/ui/Icon';
 import { useSignaturesStore } from '@/store/signatures-store';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { useHaptics } from '@/hooks/useHaptics';
 import { useThemeTokens } from '@/theme';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 import { Signature } from '@/types/signature.types';
-
-type SortOption = 'recent' | 'oldest' | 'a-z' | 'z-a';
-
-const sortOptions: { value: SortOption; label: string }[] = [
-  { value: 'recent', label: 'Recent' },
-  { value: 'oldest', label: 'Oldest' },
-  { value: 'a-z', label: 'A-Z' },
-  { value: 'z-a', label: 'Z-A' },
-];
 
 export default function GalleryScreen() {
   const router = useRouter();
@@ -41,20 +27,11 @@ export default function GalleryScreen() {
   const loadSignatures = useSignaturesStore(
     (state: { loadSignatures: () => Promise<void> }) => state.loadSignatures
   );
-  const getSortedSignatures = useSignaturesStore(
-    (state: {
-      getSortedSignatures: (
-        sortBy: 'recent' | 'oldest' | 'a-z' | 'z-a'
-      ) => Signature[];
-    }) => state.getSortedSignatures
-  );
   const getActiveSignatures = useSignaturesStore(
     (state: { getActiveSignatures: () => Signature[] }) =>
       state.getActiveSignatures
   );
 
-  const [sortBy, setSortBy] = useState<SortOption>('recent');
-  const [showSortMenu, setShowSortMenu] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
 
   useEffect(() => {
@@ -62,18 +39,7 @@ export default function GalleryScreen() {
     void loadSignatures();
   }, [screen, loadSignatures]);
 
-  const signatures: Signature[] = getSortedSignatures(sortBy);
-  const activeCount = getActiveSignatures().length;
-
-  const handleSortChange = (option: SortOption) => {
-    haptics.triggerSelection();
-    setSortBy(option);
-    setShowSortMenu(false);
-    track(ANALYTICS_EVENTS.GALLERY_SORTED, {
-      sort_by: option,
-      signature_count: signatures.length,
-    });
-  };
+  const signatures: Signature[] = getActiveSignatures();
 
   const handleSignaturePress = (signatureId: string) => {
     haptics.triggerLight();
@@ -96,77 +62,28 @@ export default function GalleryScreen() {
     setRefreshing(false);
   };
 
-  const renderSortButton = () => {
-    const currentOption = sortOptions.find((opt) => opt.value === sortBy);
-
-    return (
-      <View style={styles.sortContainer}>
-        <TouchableOpacity
-          style={styles.sortButton}
-          onPress={() => setShowSortMenu(!showSortMenu)}
-          activeOpacity={0.7}
-        >
-          <Text style={styles.sortButtonText}>
-            Sort: {currentOption?.label ?? 'Recent'}
-          </Text>
-          <Text style={styles.sortIcon}>{showSortMenu ? '▲' : '▼'}</Text>
-        </TouchableOpacity>
-
-        {showSortMenu && (
-          <Animated.View
-            entering={FadeIn.duration(200).springify()}
-            style={styles.sortMenu}
-          >
-            {sortOptions.map((option, index) => (
-              <Animated.View
-                key={option.value}
-                entering={SlideInDown.delay(index * 50)
-                  .duration(200)
-                  .springify()}
-              >
-                <TouchableOpacity
-                  style={[
-                    styles.sortMenuItem,
-                    sortBy === option.value && styles.sortMenuItemActive,
-                  ]}
-                  onPress={() => handleSortChange(option.value)}
-                  activeOpacity={0.7}
-                >
-                  <Text
-                    style={[
-                      styles.sortMenuItemText,
-                      sortBy === option.value && styles.sortMenuItemTextActive,
-                    ]}
-                  >
-                    {option.label}
-                  </Text>
-                  {sortBy === option.value && (
-                    <Animated.Text
-                      entering={FadeIn.duration(150).springify()}
-                      style={styles.checkmark}
-                    >
-                      ✓
-                    </Animated.Text>
-                  )}
-                </TouchableOpacity>
-              </Animated.View>
-            ))}
-          </Animated.View>
-        )}
-      </View>
-    );
+  const handleBack = () => {
+    router.back();
   };
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container} edges={['bottom', 'left', 'right']}>
       <Header
         title="Gallery"
-        rightAction={activeCount > 0 ? renderSortButton() : undefined}
+        leftAction={
+          <View style={styles.backButton}>
+            <Icon name="chevron-left" size="sm" color={colors.brand.primary} />
+            <Text style={styles.backText}>Back</Text>
+          </View>
+        }
+        onLeftPress={handleBack}
       />
 
       {signatures.length === 0 ? (
         <EmptyState
-          icon={<Text style={styles.emptyIcon}>📚</Text>}
+          icon={
+            <Icon name="books" size={64} color={theme.colors.text.tertiary} />
+          }
           title="No signatures yet"
           description="Start your collection by capturing your first celebrity signature!"
           ctaLabel="Create First Signature"
@@ -197,90 +114,32 @@ export default function GalleryScreen() {
           }
         />
       )}
-    </View>
+    </SafeAreaView>
   );
 }
 
 const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
   StyleSheet.create({
+    backButton: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: 4,
+    },
+    backText: {
+      color: colors.brand.primary,
+      fontSize: tokens.typography.body.fontSize,
+      fontWeight: '500',
+    },
     cardWrapper: {
       flex: 1,
       paddingHorizontal: tokens.spacing.xs,
-    },
-    checkmark: {
-      color: colors.brand.primary,
-      fontSize: tokens.typography.body.fontSize,
-      fontWeight: 'bold',
-      lineHeight: tokens.typography.body.lineHeight,
     },
     container: {
       backgroundColor: colors.surface.background,
       flex: 1,
     },
-    emptyIcon: {
-      fontSize: 64,
-    },
     listContent: {
       padding: tokens.spacing.md,
       paddingBottom: tokens.spacing.xl,
-    },
-    sortButton: {
-      alignItems: 'center',
-      backgroundColor: colors.surface.card,
-      borderColor: colors.overlay.light,
-      borderRadius: 8,
-      borderWidth: 1,
-      flexDirection: 'row',
-      gap: tokens.spacing.xs,
-      paddingHorizontal: tokens.spacing.sm,
-      paddingVertical: tokens.spacing.xs,
-    },
-    sortButtonText: {
-      color: colors.text.primary,
-      fontSize: tokens.typography.caption.fontSize,
-      fontWeight: '600',
-      letterSpacing: tokens.typography.caption.letterSpacing,
-      lineHeight: tokens.typography.caption.lineHeight,
-    },
-    sortContainer: {
-      position: 'relative',
-    },
-    sortIcon: {
-      color: colors.text.secondary,
-      fontSize: tokens.typography.caption.fontSize,
-      lineHeight: tokens.typography.caption.lineHeight,
-    },
-    sortMenu: {
-      backgroundColor: colors.surface.card,
-      borderColor: colors.overlay.light,
-      borderRadius: 8,
-      borderWidth: 1,
-      minWidth: 120,
-      position: 'absolute',
-      right: 0,
-      top: 40,
-      zIndex: 1000,
-      ...tokens.elevation.level3,
-    },
-    sortMenuItem: {
-      alignItems: 'center',
-      borderBottomColor: colors.overlay.light,
-      borderBottomWidth: 1,
-      flexDirection: 'row',
-      justifyContent: 'space-between',
-      paddingHorizontal: tokens.spacing.md,
-      paddingVertical: tokens.spacing.sm,
-    },
-    sortMenuItemActive: {
-      backgroundColor: colors.brand.primaryTint,
-    },
-    sortMenuItemText: {
-      color: colors.text.primary,
-      fontSize: tokens.typography.body.fontSize,
-      lineHeight: tokens.typography.body.lineHeight,
-    },
-    sortMenuItemTextActive: {
-      color: colors.brand.primary,
-      fontWeight: '600',
     },
   });

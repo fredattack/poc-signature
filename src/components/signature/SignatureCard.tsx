@@ -9,6 +9,7 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Signature } from '@/types/signature.types';
 import { SyncStatusBadge } from '@/components/ui/SyncStatusBadge';
+import { Icon } from '@/components/ui/Icon';
 import { useThemeTokens } from '@/theme';
 import { formatRelativeTime } from '@/utils/formatters';
 
@@ -92,9 +93,16 @@ export const SignatureCard: React.FC<SignatureCardProps> = ({
             {formatRelativeTime(signature.capturedAt)}
           </Text>
           {signature.location && (
-            <Text style={styles.location} numberOfLines={1}>
-              📍 {signature.location.city}
-            </Text>
+            <View style={styles.locationContainer}>
+              <Icon
+                name="map-pin"
+                size="xs"
+                color={theme.colors.text.tertiary}
+              />
+              <Text style={styles.location} numberOfLines={1}>
+                {signature.location.city}
+              </Text>
+            </View>
           )}
         </View>
       </Animated.View>
@@ -150,6 +158,11 @@ const createStyles = ({
     location: {
       ...captionTypography,
       color: colors.text.secondary,
+      marginLeft: tokens.spacing.xs,
+    },
+    locationContainer: {
+      alignItems: 'center',
+      flexDirection: 'row',
       marginTop: tokens.spacing.xs,
     },
     statusBadge: {

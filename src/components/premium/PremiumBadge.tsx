@@ -1,8 +1,9 @@
 // Premium lock badge for premium-only features
 
 import React, { useMemo } from 'react';
-import { StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { useThemeTokens } from '@/theme';
+import { Icon } from '@/components/ui/Icon';
 
 export interface PremiumBadgeProps {
   size?: 'small' | 'medium' | 'large';
@@ -29,7 +30,12 @@ export const PremiumBadge: React.FC<PremiumBadgeProps> = ({
         { width: containerSize, height: containerSize },
       ]}
     >
-      <Text style={[styles.lockIcon, { fontSize: iconSize }]}>🔒</Text>
+      <Icon
+        name="lock"
+        size={iconSize}
+        color={theme.colors.text.inverse}
+        weight="fill"
+      />
     </View>
   );
 };
@@ -42,8 +48,5 @@ const createStyles = ({ colors, tokens }: ReturnType<typeof useThemeTokens>) =>
       borderRadius: tokens.radii.full,
       justifyContent: 'center',
       ...tokens.elevation.level2,
-    },
-    lockIcon: {
-      color: colors.text.inverse,
     },
   });

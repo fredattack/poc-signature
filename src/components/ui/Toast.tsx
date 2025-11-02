@@ -1,6 +1,7 @@
 import React, { useEffect, useMemo, useRef } from 'react';
-import { Animated, StyleSheet, Text } from 'react-native';
+import { Animated, StyleSheet, Text, View } from 'react-native';
 import { useThemeTokens } from '@/theme';
+import { Icon, IconName } from '@/components/ui/Icon';
 
 export type ToastVariant = 'success' | 'error' | 'info' | 'warning';
 
@@ -44,16 +45,16 @@ export const Toast: React.FC<ToastProps> = ({
   const styles = useMemo(() => createStyles(theme), [theme]);
 
   // Icon mapping for each variant
-  const getIcon = () => {
+  const getIconName = (): IconName | null => {
     if (!showIcon) {
       return null;
     }
 
-    const iconMap = {
-      success: '✓',
-      error: '✕',
-      warning: '⚠',
-      info: 'ⓘ',
+    const iconMap: Record<ToastVariant, IconName> = {
+      success: 'check-circle',
+      error: 'x-circle',
+      warning: 'warning',
+      info: 'info',
     };
 
     return iconMap[variant];
@@ -103,7 +104,7 @@ export const Toast: React.FC<ToastProps> = ({
     return null;
   }
 
-  const icon = getIcon();
+  const iconName = getIconName();
 
   return (
     <Animated.View
@@ -119,7 +120,16 @@ export const Toast: React.FC<ToastProps> = ({
       accessibilityRole="alert"
       accessibilityLiveRegion="polite"
     >
-      {icon && <Text style={styles.icon}>{icon}</Text>}
+      {iconName && (
+        <View style={styles.iconContainer}>
+          <Icon
+            name={iconName}
+            size={20}
+            color={theme.colors.text.inverse}
+            weight="fill"
+          />
+        </View>
+      )}
       <Text style={[styles.text, styles[`${variant}Text`]]}>{message}</Text>
     </Animated.View>
   );
@@ -158,8 +168,7 @@ const createStyles = ({
     errorText: {
       color: colors.text.inverse,
     },
-    icon: {
-      fontSize: 16,
+    iconContainer: {
       marginRight: tokens.spacing.xs,
     },
     infoContainer: {

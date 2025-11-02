@@ -2,8 +2,8 @@
 
 import React from 'react';
 import { Tabs } from 'expo-router';
-import { Text } from 'react-native';
 import { useThemeTokens } from '@/theme';
+import { Icon } from '@/components/ui/Icon';
 
 export default function TabsLayout() {
   const { colors, tokens } = useThemeTokens();
@@ -19,8 +19,11 @@ export default function TabsLayout() {
           borderTopColor: colors.overlay.light,
           borderTopWidth: 1,
           height: tokens.layout.tabBarHeight,
-          paddingBottom: 8,
-          paddingTop: 8,
+          paddingBottom: 4,
+          paddingTop: 4,
+        },
+        tabBarIconStyle: {
+          marginTop: 0,
         },
         tabBarLabelStyle: {
           fontSize: tokens.typography.caption.fontSize,
@@ -33,10 +36,8 @@ export default function TabsLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ size }) => (
-            <Text style={{ fontSize: size }} accessible={false}>
-              🏠
-            </Text>
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="house" size={size} color={color} />
           ),
         }}
       />
@@ -44,10 +45,8 @@ export default function TabsLayout() {
         name="gallery"
         options={{
           title: 'Gallery',
-          tabBarIcon: ({ size }) => (
-            <Text style={{ fontSize: size }} accessible={false}>
-              📚
-            </Text>
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="books" size={size} color={color} />
           ),
         }}
       />
@@ -55,10 +54,8 @@ export default function TabsLayout() {
         name="settings"
         options={{
           title: 'Settings',
-          tabBarIcon: ({ size }) => (
-            <Text style={{ fontSize: size }} accessible={false}>
-              ⚙️
-            </Text>
+          tabBarIcon: ({ color, size }) => (
+            <Icon name="gear" size={size} color={color} />
           ),
         }}
       />
