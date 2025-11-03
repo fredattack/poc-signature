@@ -47,6 +47,7 @@ export const useWallpaper = (
   const [selectedTemplateId, setSelectedTemplateId] = useState('minimal-white');
   const [wallpaperOptions, setWallpaperOptions] = useState<WallpaperOptions>({
     templateId: 'minimal-white',
+    backgroundColor: signature.backgroundColor,
     showDate: true,
     showLocation: !!signature.location,
   });

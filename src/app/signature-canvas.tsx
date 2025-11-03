@@ -15,6 +15,7 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { SignatureCanvas } from '@/components/signature/SignatureCanvas';
 import { ColorPickerDropdown } from '@/components/signature/ColorPickerDropdown';
+import { BackgroundColorPicker } from '@/components/signature/BackgroundColorPicker';
 import { Header } from '@/components/shared/Header';
 import { Button } from '@/components/ui/Button';
 import { Icon } from '@/components/ui/Icon';
@@ -62,6 +63,7 @@ export default function SignatureCanvasScreen() {
   const {
     paths,
     currentColor,
+    backgroundColor,
     celebrityName,
     captureLocation,
     isSaving,
@@ -71,6 +73,7 @@ export default function SignatureCanvasScreen() {
     addPath,
     clearCanvas,
     setColor,
+    setBackgroundColor,
     setCelebrityName,
     setCanvasRef,
     toggleLocationCapture,
@@ -152,6 +155,7 @@ export default function SignatureCanvasScreen() {
         <View style={styles.landscapeCanvasWrapper}>
           <SignatureCanvas
             color={currentColor}
+            backgroundColor={backgroundColor}
             paths={paths}
             onStrokeComplete={addPath}
             captureRef={canvasRef}
@@ -201,6 +205,10 @@ export default function SignatureCanvasScreen() {
             ]}
           >
             <ColorPickerDropdown value={currentColor} onChange={setColor} />
+            <BackgroundColorPicker
+              value={backgroundColor}
+              onChange={setBackgroundColor}
+            />
 
             <TouchableOpacity
               onPress={handleClear}
@@ -281,6 +289,7 @@ export default function SignatureCanvasScreen() {
         >
           <SignatureCanvas
             color={currentColor}
+            backgroundColor={backgroundColor}
             paths={paths}
             onStrokeComplete={addPath}
             captureRef={canvasRef}
@@ -298,7 +307,13 @@ export default function SignatureCanvasScreen() {
               { backgroundColor: colors.surface.backgroundTint },
             ]}
           >
-            <ColorPickerDropdown value={currentColor} onChange={setColor} />
+            <View style={styles.pickerRow}>
+              <ColorPickerDropdown value={currentColor} onChange={setColor} />
+              <BackgroundColorPicker
+                value={backgroundColor}
+                onChange={setBackgroundColor}
+              />
+            </View>
 
             <View style={styles.controlButtons}>
               <TouchableOpacity
@@ -439,10 +454,8 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       paddingTop: tokens.spacing.md,
     },
     canvasControls: {
-      alignItems: 'center',
-      flexDirection: 'row',
+      flexDirection: 'column',
       gap: tokens.spacing.sm,
-      justifyContent: 'space-between',
       paddingHorizontal: tokens.spacing.sm,
       paddingVertical: tokens.spacing.sm,
     },
@@ -559,6 +572,13 @@ const createStyles = ({ tokens }: ReturnType<typeof useThemeTokens>) =>
       flexDirection: 'row',
       gap: tokens.spacing.sm,
       justifyContent: 'space-between',
+    },
+    pickerRow: {
+      alignItems: 'center',
+      flexDirection: 'row',
+      gap: tokens.spacing.xs,
+      justifyContent: 'space-between',
+      width: '100%',
     },
     saveButton: {
       minHeight: 56,

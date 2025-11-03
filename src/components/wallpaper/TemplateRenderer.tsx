@@ -39,12 +39,34 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
     return null;
   }
 
-  const backgroundColor =
-    options.backgroundColor ?? template.style.backgroundColor;
   const textColor = options.textColor ?? template.style.textColor;
   const gradient = template.style.gradient;
 
   const renderBackground = () => {
+    // Custom background image from user options takes HIGHEST PRIORITY (Premium feature)
+    if (options.backgroundImage) {
+      return (
+        <Image
+          source={{ uri: options.backgroundImage }}
+          style={styles.background}
+          resizeMode="cover"
+        />
+      );
+    }
+
+    // Custom backgroundColor from user options takes PRIORITY over template gradient
+    if (options.backgroundColor) {
+      return (
+        <View
+          style={[
+            styles.background,
+            { backgroundColor: options.backgroundColor },
+          ]}
+        />
+      );
+    }
+
+    // Use template gradient if available and no custom color/image selected
     if (gradient) {
       return (
         <Svg width={width} height={height} style={StyleSheet.absoluteFill}>
@@ -71,7 +93,15 @@ export const TemplateRenderer: React.FC<TemplateRendererProps> = ({
       );
     }
 
-    return <View style={[styles.background, { backgroundColor }]} />;
+    // Fallback to template default backgroundColor
+    return (
+      <View
+        style={[
+          styles.background,
+          { backgroundColor: template.style.backgroundColor },
+        ]}
+      />
+    );
   };
 
   return (

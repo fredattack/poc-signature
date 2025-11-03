@@ -3,6 +3,7 @@
 export interface WallpaperOptions {
   templateId: string;
   backgroundColor?: string;
+  backgroundImage?: string; // Image URI from gallery (Premium feature)
   textColor?: string;
   showDate: boolean;
   showLocation: boolean;

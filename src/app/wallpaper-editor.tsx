@@ -24,10 +24,14 @@ import { usePremium } from '@/hooks/usePremium';
 import { shareImage } from '@/services/sharing/share-service';
 import { PaywallModal } from '@/components/premium/PaywallModal';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
-import { colors } from '@/constants/colors';
+import {
+  colors,
+  freeColorPresets,
+  premiumColorPresets,
+} from '@/constants/colors';
 import { typography } from '@/constants/typography';
 import { spacing } from '@/constants/spacing';
-import { templateColorPresets } from '@/constants/colors';
+import * as ImagePicker from 'expo-image-picker';
 
 export default function WallpaperEditorScreen() {
   const router = useRouter();
@@ -104,10 +108,59 @@ export default function WallpaperEditorScreen() {
   };
 
   const handleColorSelect = (
-    colorPreset: (typeof templateColorPresets)[number]
+    colorPreset:
+      | (typeof freeColorPresets)[number]
+      | (typeof premiumColorPresets)[number]
   ) => {
-    updateOptions({ backgroundColor: colorPreset.value });
+    // Check if color is premium and user is not premium
+    if (colorPreset.isPremium && !isPremium) {
+      handlePremiumRequired();
+      return;
+    }
+
+    // Clear background image when selecting a color
+    updateOptions({
+      backgroundColor: colorPreset.value,
+      backgroundImage: undefined,
+    });
     setShowColorPicker(false);
+  };
+
+  const handleImagePick = async () => {
+    // Check if user is premium
+    if (!isPremium) {
+      handlePremiumRequired();
+      return;
+    }
+
+    // Request permissions
+    const permissionResult =
+      await ImagePicker.requestMediaLibraryPermissionsAsync();
+
+    if (!permissionResult.granted) {
+      Alert.alert(
+        'Permission Required',
+        'Please grant permission to access your photo library.'
+      );
+      return;
+    }
+
+    // Launch image picker
+    const result = await ImagePicker.launchImageLibraryAsync({
+      mediaTypes: ImagePicker.MediaTypeOptions.Images,
+      allowsEditing: true,
+      aspect: [9, 16], // Portrait aspect ratio for wallpaper
+      quality: 1,
+    });
+
+    if (!result.canceled && result.assets[0]) {
+      // Clear background color when selecting an image
+      updateOptions({
+        backgroundImage: result.assets[0].uri,
+        backgroundColor: undefined,
+      });
+      setShowColorPicker(false);
+    }
   };
 
   const handleShare = async () => {
@@ -180,7 +233,7 @@ export default function WallpaperEditorScreen() {
 
         {/* Template Selection */}
         <View style={styles.section}>
-          <Text style={styles.sectionLabel}>Choose Template</Text>
+          <Text style={styles.sectionLabel}>Choose Template Background</Text>
           <TemplateCarousel
             selectedTemplateId={selectedTemplateId}
             onTemplateSelect={selectTemplate}
@@ -189,41 +242,98 @@ export default function WallpaperEditorScreen() {
           />
         </View>
 
-        {/* Color Customization */}
+        {/* Background Customization */}
         <View style={styles.section}>
           <TouchableOpacity
             style={styles.colorButton}
             onPress={() => setShowColorPicker(!showColorPicker)}
             activeOpacity={0.7}
           >
-            <Text style={styles.sectionLabel}>Background Color</Text>
-            <View
-              style={[
-                styles.colorPreview,
-                {
-                  backgroundColor:
-                    wallpaperOptions.backgroundColor ??
-                    colors.backgroundSecondary,
-                },
-              ]}
-            />
+            <Text style={styles.sectionLabel}>Background</Text>
+            {wallpaperOptions.backgroundImage ? (
+              <View style={styles.imagePreview}>
+                <Text style={styles.imagePreviewText}>Image</Text>
+              </View>
+            ) : (
+              <View
+                style={[
+                  styles.colorPreview,
+                  {
+                    backgroundColor:
+                      wallpaperOptions.backgroundColor ??
+                      colors.backgroundSecondary,
+                  },
+                ]}
+              />
+            )}
           </TouchableOpacity>
 
           {showColorPicker && (
-            <View style={styles.colorGrid}>
-              {templateColorPresets.map((preset) => (
-                <TouchableOpacity
-                  key={preset.id}
-                  style={[
-                    styles.colorOption,
-                    { backgroundColor: preset.value },
-                    preset.value === wallpaperOptions.backgroundColor &&
-                      styles.colorOptionSelected,
-                  ]}
-                  onPress={() => handleColorSelect(preset)}
-                  activeOpacity={0.7}
-                />
-              ))}
+            <View style={styles.backgroundPicker}>
+              {/* Free Colors */}
+              <Text style={styles.colorGroupLabel}>Free Colors</Text>
+              <View style={styles.colorGrid}>
+                {freeColorPresets.map((preset) => (
+                  <TouchableOpacity
+                    key={preset.id}
+                    style={[
+                      styles.colorOption,
+                      { backgroundColor: preset.value },
+                      preset.value === wallpaperOptions.backgroundColor &&
+                        styles.colorOptionSelected,
+                    ]}
+                    onPress={() => handleColorSelect(preset)}
+                    activeOpacity={0.7}
+                  />
+                ))}
+              </View>
+
+              {/* Premium Colors */}
+              <Text style={styles.colorGroupLabel}>Premium Colors</Text>
+              <View style={styles.colorGrid}>
+                {premiumColorPresets.map((preset) => (
+                  <TouchableOpacity
+                    key={preset.id}
+                    style={[
+                      styles.colorOption,
+                      { backgroundColor: preset.value },
+                      preset.value === wallpaperOptions.backgroundColor &&
+                        styles.colorOptionSelected,
+                    ]}
+                    onPress={() => handleColorSelect(preset)}
+                    activeOpacity={0.7}
+                  >
+                    {!isPremium && (
+                      <View style={styles.premiumBadge}>
+                        <Text style={styles.premiumBadgeText}>PRO</Text>
+                      </View>
+                    )}
+                  </TouchableOpacity>
+                ))}
+              </View>
+
+              {/* Image from Gallery */}
+              <Text style={styles.colorGroupLabel}>Custom Image</Text>
+              <TouchableOpacity
+                style={[
+                  styles.imagePickerButton,
+                  wallpaperOptions.backgroundImage &&
+                    styles.imagePickerButtonSelected,
+                ]}
+                onPress={() => void handleImagePick()}
+                activeOpacity={0.7}
+              >
+                <Text style={styles.imagePickerButtonText}>
+                  {wallpaperOptions.backgroundImage
+                    ? 'Change Image'
+                    : 'Choose from Gallery'}
+                </Text>
+                {!isPremium && (
+                  <View style={styles.premiumBadge}>
+                    <Text style={styles.premiumBadgeText}>PRO</Text>
+                  </View>
+                )}
+              </TouchableOpacity>
             </View>
           )}
         </View>
@@ -323,6 +433,9 @@ const styles = StyleSheet.create({
     ...typography.body,
     color: colors.primary,
   },
+  backgroundPicker: {
+    marginTop: spacing.md,
+  },
   colorButton: {
     alignItems: 'center',
     flexDirection: 'row',
@@ -333,6 +446,14 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     gap: spacing.sm,
     marginTop: spacing.md,
+  },
+  colorGroupLabel: {
+    ...typography.caption,
+    color: colors.textSecondary,
+    fontWeight: '600',
+    marginBottom: spacing.xs,
+    marginTop: spacing.sm,
+    textTransform: 'uppercase',
   },
   colorOption: {
     borderColor: colors.border,
@@ -366,12 +487,63 @@ const styles = StyleSheet.create({
     color: colors.error,
     textAlign: 'center',
   },
+  imagePickerButton: {
+    alignItems: 'center',
+    backgroundColor: colors.card,
+    borderColor: colors.border,
+    borderRadius: 12,
+    borderWidth: 2,
+    flexDirection: 'row',
+    justifyContent: 'center',
+    paddingHorizontal: spacing.md,
+    paddingVertical: spacing.sm,
+    position: 'relative',
+  },
+  imagePickerButtonSelected: {
+    borderColor: colors.primary,
+    borderWidth: 3,
+  },
+  imagePickerButtonText: {
+    ...typography.body,
+    color: colors.text,
+    fontWeight: '600',
+  },
+  imagePreview: {
+    alignItems: 'center',
+    backgroundColor: colors.primary,
+    borderColor: colors.border,
+    borderRadius: 20,
+    borderWidth: 2,
+    height: 40,
+    justifyContent: 'center',
+    width: 80,
+  },
+  imagePreviewText: {
+    ...typography.caption,
+    color: colors.textInverse,
+    fontWeight: '600',
+  },
   infoText: {
     ...typography.caption,
     color: colors.textSecondary,
     marginTop: spacing.lg,
     paddingHorizontal: spacing.lg,
     textAlign: 'center',
+  },
+  premiumBadge: {
+    backgroundColor: colors.accent,
+    borderRadius: 8,
+    paddingHorizontal: 4,
+    paddingVertical: 2,
+    position: 'absolute',
+    right: 2,
+    top: 2,
+  },
+  premiumBadgeText: {
+    ...typography.caption,
+    color: colors.textInverse,
+    fontSize: 8,
+    fontWeight: 'bold',
   },
   scrollContent: {
     paddingBottom: spacing.xl,

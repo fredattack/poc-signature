@@ -35,6 +35,7 @@ import { useThemeTokens } from '@/theme';
 
 export interface SignatureCanvasProps {
   color: SignatureColor;
+  backgroundColor?: string;
   paths?: CanvasPath[];
   onStrokeComplete: (path: CanvasPath) => void;
   captureRef?:
@@ -81,6 +82,7 @@ const getColorHex = (color: SignatureColor): string =>
 
 export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
   color,
+  backgroundColor,
   paths = [],
   onStrokeComplete,
   captureRef,
@@ -336,6 +338,7 @@ export const SignatureCanvas: React.FC<SignatureCanvasProps> = ({
           {
             width: width ?? CANVAS_ACTUAL_WIDTH,
             height,
+            backgroundColor: backgroundColor ?? theme.colors.surface.background,
           },
         ]}
       >
@@ -436,9 +439,7 @@ const createStyles = ({
     mode === 'dark' ? 'rgba(244, 244, 244, 0.16)' : 'rgba(35, 35, 35, 0.12)';
 
   return StyleSheet.create({
-    canvas: {
-      backgroundColor: colors.surface.background,
-    },
+    canvas: {},
     checkmark: {
       alignItems: 'center',
       backgroundColor: colors.surface.card,

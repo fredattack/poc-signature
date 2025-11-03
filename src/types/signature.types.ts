@@ -33,6 +33,7 @@ export interface Signature {
   celebrityName: string;
   signatureImagePath: string;
   signatureColor: SignatureColor;
+  backgroundColor?: string;
   capturedAt: Date;
   location?: SignatureLocation;
   syncStatus: SyncStatus;
@@ -56,5 +57,6 @@ export interface SignatureCreateInput {
   celebrityName: string;
   signatureImagePath: string;
   signatureColor: SignatureColor;
+  backgroundColor?: string;
   location?: SignatureLocation;
 }

@@ -53,17 +53,68 @@ export const colors = {
 export type ColorKey = keyof typeof colors;
 
 // Wallpaper template color presets aligned with brand palette
-export const templateColorPresets = [
-  { id: 'sage', name: 'Sauge', value: tokenColors.brand.primary },
-  { id: 'beige', name: 'Beige', value: tokenColors.brand.secondary },
-  { id: 'water', name: 'Eau', value: tokenColors.brand.accent },
+// Free colors available to all users
+export const freeColorPresets = [
+  {
+    id: 'sage',
+    name: 'Sauge',
+    value: tokenColors.brand.primary,
+    isPremium: false,
+  },
+  {
+    id: 'beige',
+    name: 'Beige',
+    value: tokenColors.brand.secondary,
+    isPremium: false,
+  },
+  {
+    id: 'water',
+    name: 'Eau',
+    value: tokenColors.brand.accent,
+    isPremium: false,
+  },
+  {
+    id: 'pearl',
+    name: 'Perle',
+    value: tokenColors.surface.background,
+    isPremium: false,
+  },
+] as const;
+
+// Premium colors available only to premium users
+export const premiumColorPresets = [
   {
     id: 'graphite',
     name: 'Graphite',
     value: tokenColors.surface.backgroundDark,
+    isPremium: true,
   },
-  { id: 'pearl', name: 'Perle', value: tokenColors.surface.background },
-  { id: 'success', name: 'Succès', value: tokenColors.feedback.success },
-  { id: 'warning', name: 'Alerte', value: tokenColors.feedback.warning },
-  { id: 'critical', name: 'Critique', value: tokenColors.feedback.critical },
+  {
+    id: 'success',
+    name: 'Succès',
+    value: tokenColors.feedback.success,
+    isPremium: true,
+  },
+  {
+    id: 'warning',
+    name: 'Alerte',
+    value: tokenColors.feedback.warning,
+    isPremium: true,
+  },
+  {
+    id: 'critical',
+    name: 'Critique',
+    value: tokenColors.feedback.critical,
+    isPremium: true,
+  },
+  { id: 'midnight', name: 'Minuit', value: '#1a1a2e', isPremium: true },
+  { id: 'rose-gold', name: 'Or Rose', value: '#b76e79', isPremium: true },
+  { id: 'emerald', name: 'Émeraude', value: '#2d6a4f', isPremium: true },
+  { id: 'lavender', name: 'Lavande', value: '#9d84b7', isPremium: true },
+] as const;
+
+// Combined list for backwards compatibility
+export const templateColorPresets = [
+  ...freeColorPresets,
+  ...premiumColorPresets,
 ] as const;
