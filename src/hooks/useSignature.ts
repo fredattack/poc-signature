@@ -176,6 +176,7 @@ export const useSignature = (
         signatureImagePath: imagePath,
         signatureColor: currentColor,
         backgroundColor,
+        paths,
         capturedAt: new Date(),
         location: signatureLocation ?? undefined,
         syncStatus: SyncStatus.Pending,
@@ -213,6 +214,8 @@ export const useSignature = (
     canvasRef,
     celebrityName,
     currentColor,
+    backgroundColor,
+    paths,
     addSignature,
     trackSignatureEvent,
   ]);

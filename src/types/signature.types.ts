@@ -34,6 +34,7 @@ export interface Signature {
   signatureImagePath: string;
   signatureColor: SignatureColor;
   backgroundColor?: string;
+  paths?: CanvasPath[];
   capturedAt: Date;
   location?: SignatureLocation;
   syncStatus: SyncStatus;

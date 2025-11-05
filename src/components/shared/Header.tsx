@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo } from 'react';
-import { StyleSheet, TouchableOpacity } from 'react-native';
+import { StyleSheet, Text, TouchableOpacity, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -52,7 +52,7 @@ export const Header: React.FC<HeaderProps> = ({
 
   return (
     <Animated.View style={[styles.container, animatedStyle]}>
-      <Animated.View style={styles.leftSlot}>
+      <View style={styles.leftSlot}>
         {leftAction && onLeftPress ? (
           <TouchableOpacity onPress={onLeftPress} style={styles.action}>
             {leftAction}
@@ -60,13 +60,13 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           leftAction
         )}
-      </Animated.View>
-      <Animated.View style={styles.titleContainer}>
-        <Animated.Text style={styles.title} numberOfLines={1}>
+      </View>
+      <View style={styles.titleContainer}>
+        <Text style={styles.title} numberOfLines={1}>
           {title}
-        </Animated.Text>
-      </Animated.View>
-      <Animated.View style={styles.rightSlot}>
+        </Text>
+      </View>
+      <View style={styles.rightSlot}>
         {rightAction && onRightPress ? (
           <TouchableOpacity onPress={onRightPress} style={styles.action}>
             {rightAction}
@@ -74,7 +74,7 @@ export const Header: React.FC<HeaderProps> = ({
         ) : (
           rightAction
         )}
-      </Animated.View>
+      </View>
     </Animated.View>
   );
 };

@@ -5,6 +5,7 @@ import {
   StyleSheet,
   Text,
   TextStyle,
+  View,
   ViewStyle,
 } from 'react-native';
 import Animated, {
@@ -144,10 +145,10 @@ export const Button: React.FC<ButtonProps> = ({
         {loading ? (
           <ActivityIndicator color={indicatorColor} />
         ) : (
-          <Animated.View style={styles.content}>
-            {icon && <Animated.View style={styles.icon}>{icon}</Animated.View>}
+          <View style={styles.content}>
+            {icon && <View style={styles.icon}>{icon}</View>}
             <Text style={textStyles}>{title}</Text>
-          </Animated.View>
+          </View>
         )}
       </Animated.View>
     </Pressable>

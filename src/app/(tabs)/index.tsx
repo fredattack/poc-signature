@@ -1,7 +1,14 @@
 // Home screen with "New Signature" CTA
 
 import React, { useEffect, useMemo } from 'react';
-import { ScrollView, StyleSheet, Text, View } from 'react-native';
+import {
+  Image,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from 'react-native';
 import { useRouter } from 'expo-router';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
 import { Button } from '@/components/ui/Button';
@@ -41,6 +48,13 @@ export default function HomeScreen() {
 
   const handleViewAll = () => {
     router.push('/(tabs)/gallery');
+  };
+
+  const handleSignaturePress = (signatureId: string) => {
+    router.push({
+      pathname: '/signature-detail',
+      params: { signatureId },
+    });
   };
 
   return (
@@ -99,26 +113,47 @@ export default function HomeScreen() {
           </View>
 
           {recentSignatures.map((signature) => (
-            <Card key={signature.id} style={styles.signatureCard}>
-              <Text style={styles.signatureName}>
-                {signature.celebrityName}
-              </Text>
-              <Text style={styles.signatureDate}>
-                {formatRelativeTime(signature.capturedAt)}
-              </Text>
-              {signature.location && (
-                <View style={styles.signatureLocationContainer}>
-                  <Icon
-                    name="map-pin"
-                    size="xs"
-                    color={theme.colors.text.tertiary}
-                  />
-                  <Text style={styles.signatureLocation}>
-                    {signature.location.city}, {signature.location.country}
-                  </Text>
+            <Pressable
+              key={signature.id}
+              onPress={() => handleSignaturePress(signature.id)}
+              style={({ pressed }) => [
+                styles.signaturePressable,
+                pressed && styles.signaturePressablePressed,
+              ]}
+            >
+              <Card style={styles.signatureCard}>
+                <View style={styles.signatureCardContent}>
+                  <View style={styles.signatureTextContainer}>
+                    <Text style={styles.signatureName}>
+                      {signature.celebrityName}
+                    </Text>
+                    <Text style={styles.signatureDate}>
+                      {formatRelativeTime(signature.capturedAt)}
+                    </Text>
+                    {signature.location && (
+                      <View style={styles.signatureLocationContainer}>
+                        <Icon
+                          name="map-pin"
+                          size="xs"
+                          color={theme.colors.text.tertiary}
+                        />
+                        <Text style={styles.signatureLocation}>
+                          {signature.location.city},{' '}
+                          {signature.location.country}
+                        </Text>
+                      </View>
+                    )}
+                  </View>
+                  <View style={styles.signatureImageContainer}>
+                    <Image
+                      source={{ uri: signature.signatureImagePath }}
+                      style={styles.signatureImage}
+                      resizeMode="contain"
+                    />
+                  </View>
                 </View>
-              )}
-            </Card>
+              </Card>
+            </Pressable>
           ))}
         </View>
       )}
@@ -132,32 +167,6 @@ export default function HomeScreen() {
           </Text>
         </Card>
       )}
-
-      {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActions}>
-          <Button
-            title="Capture Signature"
-            onPress={handleNewSignature}
-            variant="secondary"
-            fullWidth
-            icon={
-              <Icon name="camera" size="sm" color={theme.colors.text.primary} />
-            }
-          />
-          <Button
-            title="View Gallery"
-            onPress={handleViewAll}
-            variant="secondary"
-            fullWidth
-            style={styles.galleryButton}
-            icon={
-              <Icon name="books" size="sm" color={theme.colors.text.primary} />
-            }
-          />
-        </View>
-      </View>
     </ScrollView>
   );
 }
@@ -225,7 +234,11 @@ const createStyles = (
       lineHeight: tokens.typography.headingM.lineHeight,
     },
     signatureCard: {
-      marginBottom: tokens.spacing.sm,
+      marginBottom: 0,
+    },
+    signatureCardContent: {
+      flexDirection: 'row',
+      gap: tokens.spacing.sm,
     },
     signatureDate: {
       color: colors.text.secondary,
@@ -233,6 +246,19 @@ const createStyles = (
       fontWeight: tokens.typography.caption.fontWeight,
       letterSpacing: tokens.typography.caption.letterSpacing,
       lineHeight: tokens.typography.caption.lineHeight,
+    },
+    signatureImage: {
+      height: '100%',
+      width: '100%',
+    },
+    signatureImageContainer: {
+      backgroundColor: colors.surface.background,
+      borderColor: colors.overlay.light,
+      borderRadius: tokens.radii.mild,
+      borderWidth: 1,
+      height: 80,
+      overflow: 'hidden',
+      width: '33%',
     },
     signatureLocation: {
       color: colors.text.secondary,
@@ -253,6 +279,16 @@ const createStyles = (
       fontWeight: tokens.typography.headingS.fontWeight,
       letterSpacing: tokens.typography.headingS.letterSpacing,
       lineHeight: tokens.typography.headingS.lineHeight,
+    },
+    signaturePressable: {
+      marginBottom: tokens.spacing.sm,
+    },
+    signaturePressablePressed: {
+      opacity: 0.7,
+    },
+    signatureTextContainer: {
+      flex: 1,
+      justifyContent: 'center',
     },
     stat: {
       alignItems: 'center',

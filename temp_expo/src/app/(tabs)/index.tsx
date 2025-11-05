@@ -107,25 +107,7 @@ export default function HomeScreen() {
         </Card>
       )}
 
-      {/* Quick Actions */}
-      <View style={styles.section}>
-        <Text style={styles.sectionTitle}>Quick Actions</Text>
-        <View style={styles.quickActions}>
-          <Button
-            title="📸 Capture Signature"
-            onPress={handleNewSignature}
-            variant="secondary"
-            fullWidth
-          />
-          <Button
-            title="📚 View Gallery"
-            onPress={handleViewAll}
-            variant="secondary"
-            fullWidth
-            style={{ marginTop: spacing.sm }}
-          />
-        </View>
-      </View>
+
     </ScrollView>
   );
 }

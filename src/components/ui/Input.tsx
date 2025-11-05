@@ -61,6 +61,7 @@ export const Input: React.FC<InputProps> = ({
   // Animated values for focus state
   const scale = useSharedValue(1);
   const labelTranslateY = useSharedValue(0);
+  const labelOpacity = useSharedValue(0.8);
 
   const inputContainerStyles = [
     styles.inputContainer,
@@ -86,7 +87,7 @@ export const Input: React.FC<InputProps> = ({
   // Animate label on focus
   const animatedLabelStyle = useAnimatedStyle(() => ({
     transform: [{ translateY: labelTranslateY.value }],
-    opacity: withSpring(isFocused ? 1 : 0.8),
+    opacity: labelOpacity.value,
   }));
 
   useEffect(() => {
@@ -99,6 +100,10 @@ export const Input: React.FC<InputProps> = ({
         damping: 18,
         stiffness: 200,
       });
+      labelOpacity.value = withSpring(1, {
+        damping: 18,
+        stiffness: 200,
+      });
     } else {
       scale.value = withSpring(1, {
         damping: 18,
@@ -108,8 +113,12 @@ export const Input: React.FC<InputProps> = ({
         damping: 18,
         stiffness: 200,
       });
+      labelOpacity.value = withSpring(0.8, {
+        damping: 18,
+        stiffness: 200,
+      });
     }
-  }, [isFocused, scale, labelTranslateY]);
+  }, [isFocused, scale, labelTranslateY, labelOpacity]);
 
   return (
     <View style={[styles.container, containerStyle]}>
