@@ -1,214 +1,242 @@
-// Login screen with email/password and social login
+/**
+ * Login Screen
+ *
+ * Modern login screen with email/password and OAuth providers.
+ * Includes validation, MFA support, and anonymous mode.
+ */
 
 import React, { useState } from 'react';
-import { Alert, ScrollView, StyleSheet, Text, View } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Header } from '@/components/shared/Header';
-import { useAuth } from '@/hooks/useAuth';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/store/authStore';
+import {
+  AuthInput,
+  AuthButton,
+  OAuthButton,
+  ErrorMessage,
+  LoadingOverlay,
+} from '@/components/auth';
+import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import { validateEmail } from '@/utils/validation';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const {
-    login,
-    loginWithGoogle,
-    loginWithApple,
-    setAnonymous,
-    isLoading,
-    error,
-  } = useAuth();
+  const { login, loginWithOAuth, isLoading, error, clearError, requiresMFA } =
+    useAuthStore();
   const { track } = useAnalytics();
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleLogin = async () => {
-    if (!email || !password) {
-      Alert.alert('Error', 'Please enter email and password');
+    // Validate
+    const newErrors: Record<string, string> = {};
+
+    const emailError = validateEmail(email);
+    if (emailError) newErrors.email = emailError;
+
+    if (!password) newErrors.password = 'Mot de passe requis';
+
+    if (Object.keys(newErrors).length > 0) {
+      setErrors(newErrors);
       return;
     }
 
-    const success = await login({ email, password });
+    try {
+      await login(email, password);
 
-    if (success) {
-      track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
-        auth_method: 'email',
-      });
-      router.replace('/(tabs)');
-    } else if (error) {
-      Alert.alert('Login Failed', error);
+      if (requiresMFA) {
+        // Redirect to MFA verification
+        track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
+          auth_method: 'email_mfa',
+        });
+        router.push('/(auth)/mfa/verify');
+      } else {
+        // Login complete
+        track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
+          auth_method: 'email',
+        });
+        router.replace('/(tabs)');
+      }
+    } catch (err) {
+      console.error('Login error:', err);
     }
   };
 
-  const handleGoogleLogin = async () => {
-    const success = await loginWithGoogle();
-
-    if (success) {
+  const handleOAuthLogin = async (provider: 'google' | 'apple') => {
+    try {
+      // TODO: Implement actual OAuth flow with expo-auth-session
+      // For now, this is a placeholder
       track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
-        auth_method: 'google',
+        auth_method: provider,
       });
-      router.replace('/(tabs)');
-    } else if (error) {
-      Alert.alert('Google Login', error);
+
+      // Placeholder implementation
+      console.warn(`${provider} login not yet fully implemented`);
+      // await loginWithOAuth(provider, 'token');
+    } catch (err) {
+      console.error(`${provider} login error:`, err);
     }
   };
 
-  const handleAppleLogin = async () => {
-    const success = await loginWithApple();
-
-    if (success) {
-      track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
-        auth_method: 'apple',
-      });
-      router.replace('/(tabs)');
-    } else if (error) {
-      Alert.alert('Apple Login', error);
-    }
-  };
-
-  const handleContinueWithoutAccount = () => {
-    setAnonymous(true);
+  const handleContinueAnonymous = () => {
     track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
       auth_method: 'anonymous',
     });
     router.replace('/(tabs)');
   };
 
-  const handleForgotPassword = () => {
-    router.push('/(auth)/forgot-password');
-  };
-
-  const handleSignUp = () => {
-    router.push('/(auth)/register');
-  };
-
   return (
-    <View style={styles.container}>
-      <Header title="Welcome Back" />
-
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <ScrollView
         style={styles.scrollView}
         contentContainerStyle={styles.content}
         showsVerticalScrollIndicator={false}
+        keyboardShouldPersistTaps="handled"
       >
-        <Text style={styles.subtitle}>
-          Sign in to sync your signatures across devices
-        </Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Bienvenue</Text>
+          <Text style={styles.subtitle}>
+            Connectez-vous pour synchroniser vos signatures
+          </Text>
+        </View>
 
         {/* Email Input */}
-        <Input
+        <AuthInput
           label="Email"
           value={email}
-          onChangeText={setEmail}
-          placeholder="your@email.com"
+          onChangeText={(text) => {
+            setEmail(text);
+            setErrors({ ...errors, email: '' });
+          }}
+          placeholder="votre@email.com"
           keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
+          autoComplete="email"
+          error={errors.email}
         />
 
         {/* Password Input */}
-        <Input
-          label="Password"
+        <AuthInput
+          label="Mot de passe"
           value={password}
-          onChangeText={setPassword}
-          placeholder="Enter your password"
+          onChangeText={(text) => {
+            setPassword(text);
+            setErrors({ ...errors, password: '' });
+          }}
+          placeholder="Entrez votre mot de passe"
           secureTextEntry
+          autoComplete="password"
+          error={errors.password}
         />
 
         {/* Forgot Password */}
-        <Button
-          title="Forgot Password?"
-          onPress={handleForgotPassword}
+        <AuthButton
+          title="Mot de passe oublié ?"
+          onPress={() => router.push('/(auth)/forgot-password')}
           variant="ghost"
-          size="small"
+          haptic={false}
+          style={styles.forgotButton}
         />
 
         {/* Login Button */}
-        <Button
-          title="Sign In"
+        <AuthButton
+          title="Se connecter"
           onPress={() => void handleLogin()}
           variant="primary"
-          fullWidth
           loading={isLoading}
-          disabled={isLoading}
+          disabled={isLoading || !email || !password}
         />
 
         {/* Divider */}
         <View style={styles.divider}>
           <View style={styles.dividerLine} />
-          <Text style={styles.dividerText}>OR</Text>
+          <Text style={styles.dividerText}>OU</Text>
           <View style={styles.dividerLine} />
         </View>
 
-        {/* Social Login Buttons */}
-        <Button
-          title="Continue with Google"
-          onPress={() => void handleGoogleLogin()}
-          variant="secondary"
-          fullWidth
+        {/* OAuth Buttons */}
+        <OAuthButton
+          provider="google"
+          onPress={() => void handleOAuthLogin('google')}
+          loading={isLoading}
           disabled={isLoading}
         />
 
-        <Button
-          title="Continue with Apple"
-          onPress={() => void handleAppleLogin()}
-          variant="secondary"
-          fullWidth
+        <OAuthButton
+          provider="apple"
+          onPress={() => void handleOAuthLogin('apple')}
+          loading={isLoading}
           disabled={isLoading}
         />
 
-        {/* Continue Without Account */}
-        <Button
-          title="Continue without account"
-          onPress={handleContinueWithoutAccount}
+        {/* Continue Anonymous */}
+        <AuthButton
+          title="Continuer sans compte"
+          onPress={handleContinueAnonymous}
           variant="ghost"
-          fullWidth
+          disabled={isLoading}
+          style={styles.anonymousButton}
         />
 
         {/* Sign Up Link */}
         <View style={styles.signUpContainer}>
-          <Text style={styles.signUpText}>Don&apos;t have an account? </Text>
-          <Button
-            title="Sign Up"
-            onPress={handleSignUp}
+          <Text style={styles.signUpText}>Pas de compte ? </Text>
+          <AuthButton
+            title="S'inscrire"
+            onPress={() => router.push('/(auth)/signup')}
             variant="ghost"
-            size="small"
+            haptic={false}
           />
         </View>
       </ScrollView>
-    </View>
+
+      <LoadingOverlay visible={isLoading} message="Connexion..." />
+      <ErrorMessage
+        message={error || ''}
+        visible={!!error}
+        onDismiss={clearError}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
+  anonymousButton: {
+    marginTop: AUTH_SPACING.md,
+  },
   container: {
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: AUTH_COLORS.background.light,
     flex: 1,
   },
   content: {
-    gap: spacing.md,
-    padding: spacing.lg,
+    padding: AUTH_SPACING.lg,
   },
   divider: {
     alignItems: 'center',
     flexDirection: 'row',
-    marginVertical: spacing.lg,
+    marginVertical: AUTH_SPACING.lg,
   },
   dividerLine: {
-    backgroundColor: colors.border,
+    backgroundColor: AUTH_COLORS.border.light,
     flex: 1,
     height: 1,
   },
   dividerText: {
-    ...typography.caption,
-    color: colors.textSecondary,
-    marginHorizontal: spacing.md,
+    ...AUTH_TYPOGRAPHY.caption,
+    color: AUTH_COLORS.text.tertiary,
+    marginHorizontal: AUTH_SPACING.md,
+  },
+  forgotButton: {
+    alignSelf: 'flex-end',
+    marginBottom: AUTH_SPACING.sm,
+  },
+  header: {
+    marginBottom: AUTH_SPACING.xl,
   },
   scrollView: {
     flex: 1,
@@ -217,16 +245,21 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     flexDirection: 'row',
     justifyContent: 'center',
-    marginTop: spacing.lg,
+    marginTop: AUTH_SPACING.xl,
   },
   signUpText: {
-    ...typography.body,
-    color: colors.textSecondary,
+    ...AUTH_TYPOGRAPHY.body,
+    color: AUTH_COLORS.text.secondary,
   },
   subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.lg,
+    ...AUTH_TYPOGRAPHY.body,
+    color: AUTH_COLORS.text.secondary,
+    marginTop: AUTH_SPACING.xs,
+    textAlign: 'center',
+  },
+  title: {
+    ...AUTH_TYPOGRAPHY.h1,
+    color: AUTH_COLORS.text.primary,
     textAlign: 'center',
   },
 });

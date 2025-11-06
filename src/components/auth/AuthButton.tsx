@@ -11,15 +11,15 @@ import {
   Pressable,
   StyleSheet,
   Text,
-  ViewStyle,
 } from 'react-native';
+import type { ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withSpring,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { LinearGradient } from 'expo-linear-gradient';
+// import { LinearGradient } from 'expo-linear-gradient'; // Install with: npm install expo-linear-gradient
 import {
   AUTH_COLORS,
   AUTH_DIMENSIONS,
@@ -160,12 +160,14 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
       >
         <Animated.View
           style={[
+            styles.primaryButton,
             animatedStyle,
             { height: buttonHeight },
             disabled && styles.disabled,
             style,
           ]}
         >
+          {/* TODO: Uncomment when expo-linear-gradient is installed
           <LinearGradient
             colors={[AUTH_COLORS.primary.base, AUTH_COLORS.accent.base]}
             start={{ x: 0, y: 0 }}
@@ -174,6 +176,8 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
           >
             {renderContent()}
           </LinearGradient>
+          */}
+          {renderContent()}
         </Animated.View>
       </Pressable>
     );
@@ -234,6 +238,7 @@ const styles = StyleSheet.create({
   },
   primaryButton: {
     alignItems: 'center',
+    backgroundColor: AUTH_COLORS.primary.base, // Solid color until gradient is installed
     borderRadius: AUTH_RADIUS.generous,
     flexDirection: 'row',
     justifyContent: 'center',

@@ -1,106 +1,166 @@
-// Forgot password screen
+/**
+ * Forgot Password Screen
+ *
+ * Screen for requesting a password reset email.
+ */
 
 import React, { useState } from 'react';
-import { Alert, StyleSheet, Text, View } from 'react-native';
+import { StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
-import { Input } from '@/components/ui/Input';
-import { Button } from '@/components/ui/Button';
-import { Header } from '@/components/shared/Header';
-import { authService } from '@/services/api/auth';
-import { colors } from '@/constants/colors';
-import { typography } from '@/constants/typography';
-import { spacing } from '@/constants/spacing';
+import { SafeAreaView } from 'react-native-safe-area-context';
+import { useAuthStore } from '@/store/authStore';
+import {
+  AuthInput,
+  AuthButton,
+  ErrorMessage,
+  LoadingOverlay,
+} from '@/components/auth';
+import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import { validateEmail } from '@/utils/validation';
+import * as Haptics from 'expo-haptics';
 
 export default function ForgotPasswordScreen() {
   const router = useRouter();
+  const { forgotPassword, isLoading, error, clearError } = useAuthStore();
+
   const [email, setEmail] = useState('');
-  const [isLoading, setIsLoading] = useState(false);
+  const [emailError, setEmailError] = useState<string | null>(null);
+  const [successMessage, setSuccessMessage] = useState<string | null>(null);
 
   const handleResetPassword = async () => {
-    if (!email) {
-      Alert.alert('Error', 'Please enter your email address');
+    // Validate email
+    const error = validateEmail(email);
+    if (error) {
+      setEmailError(error);
       return;
     }
 
-    setIsLoading(true);
-
     try {
-      const response = await authService.forgotPassword(email);
+      await forgotPassword(email);
 
-      if (response.error) {
-        Alert.alert('Error', response.error);
-      } else {
-        Alert.alert(
-          'Success',
-          'Password reset instructions have been sent to your email',
-          [
-            {
-              text: 'OK',
-              onPress: () => router.back(),
-            },
-          ]
-        );
-      }
-    } catch (error) {
-      Alert.alert('Error', 'Failed to send reset email');
-    } finally {
-      setIsLoading(false);
+      // Show success message
+      setSuccessMessage(
+        'Un email avec les instructions de réinitialisation a été envoyé à votre adresse.'
+      );
+
+      // Success haptic
+      void Haptics.notificationAsync(
+        Haptics.NotificationFeedbackType.Success
+      );
+
+      // Navigate back after 3 seconds
+      setTimeout(() => {
+        router.back();
+      }, 3000);
+    } catch (err) {
+      console.error('Forgot password error:', err);
     }
   };
 
   return (
-    <View style={styles.container}>
-      <Header
-        title="Reset Password"
-        leftAction={<Text style={styles.backText}>Back</Text>}
-        onLeftPress={() => router.back()}
-      />
-
+    <SafeAreaView style={styles.container} edges={['bottom']}>
       <View style={styles.content}>
-        <Text style={styles.subtitle}>
-          Enter your email address and we&apos;ll send you instructions to reset
-          your password
-        </Text>
+        {/* Header */}
+        <View style={styles.header}>
+          <Text style={styles.title}>Mot de passe oublié ?</Text>
+          <Text style={styles.subtitle}>
+            Entrez votre adresse email et nous vous enverrons les instructions
+            pour réinitialiser votre mot de passe.
+          </Text>
+        </View>
 
-        <Input
-          label="Email"
-          value={email}
-          onChangeText={setEmail}
-          placeholder="your@email.com"
-          keyboardType="email-address"
-          autoCapitalize="none"
-          autoCorrect={false}
-        />
+        {/* Success Message */}
+        {successMessage && (
+          <View style={styles.successBanner}>
+            <Text style={styles.successText}>{successMessage}</Text>
+          </View>
+        )}
 
-        <Button
-          title="Send Reset Instructions"
-          onPress={() => void handleResetPassword()}
-          variant="primary"
-          fullWidth
-          loading={isLoading}
-          disabled={isLoading}
-        />
+        {/* Email Input */}
+        {!successMessage && (
+          <>
+            <AuthInput
+              label="Email"
+              value={email}
+              onChangeText={(text) => {
+                setEmail(text);
+                setEmailError(null);
+              }}
+              placeholder="votre@email.com"
+              keyboardType="email-address"
+              autoComplete="email"
+              autoFocus
+              error={emailError || undefined}
+            />
+
+            {/* Send Button */}
+            <AuthButton
+              title="Envoyer les instructions"
+              onPress={() => void handleResetPassword()}
+              variant="primary"
+              loading={isLoading}
+              disabled={isLoading || !email}
+              style={styles.sendButton}
+            />
+
+            {/* Back to Login */}
+            <AuthButton
+              title="Retour à la connexion"
+              onPress={() => router.back()}
+              variant="ghost"
+              disabled={isLoading}
+            />
+          </>
+        )}
       </View>
-    </View>
+
+      <LoadingOverlay visible={isLoading} message="Envoi..." />
+      <ErrorMessage
+        message={error || ''}
+        visible={!!error}
+        onDismiss={clearError}
+      />
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  backText: {
-    ...typography.body,
-    color: colors.primary,
-  },
   container: {
-    backgroundColor: colors.backgroundSecondary,
+    backgroundColor: AUTH_COLORS.background.light,
     flex: 1,
   },
   content: {
-    gap: spacing.md,
-    padding: spacing.lg,
+    flex: 1,
+    justifyContent: 'center',
+    padding: AUTH_SPACING.lg,
+  },
+  header: {
+    marginBottom: AUTH_SPACING.xl,
+  },
+  sendButton: {
+    marginBottom: AUTH_SPACING.md,
+    marginTop: AUTH_SPACING.sm,
   },
   subtitle: {
-    ...typography.body,
-    color: colors.textSecondary,
-    marginBottom: spacing.lg,
+    ...AUTH_TYPOGRAPHY.body,
+    color: AUTH_COLORS.text.secondary,
+    marginTop: AUTH_SPACING.xs,
+    textAlign: 'center',
+  },
+  successBanner: {
+    backgroundColor: AUTH_COLORS.system.success,
+    borderRadius: 12,
+    marginBottom: AUTH_SPACING.lg,
+    padding: AUTH_SPACING.md,
+  },
+  successText: {
+    ...AUTH_TYPOGRAPHY.body,
+    color: AUTH_COLORS.text.inverse,
+    textAlign: 'center',
+  },
+  title: {
+    ...AUTH_TYPOGRAPHY.h1,
+    color: AUTH_COLORS.text.primary,
+    textAlign: 'center',
   },
 });
