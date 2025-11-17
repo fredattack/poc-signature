@@ -11,21 +11,24 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
 import {
-  AuthInput,
   AuthButton,
-  OAuthButton,
+  AuthInput,
   ErrorMessage,
   LoadingOverlay,
+  OAuthButton,
 } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { validateEmail } from '@/utils/validation';
 import { useAnalytics } from '@/hooks/useAnalytics';
 import { ANALYTICS_EVENTS } from '@/constants/analytics-events';
 
 export default function LoginScreen() {
   const router = useRouter();
-  const { login, loginWithOAuth, isLoading, error, clearError, requiresMFA } =
-    useAuthStore();
+  const { login, isLoading, error, clearError, requiresMFA } = useAuthStore();
   const { track } = useAnalytics();
 
   const [email, setEmail] = useState('');
@@ -67,20 +70,16 @@ export default function LoginScreen() {
     }
   };
 
-  const handleOAuthLogin = async (provider: 'google' | 'apple') => {
-    try {
-      // TODO: Implement actual OAuth flow with expo-auth-session
-      // For now, this is a placeholder
-      track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
-        auth_method: provider,
-      });
+  const handleOAuthLogin = (provider: 'google' | 'apple') => {
+    // TODO: Implement actual OAuth flow with expo-auth-session
+    // For now, this is a placeholder
+    track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
+      auth_method: provider,
+    });
 
-      // Placeholder implementation
-      console.warn(`${provider} login not yet fully implemented`);
-      // await loginWithOAuth(provider, 'token');
-    } catch (err) {
-      console.error(`${provider} login error:`, err);
-    }
+    // Placeholder implementation
+    console.warn(`${provider} login not yet fully implemented`);
+    // await loginWithOAuth(provider, 'token');
   };
 
   const handleContinueAnonymous = () => {
@@ -197,7 +196,7 @@ export default function LoginScreen() {
 
       <LoadingOverlay visible={isLoading} message="Connexion..." />
       <ErrorMessage
-        message={error || ''}
+        message={error ?? ''}
         visible={!!error}
         onDismiss={clearError}
       />

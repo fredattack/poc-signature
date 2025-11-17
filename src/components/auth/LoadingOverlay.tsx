@@ -5,19 +5,17 @@
  */
 
 import React, { useEffect } from 'react';
-import {
-  ActivityIndicator,
-  Modal,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { ActivityIndicator, Modal, StyleSheet, Text, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 
 export interface LoadingOverlayProps {
   visible: boolean;
@@ -68,10 +66,7 @@ export const LoadingOverlay: React.FC<LoadingOverlayProps> = ({
     >
       <Animated.View style={[styles.overlay, animatedStyle]}>
         <View style={styles.container}>
-          <ActivityIndicator
-            size="large"
-            color={AUTH_COLORS.primary.base}
-          />
+          <ActivityIndicator size="large" color={AUTH_COLORS.primary.base} />
           {message && <Text style={styles.message}>{message}</Text>}
         </View>
       </Animated.View>

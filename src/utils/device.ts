@@ -52,7 +52,7 @@ export const getDeviceId = async (): Promise<string> => {
  * Gets the device name
  * @returns Device name (e.g., "iPhone 14 Pro", "Pixel 6")
  */
-export const getDeviceName = async (): Promise<string> => {
+export const getDeviceName = (): string => {
   try {
     const deviceName = Device.deviceName;
     if (deviceName) {
@@ -105,7 +105,7 @@ export const getOSVersion = (): string => {
  * Gets the app version
  * @returns App version string
  */
-export const getAppVersion = async (): Promise<string> => {
+export const getAppVersion = (): string => {
   try {
     const version = Application.nativeApplicationVersion;
     if (version) {

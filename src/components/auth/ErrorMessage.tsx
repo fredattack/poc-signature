@@ -5,12 +5,7 @@
  */
 
 import React, { useEffect } from 'react';
-import {
-  Pressable,
-  StyleSheet,
-  Text,
-  View,
-} from 'react-native';
+import { Pressable, StyleSheet, Text } from 'react-native';
 import Animated, {
   SlideInUp,
   SlideOutUp,
@@ -20,7 +15,12 @@ import Animated, {
 } from 'react-native-reanimated';
 import { Gesture, GestureDetector } from 'react-native-gesture-handler';
 import * as Haptics from 'expo-haptics';
-import { AUTH_COLORS, AUTH_RADIUS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_RADIUS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { Icon } from '@/components/ui/Icon';
 
 export interface ErrorMessageProps {
@@ -64,14 +64,14 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
 
       return () => clearTimeout(timer);
     }
+
+    return undefined;
   }, [visible, autoHideDuration, onDismiss]);
 
   // Haptic feedback on show
   useEffect(() => {
     if (visible) {
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Error
-      );
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   }, [visible]);
 
@@ -111,11 +111,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
           accessibilityLabel={message}
         >
           <Animated.View style={[styles.errorBanner, animatedStyle]}>
-            <Icon
-              name="warning"
-              size={20}
-              color={AUTH_COLORS.text.inverse}
-            />
+            <Icon name="warning" size={20} color={AUTH_COLORS.text.inverse} />
             <Text style={styles.message} numberOfLines={2}>
               {message}
             </Text>
@@ -125,11 +121,7 @@ export const ErrorMessage: React.FC<ErrorMessageProps> = ({
               accessibilityRole="button"
               accessibilityLabel="Dismiss error"
             >
-              <Icon
-                name="x"
-                size={20}
-                color={AUTH_COLORS.text.inverse}
-              />
+              <Icon name="x" size={20} color={AUTH_COLORS.text.inverse} />
             </Pressable>
           </Animated.View>
         </Pressable>

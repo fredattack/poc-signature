@@ -5,12 +5,7 @@
  */
 
 import React, { useEffect, useRef, useState } from 'react';
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  View,
-} from 'react-native';
+import { StyleSheet, Text, TextInput, View } from 'react-native';
 import Animated, {
   useAnimatedStyle,
   useSharedValue,
@@ -85,9 +80,7 @@ export const MFACodeInput: React.FC<MFACodeInputProps> = ({
       };
 
       void shakeSequence();
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Error
-      );
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Error);
     }
   }, [error, shakeTranslateX]);
 
@@ -99,9 +92,7 @@ export const MFACodeInput: React.FC<MFACodeInputProps> = ({
 
     // Haptic feedback on complete
     if (value.length === 6) {
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      );
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   }, [value.length]);
 
@@ -132,10 +123,7 @@ export const MFACodeInput: React.FC<MFACodeInputProps> = ({
               ]}
             >
               <Text
-                style={[
-                  styles.digitText,
-                  !isFilled && styles.digitTextEmpty,
-                ]}
+                style={[styles.digitText, !isFilled && styles.digitTextEmpty]}
               >
                 {isFilled ? digit : ''}
               </Text>
@@ -162,11 +150,7 @@ export const MFACodeInput: React.FC<MFACodeInputProps> = ({
 
       {/* Error Message */}
       {error && (
-        <Text
-          style={styles.errorText}
-          accessible
-          accessibilityRole="alert"
-        >
+        <Text style={styles.errorText} accessible accessibilityRole="alert">
           {error}
         </Text>
       )}

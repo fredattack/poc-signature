@@ -283,9 +283,7 @@ export const removeMFASessionToken = async (): Promise<void> => {
  * Saves MFA backup codes
  * @param codes - Array of backup codes
  */
-export const saveMFABackupCodes = async (
-  codes: string[]
-): Promise<void> => {
+export const saveMFABackupCodes = async (codes: string[]): Promise<void> => {
   try {
     await setSecureItem(STORAGE_KEYS.MFA_BACKUP_CODES, JSON.stringify(codes));
   } catch (error) {
@@ -301,7 +299,7 @@ export const saveMFABackupCodes = async (
 export const getMFABackupCodes = async (): Promise<string[] | null> => {
   try {
     const codes = await getSecureItem(STORAGE_KEYS.MFA_BACKUP_CODES);
-    return codes ? JSON.parse(codes) : null;
+    return codes ? (JSON.parse(codes) as string[]) : null;
   } catch (error) {
     console.error('Error getting MFA backup codes:', error);
     return null;
@@ -316,14 +314,9 @@ export const getMFABackupCodes = async (): Promise<string[] | null> => {
  * Saves biometric authentication setting
  * @param enabled - Whether biometric auth is enabled
  */
-export const setBiometricEnabled = async (
-  enabled: boolean
-): Promise<void> => {
+export const setBiometricEnabled = async (enabled: boolean): Promise<void> => {
   try {
-    await setSecureItem(
-      STORAGE_KEYS.BIOMETRIC_ENABLED,
-      enabled.toString()
-    );
+    await setSecureItem(STORAGE_KEYS.BIOMETRIC_ENABLED, enabled.toString());
   } catch (error) {
     console.error('Error saving biometric setting:', error);
     throw error;

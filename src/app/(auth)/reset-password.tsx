@@ -6,7 +6,7 @@
 
 import React, { useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
 import {
@@ -16,7 +16,11 @@ import {
   LoadingOverlay,
   PasswordStrengthIndicator,
 } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import {
   validatePassword,
   validatePasswordConfirmation,
@@ -107,10 +111,7 @@ export default function ResetPasswordScreen() {
         />
       </View>
 
-      <LoadingOverlay
-        visible={isLoading}
-        message="Réinitialisation..."
-      />
+      <LoadingOverlay visible={isLoading} message="Réinitialisation..." />
       <ErrorMessage
         message={error || ''}
         visible={!!error}

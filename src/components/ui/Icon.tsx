@@ -1,6 +1,7 @@
 import React from 'react';
 import { ViewStyle } from 'react-native';
 import {
+  AppleLogo,
   ArrowsDownUp,
   Books,
   Camera,
@@ -9,15 +10,23 @@ import {
   CaretUp,
   Check,
   CheckCircle,
+  Eye,
+  EyeSlash,
+  FacebookLogo,
   Gear,
+  GoogleLogo,
   House,
   Info,
+  InstagramLogo,
   Lock,
   MapPin,
   PencilLine,
   SmileyXEyes,
+  TiktokLogo,
   Trash,
+  TwitterLogo,
   Warning,
+  X,
   XCircle,
 } from 'phosphor-react-native';
 
@@ -41,6 +50,15 @@ const ICON_MAP = {
   'chevron-up': CaretUp,
   'chevron-left': CaretLeft,
   trash: Trash,
+  eye: Eye,
+  'eye-slash': EyeSlash,
+  x: X,
+  'google-logo': GoogleLogo,
+  'apple-logo': AppleLogo,
+  'facebook-logo': FacebookLogo,
+  'twitter-logo': TwitterLogo,
+  'instagram-logo': InstagramLogo,
+  'tiktok-logo': TiktokLogo,
 } as const;
 
 export type IconName = keyof typeof ICON_MAP;

@@ -15,7 +15,11 @@ import {
   LoadingOverlay,
   MFACodeInput,
 } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 
 export default function MFAVerifyScreen() {
   const router = useRouter();
@@ -40,14 +44,11 @@ export default function MFAVerifyScreen() {
       <View style={styles.content}>
         <Text style={styles.title}>Vérification MFA</Text>
         <Text style={styles.subtitle}>
-          Entrez le code de vérification depuis votre app d&apos;authentification
+          Entrez le code de vérification depuis votre app
+          d&apos;authentification
         </Text>
 
-        <MFACodeInput
-          value={code}
-          onChangeText={setCode}
-          autoFocus
-        />
+        <MFACodeInput value={code} onChangeText={setCode} autoFocus />
 
         <AuthButton
           title="Vérifier"

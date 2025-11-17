@@ -7,12 +7,12 @@
 
 import React, { useEffect, useState } from 'react';
 import {
+  Image,
+  Pressable,
   ScrollView,
   StyleSheet,
   Text,
   View,
-  Image,
-  Pressable,
 } from 'react-native';
 import { useRouter } from 'expo-router';
 import * as Clipboard from 'expo-clipboard';
@@ -25,7 +25,11 @@ import {
   ErrorMessage,
   LoadingOverlay,
 } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { MFASetupData } from '@/types/auth.types';
 import { validateMFACode } from '@/utils/validation';
 
@@ -38,7 +42,8 @@ export default function MFASetupScreen() {
   const [codeError, setCodeError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadMFASetup();
+    void loadMFASetup();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const loadMFASetup = async () => {
@@ -53,9 +58,7 @@ export default function MFASetupScreen() {
   const handleCopySecret = async () => {
     if (mfaData?.secret) {
       await Clipboard.setStringAsync(mfaData.secret);
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      );
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
     }
   };
 
@@ -96,9 +99,7 @@ export default function MFASetupScreen() {
           <>
             {/* QR Code */}
             <View style={styles.qrContainer}>
-              <Text style={styles.sectionTitle}>
-                1. Scannez ce QR code
-              </Text>
+              <Text style={styles.sectionTitle}>1. Scannez ce QR code</Text>
               <Text style={styles.instruction}>
                 Utilisez une app d&apos;authentification (Google Authenticator,
                 Authy, etc.)
@@ -120,7 +121,7 @@ export default function MFASetupScreen() {
               </Text>
               <Pressable
                 style={styles.secretBox}
-                onPress={handleCopySecret}
+                onPress={() => void handleCopySecret()}
                 accessibilityLabel="Copy secret key"
                 accessibilityHint="Double tap to copy"
               >
@@ -181,7 +182,10 @@ export default function MFASetupScreen() {
         )}
       </ScrollView>
 
-      <LoadingOverlay visible={isLoading && !mfaData} message="Configuration MFA..." />
+      <LoadingOverlay
+        visible={isLoading && !mfaData}
+        message="Configuration MFA..."
+      />
       <ErrorMessage
         message={error || ''}
         visible={!!error}

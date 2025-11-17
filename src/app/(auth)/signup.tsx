@@ -6,20 +6,24 @@
  */
 
 import React, { useState } from 'react';
-import { ScrollView, StyleSheet, Text, View, Pressable } from 'react-native';
+import { ScrollView, StyleSheet, Text, View } from 'react-native';
 import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
 import {
-  AuthInput,
   AuthButton,
-  OAuthButton,
+  AuthInput,
   ErrorMessage,
   LoadingOverlay,
+  OAuthButton,
   PasswordStrengthIndicator,
 } from '@/components/auth';
 import { Checkbox } from '@/components/ui/Checkbox';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import {
   validateEmail,
   validateName,
@@ -106,17 +110,14 @@ export default function SignupScreen() {
     }
   };
 
-  const handleOAuthSignup = async (provider: 'google' | 'apple') => {
-    try {
-      // TODO: Implement actual OAuth flow
-      track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
-        auth_method: `${provider}_signup`,
-      });
+  const handleOAuthSignup = (provider: 'google' | 'apple') => {
+    // TODO: Implement actual OAuth flow
+    track(ANALYTICS_EVENTS.LOGIN_COMPLETED, {
+      auth_method: `${provider}_signup`,
+    });
 
-      console.warn(`${provider} signup not yet fully implemented`);
-    } catch (err) {
-      console.error(`${provider} signup error:`, err);
-    }
+    // Placeholder implementation
+    console.warn(`${provider} signup not yet fully implemented`);
   };
 
   return (
@@ -280,7 +281,7 @@ export default function SignupScreen() {
 
       <LoadingOverlay visible={isLoading} message="Création du compte..." />
       <ErrorMessage
-        message={error || ''}
+        message={error ?? ''}
         visible={!!error}
         onDismiss={clearError}
       />

@@ -34,8 +34,8 @@ export interface Tokens {
 // ============================================================================
 
 export interface DeviceInfo {
-  device_id: string;      // UUID v4
-  device_name: string;    // "iPhone 14 Pro"
+  device_id: string; // UUID v4
+  device_name: string; // "iPhone 14 Pro"
   platform: 'ios' | 'android' | 'web';
   os_version: string;
   app_version?: string;
@@ -106,9 +106,9 @@ export interface LoginRequest {
 // ============================================================================
 
 export interface OAuthLoginRequest {
-  access_token?: string;   // Google, Facebook, Twitter, Instagram, TikTok
+  access_token?: string; // Google, Facebook, Twitter, Instagram, TikTok
   identity_token?: string; // Apple
-  id_token?: string;       // Google
+  id_token?: string; // Google
   device_info: DeviceInfo;
 }
 

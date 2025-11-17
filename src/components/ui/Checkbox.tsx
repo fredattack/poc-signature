@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useRef } from 'react';
+import React, { ReactNode, useEffect, useMemo, useRef } from 'react';
 import {
   Animated,
   Pressable,
@@ -11,9 +11,11 @@ import { useThemeTokens } from '@/theme';
 import { useHaptics } from '@/hooks/useHaptics';
 
 export interface CheckboxProps {
-  checked: boolean;
-  onToggle: (checked: boolean) => void;
-  label?: string;
+  checked?: boolean;
+  value?: boolean;
+  onToggle?: (checked: boolean) => void;
+  onValueChange?: (checked: boolean) => void;
+  label?: string | ReactNode;
   disabled?: boolean;
   indeterminate?: boolean;
   style?: ViewStyle;
@@ -32,7 +34,9 @@ export interface CheckboxProps {
  */
 export const Checkbox: React.FC<CheckboxProps> = ({
   checked,
+  value,
   onToggle,
+  onValueChange,
   label,
   disabled = false,
   indeterminate = false,
@@ -46,15 +50,18 @@ export const Checkbox: React.FC<CheckboxProps> = ({
   const scaleAnim = useRef(new Animated.Value(1)).current;
   const checkAnim = useRef(new Animated.Value(0)).current;
 
+  const isChecked = checked ?? value ?? false;
+  const onChange = onToggle ?? onValueChange;
+
   // Animate checkmark on state change
   useEffect(() => {
     Animated.spring(checkAnim, {
-      toValue: checked || indeterminate ? 1 : 0,
+      toValue: isChecked || indeterminate ? 1 : 0,
       useNativeDriver: true,
       tension: 50,
       friction: 7,
     }).start();
-  }, [checked, indeterminate, checkAnim]);
+  }, [isChecked, indeterminate, checkAnim]);
 
   const handlePress = () => {
     if (disabled) {
@@ -78,14 +85,17 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       }),
     ]).start();
 
-    onToggle(!checked);
+    onChange?.(!isChecked);
   };
 
   const boxStyles = [
     styles.checkboxBox,
-    (checked || indeterminate) && styles.checkboxBoxChecked,
+    (isChecked || indeterminate) && styles.checkboxBoxChecked,
     disabled && styles.checkboxBoxDisabled,
   ];
+
+  const labelText =
+    typeof label === 'string' ? label : (accessibilityLabel ?? 'Checkbox');
 
   return (
     <Pressable
@@ -95,10 +105,10 @@ export const Checkbox: React.FC<CheckboxProps> = ({
       accessible
       accessibilityRole="checkbox"
       accessibilityState={{
-        checked: indeterminate ? 'mixed' : checked,
+        checked: indeterminate ? 'mixed' : isChecked,
         disabled,
       }}
-      accessibilityLabel={accessibilityLabel ?? label}
+      accessibilityLabel={accessibilityLabel ?? labelText}
     >
       <Animated.View
         style={[
@@ -109,7 +119,7 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         ]}
       >
         {/* Checkmark */}
-        {(checked || indeterminate) && (
+        {(isChecked || indeterminate) && (
           <Animated.View
             style={[
               styles.checkmark,
@@ -137,7 +147,12 @@ export const Checkbox: React.FC<CheckboxProps> = ({
         )}
       </Animated.View>
 
-      {label && <Text style={styles.label}>{label}</Text>}
+      {label &&
+        (typeof label === 'string' ? (
+          <Text style={styles.label}>{label}</Text>
+        ) : (
+          <View style={styles.labelContainer}>{label}</View>
+        ))}
     </Pressable>
   );
 };
@@ -202,6 +217,10 @@ const createStyles = ({
     label: {
       ...labelTypography,
       color: colors.text.primary,
+      marginLeft: tokens.spacing.xs,
+    },
+    labelContainer: {
+      flex: 1,
       marginLeft: tokens.spacing.xs,
     },
   });

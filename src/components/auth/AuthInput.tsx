@@ -8,7 +8,6 @@
 import React, { ReactNode, useEffect, useState } from 'react';
 import {
   KeyboardTypeOptions,
-  Platform,
   Pressable,
   StyleSheet,
   Text,
@@ -23,7 +22,14 @@ import Animated, {
   withTiming,
 } from 'react-native-reanimated';
 import * as Haptics from 'expo-haptics';
-import { AUTH_COLORS, AUTH_DIMENSIONS, AUTH_RADIUS, AUTH_SHADOWS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_DIMENSIONS,
+  AUTH_RADIUS,
+  AUTH_SHADOWS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { Icon } from '@/components/ui/Icon';
 
 export interface AuthInputProps extends Omit<TextInputProps, 'onChange'> {
@@ -80,10 +86,10 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   const [isPasswordVisible, setIsPasswordVisible] = useState(false);
 
   // Animation values
-  const borderColor = useSharedValue(AUTH_COLORS.border.light);
-  const borderWidth = useSharedValue(AUTH_DIMENSIONS.inputBorderWidth);
-  const scale = useSharedValue(1);
-  const shakeTranslateX = useSharedValue(0);
+  const borderColor = useSharedValue<string>(AUTH_COLORS.border.light);
+  const borderWidth = useSharedValue<number>(AUTH_DIMENSIONS.inputBorderWidth);
+  const scale = useSharedValue<number>(1);
+  const shakeTranslateX = useSharedValue<number>(0);
 
   // Animated styles
   const animatedContainerStyle = useAnimatedStyle(() => ({
@@ -155,9 +161,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
   return (
     <View style={styles.container}>
       {/* Label */}
-      <Text style={[styles.label, error && styles.labelError]}>
-        {label}
-      </Text>
+      <Text style={[styles.label, error && styles.labelError]}>{label}</Text>
 
       {/* Input Container */}
       <Animated.View
@@ -174,8 +178,8 @@ export const AuthInput: React.FC<AuthInputProps> = ({
         <TextInput
           style={[
             styles.input,
-            leftIcon && styles.inputWithLeftIcon,
-            (rightIcon || secureTextEntry) && styles.inputWithRightIcon,
+            leftIcon ? styles.inputWithLeftIcon : null,
+            rightIcon || secureTextEntry ? styles.inputWithRightIcon : null,
           ]}
           value={value}
           onChangeText={onChangeText}
@@ -194,7 +198,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
           accessible
           accessibilityLabel={label}
           accessibilityState={{
-            disabled: disabled,
+            disabled,
           }}
           accessibilityLiveRegion={error ? 'polite' : 'none'}
           {...textInputProps}
@@ -207,7 +211,9 @@ export const AuthInput: React.FC<AuthInputProps> = ({
             style={styles.rightIcon}
             accessibilityRole="button"
             accessibilityLabel={
-              isPasswordVisible ? 'Masquer le mot de passe' : 'Afficher le mot de passe'
+              isPasswordVisible
+                ? 'Masquer le mot de passe'
+                : 'Afficher le mot de passe'
             }
           >
             <Icon
@@ -223,11 +229,7 @@ export const AuthInput: React.FC<AuthInputProps> = ({
 
       {/* Error Message */}
       {error && (
-        <Text
-          style={styles.errorText}
-          accessible
-          accessibilityRole="alert"
-        >
+        <Text style={styles.errorText} accessible accessibilityRole="alert">
           {error}
         </Text>
       )}

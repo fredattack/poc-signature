@@ -5,10 +5,7 @@
  * All validation functions return null on success or an error message on failure.
  */
 
-import {
-  PasswordStrength,
-  PasswordStrengthResult,
-} from '../types/auth.types';
+import { PasswordStrength, PasswordStrengthResult } from '../types/auth.types';
 import { AUTH_ERROR_MESSAGES } from '../constants/auth-design';
 
 // ============================================================================
@@ -251,7 +248,7 @@ export const validateMFACode = (code: string): string | null => {
  */
 export const validateTermsAcceptance = (accepted: boolean): string | null => {
   if (!accepted) {
-    return 'Vous devez accepter les conditions d\'utilisation';
+    return "Vous devez accepter les conditions d'utilisation";
   }
 
   return null;

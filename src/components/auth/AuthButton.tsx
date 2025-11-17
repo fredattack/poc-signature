@@ -6,12 +6,7 @@
  */
 
 import React, { ReactNode } from 'react';
-import {
-  ActivityIndicator,
-  Pressable,
-  StyleSheet,
-  Text,
-} from 'react-native';
+import { ActivityIndicator, Pressable, StyleSheet, Text } from 'react-native';
 import type { ViewStyle } from 'react-native';
 import Animated, {
   useAnimatedStyle,
@@ -111,15 +106,17 @@ export const AuthButton: React.FC<AuthButtonProps> = ({
     variant === 'primary'
       ? AUTH_DIMENSIONS.buttonHeight.large
       : variant === 'secondary'
-      ? AUTH_DIMENSIONS.buttonHeight.medium
-      : AUTH_DIMENSIONS.buttonHeight.small;
+        ? AUTH_DIMENSIONS.buttonHeight.medium
+        : AUTH_DIMENSIONS.buttonHeight.small;
 
   const renderContent = () => {
     if (loading) {
       return (
         <ActivityIndicator
           color={
-            variant === 'primary' ? AUTH_COLORS.text.inverse : AUTH_COLORS.primary.base
+            variant === 'primary'
+              ? AUTH_COLORS.text.inverse
+              : AUTH_COLORS.primary.base
           }
         />
       );

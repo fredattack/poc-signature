@@ -10,7 +10,8 @@
       "Bash(wc:*)",
       "Bash(npm test:*)",
       "Bash(npx tsc:*)",
-      "Bash(npx prettier:*)"
+      "Bash(npx prettier:*)",
+      "Bash(npm run type-check:*)"
     ],
     "deny": [],
     "ask": []

@@ -11,16 +11,9 @@ import {
   MFASetupData,
   OAuthProvider,
   RegisterData,
-  Tokens,
-  User,
 } from '@/types/auth.types';
 import { authApi } from '@/services/api/authApi';
-import {
-  getTokens,
-  getMFASessionToken,
-  removeTokens,
-  saveMFASessionToken,
-} from '@/utils/storage';
+import { getMFASessionToken, getTokens, removeTokens } from '@/utils/storage';
 
 // ============================================================================
 // AUTH STORE

@@ -53,19 +53,19 @@ export const AUTH_COLORS = {
 
   // Text Hierarchy
   text: {
-    primary: '#2C2C2C',      // 90% opacity
-    secondary: '#6B7A3F',    // Primary dark 70%
-    tertiary: '#A6A6A6',     // Pearl dark
-    disabled: '#C4C4C4',     // 60% opacity
+    primary: '#2C2C2C', // 90% opacity
+    secondary: '#6B7A3F', // Primary dark 70%
+    tertiary: '#A6A6A6', // Pearl dark
+    disabled: '#C4C4C4', // 60% opacity
     inverse: '#FFFFFF',
   },
 
   // System States
   system: {
-    success: '#8A9A5B',      // Primary
-    warning: '#D4C5B1',      // Secondary
-    error: '#C77B6B',        // Red-Brown
-    info: '#A8C3BC',         // Accent
+    success: '#8A9A5B', // Primary
+    warning: '#D4C5B1', // Secondary
+    error: '#C77B6B', // Red-Brown
+    info: '#A8C3BC', // Accent
   },
 
   // Borders
@@ -142,12 +142,12 @@ export const AUTH_TYPOGRAPHY = {
 // ============================================================================
 
 export const AUTH_SPACING = {
-  micro: 4,       // Rare, éléments très serrés
-  xs: 8,          // Tight spacing
-  sm: 16,         // Default spacing
-  md: 24,         // Section separation
-  lg: 32,         // Major blocks
-  xl: 48,         // Hero sections
+  micro: 4, // Rare, éléments très serrés
+  xs: 8, // Tight spacing
+  sm: 16, // Default spacing
+  md: 24, // Section separation
+  lg: 32, // Major blocks
+  xl: 48, // Hero sections
 
   // Component specific
   screenMargin: 16,
@@ -160,11 +160,11 @@ export const AUTH_SPACING = {
 // ============================================================================
 
 export const AUTH_RADIUS = {
-  subtle: 4,      // Petits inputs, badges
-  mild: 8,        // Inputs standards
-  regular: 12,    // Cards, modales
-  generous: 16,   // Hero cards, CTA buttons
-  full: 24,       // Sections spéciales
+  subtle: 4, // Petits inputs, badges
+  mild: 8, // Inputs standards
+  regular: 12, // Cards, modales
+  generous: 16, // Hero cards, CTA buttons
+  full: 24, // Sections spéciales
 } as const;
 
 // ============================================================================

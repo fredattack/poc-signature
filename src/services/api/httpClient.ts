@@ -5,8 +5,13 @@
  * and comprehensive error handling.
  */
 
-import { API_ENDPOINTS, ApiError, ApiResponse, HttpStatusCode } from '@/types/api.types';
-import { getTokens, isTokenExpired, removeTokens, saveTokens } from '@/utils/storage';
+import { API_ENDPOINTS, ApiError, ApiResponse } from '@/types/api.types';
+import {
+  getTokens,
+  isTokenExpired,
+  removeTokens,
+  saveTokens,
+} from '@/utils/storage';
 import { Tokens } from '@/types/auth.types';
 
 // ============================================================================
@@ -14,7 +19,8 @@ import { Tokens } from '@/types/auth.types';
 // ============================================================================
 
 const API_BASE_URL =
-  process.env.EXPO_PUBLIC_API_URL || 'https://api.signatureapp.com/api/v1';
+  (process.env.EXPO_PUBLIC_API_URL as string | undefined) ??
+  'https://api.signatureapp.com/api/v1';
 
 const DEFAULT_TIMEOUT = 30000; // 30 seconds
 
@@ -28,7 +34,10 @@ class HttpClient {
   private isRefreshing = false;
   private refreshSubscribers: Array<(token: string) => void> = [];
 
-  constructor(baseURL: string = API_BASE_URL, timeout: number = DEFAULT_TIMEOUT) {
+  constructor(
+    baseURL: string = API_BASE_URL,
+    timeout: number = DEFAULT_TIMEOUT
+  ) {
     this.baseURL = baseURL;
     this.timeout = timeout;
   }
@@ -47,7 +56,9 @@ class HttpClient {
       }
 
       // Get headers
-      const headers = await this.getHeaders(options.headers as Record<string, string>);
+      const headers = await this.getHeaders(
+        (options.headers as Record<string, string> | undefined) ?? {}
+      );
 
       // Make request with timeout
       const controller = new AbortController();
@@ -62,7 +73,11 @@ class HttpClient {
       clearTimeout(timeoutId);
 
       // Parse response
-      const data = await response.json();
+      const data = (await response.json()) as {
+        data?: T;
+        message?: string;
+        error?: unknown;
+      };
 
       // Handle HTTP errors
       if (!response.ok) {
@@ -82,7 +97,10 @@ class HttpClient {
   /**
    * GET request
    */
-  async get<T>(endpoint: string, params?: Record<string, unknown>): Promise<ApiResponse<T>> {
+  async get<T>(
+    endpoint: string,
+    params?: Record<string, unknown>
+  ): Promise<ApiResponse<T>> {
     const queryString = params ? `?${this.buildQueryString(params)}` : '';
     return this.request<T>(`${endpoint}${queryString}`, {
       method: 'GET',
@@ -92,10 +110,7 @@ class HttpClient {
   /**
    * POST request
    */
-  async post<T>(
-    endpoint: string,
-    data?: unknown
-  ): Promise<ApiResponse<T>> {
+  async post<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'POST',
       body: JSON.stringify(data),
@@ -105,10 +120,7 @@ class HttpClient {
   /**
    * PUT request
    */
-  async put<T>(
-    endpoint: string,
-    data?: unknown
-  ): Promise<ApiResponse<T>> {
+  async put<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PUT',
       body: JSON.stringify(data),
@@ -118,10 +130,7 @@ class HttpClient {
   /**
    * PATCH request
    */
-  async patch<T>(
-    endpoint: string,
-    data?: unknown
-  ): Promise<ApiResponse<T>> {
+  async patch<T>(endpoint: string, data?: unknown): Promise<ApiResponse<T>> {
     return this.request<T>(endpoint, {
       method: 'PATCH',
       body: JSON.stringify(data),
@@ -178,28 +187,35 @@ class HttpClient {
       }
 
       // Request new tokens
-      const response = await fetch(`${this.baseURL}${API_ENDPOINTS.AUTH.REFRESH}`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          refresh_token: tokens.refresh_token,
-        }),
-      });
+      const response = await fetch(
+        `${this.baseURL}${API_ENDPOINTS.AUTH.REFRESH}`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+          },
+          body: JSON.stringify({
+            refresh_token: tokens.refresh_token,
+          }),
+        }
+      );
 
       if (!response.ok) {
         throw new Error('Token refresh failed');
       }
 
-      const data = await response.json();
+      const data = (await response.json()) as {
+        data: { tokens: Tokens };
+      };
       const newTokens: Tokens = data.data.tokens;
 
       // Save new tokens
       await saveTokens(newTokens);
 
       // Notify subscribers
-      this.refreshSubscribers.forEach((callback) => callback(newTokens.access_token));
+      this.refreshSubscribers.forEach((callback: (token: string) => void) =>
+        callback(newTokens.access_token)
+      );
       this.refreshSubscribers = [];
     } catch (error) {
       // Refresh failed - logout user
@@ -215,12 +231,22 @@ class HttpClient {
    */
   private handleErrorResponse<T>(
     statusCode: number,
-    data: any
+    data: unknown
   ): ApiResponse<T> {
+    const errorData = data as {
+      error?: {
+        message?: string;
+        code?: string;
+        details?: Record<string, string[]>;
+      };
+      message?: string;
+    };
+
     const error: ApiError = {
-      message: data.error?.message || data.message || 'An error occurred',
-      code: data.error?.code || 'UNKNOWN_ERROR',
-      details: data.error?.details,
+      message:
+        errorData.error?.message ?? errorData.message ?? 'An error occurred',
+      code: errorData.error?.code ?? 'UNKNOWN_ERROR',
+      details: errorData.error?.details,
       statusCode,
     };
 

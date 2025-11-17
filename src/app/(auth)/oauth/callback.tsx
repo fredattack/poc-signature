@@ -6,11 +6,15 @@
 
 import React, { useEffect, useState } from 'react';
 import { StyleSheet, Text, View } from 'react-native';
-import { useRouter, useLocalSearchParams } from 'expo-router';
+import { useLocalSearchParams, useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
-import { LoadingOverlay, ErrorMessage } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import { LoadingOverlay } from '@/components/auth';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { OAuthProvider } from '@/types/auth.types';
 
 export default function OAuthCallbackScreen() {
@@ -26,16 +30,15 @@ export default function OAuthCallbackScreen() {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
   useEffect(() => {
-    handleCallback();
+    void handleCallback();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleCallback = async () => {
     try {
       // Check for errors
       if (params.error) {
-        setErrorMessage(
-          `Erreur d'authentification: ${params.error}`
-        );
+        setErrorMessage(`Erreur d'authentification: ${params.error}`);
         setTimeout(() => router.replace('/(auth)/login'), 3000);
         return;
       }
@@ -50,7 +53,7 @@ export default function OAuthCallbackScreen() {
       const provider = params.provider as OAuthProvider;
 
       // Get token (code or token depending on provider)
-      const token = params.token || params.code;
+      const token = params.token ?? params.code;
 
       if (!token) {
         setErrorMessage('Token manquant');
@@ -66,9 +69,7 @@ export default function OAuthCallbackScreen() {
     } catch (error) {
       console.error('OAuth callback error:', error);
       setErrorMessage(
-        error instanceof Error
-          ? error.message
-          : 'Erreur d\'authentification'
+        error instanceof Error ? error.message : "Erreur d'authentification"
       );
       setTimeout(() => router.replace('/(auth)/login'), 3000);
     }

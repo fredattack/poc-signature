@@ -10,12 +10,16 @@ import { useRouter } from 'expo-router';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useAuthStore } from '@/store/authStore';
 import {
-  AuthInput,
   AuthButton,
+  AuthInput,
   ErrorMessage,
   LoadingOverlay,
 } from '@/components/auth';
-import { AUTH_COLORS, AUTH_SPACING, AUTH_TYPOGRAPHY } from '@/constants/auth-design';
+import {
+  AUTH_COLORS,
+  AUTH_SPACING,
+  AUTH_TYPOGRAPHY,
+} from '@/constants/auth-design';
 import { validateEmail } from '@/utils/validation';
 import * as Haptics from 'expo-haptics';
 
@@ -44,9 +48,7 @@ export default function ForgotPasswordScreen() {
       );
 
       // Success haptic
-      void Haptics.notificationAsync(
-        Haptics.NotificationFeedbackType.Success
-      );
+      void Haptics.notificationAsync(Haptics.NotificationFeedbackType.Success);
 
       // Navigate back after 3 seconds
       setTimeout(() => {

@@ -26,7 +26,7 @@ import {
   AUTH_SPACING,
   AUTH_TYPOGRAPHY,
 } from '@/constants/auth-design';
-import { Icon } from '@/components/ui/Icon';
+import { Icon, IconName } from '@/components/ui/Icon';
 
 export interface OAuthButtonProps {
   provider: OAuthProvider;
@@ -37,7 +37,7 @@ export interface OAuthButtonProps {
 
 const PROVIDER_CONFIG: Record<
   OAuthProvider,
-  { name: string; icon: string; color: string }
+  { name: string; icon: IconName; color: string }
 > = {
   google: {
     name: 'Google',
@@ -142,7 +142,11 @@ export const OAuthButton: React.FC<OAuthButtonProps> = ({
         ) : (
           <>
             <View style={styles.iconContainer}>
-              <Icon name={config.icon} size={AUTH_DIMENSIONS.oauthIconSize} color={config.color} />
+              <Icon
+                name={config.icon}
+                size={AUTH_DIMENSIONS.oauthIconSize}
+                color={config.color}
+              />
             </View>
             <Text style={styles.text}>Continue with {config.name}</Text>
           </>

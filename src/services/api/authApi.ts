@@ -9,26 +9,20 @@ import { httpClient } from './httpClient';
 import { API_ENDPOINTS, ApiResponse } from '@/types/api.types';
 import {
   AuthResponse,
-  ForgotPasswordRequest,
-  LoginRequest,
-  MFAEnableRequest,
   MFASetupData,
-  MFASetupResponse,
-  MFAVerifyRequest,
   OAuthLoginRequest,
   OAuthProvider,
   RegisterRequest,
-  ResetPasswordRequest,
   Tokens,
   User,
 } from '@/types/auth.types';
 import {
-  getTokens,
-  removeTokens,
-  saveTokens,
-  saveMFASessionToken,
   getMFASessionToken,
+  getTokens,
   removeMFASessionToken,
+  removeTokens,
+  saveMFASessionToken,
+  saveTokens,
 } from '@/utils/storage';
 import { collectDeviceInfo } from '@/utils/device';
 
@@ -40,7 +34,9 @@ class AuthApiService {
   /**
    * Register new user with email and password
    */
-  async register(data: Omit<RegisterRequest, 'device_info'>): Promise<ApiResponse<AuthResponse>> {
+  async register(
+    data: Omit<RegisterRequest, 'device_info'>
+  ): Promise<ApiResponse<AuthResponse['data']>> {
     try {
       const deviceInfo = await collectDeviceInfo();
 
@@ -67,7 +63,7 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<AuthResponse>;
+      return response;
     } catch (error) {
       console.error('Register error:', error);
       return {
@@ -83,7 +79,10 @@ class AuthApiService {
   /**
    * Login with email and password
    */
-  async login(email: string, password: string): Promise<ApiResponse<AuthResponse>> {
+  async login(
+    email: string,
+    password: string
+  ): Promise<ApiResponse<AuthResponse['data']>> {
     try {
       const deviceInfo = await collectDeviceInfo();
 
@@ -111,7 +110,7 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<AuthResponse>;
+      return response;
     } catch (error) {
       console.error('Login error:', error);
       return {
@@ -130,11 +129,14 @@ class AuthApiService {
   async loginWithOAuth(
     provider: OAuthProvider,
     oauthData: Omit<OAuthLoginRequest, 'device_info'>
-  ): Promise<ApiResponse<AuthResponse>> {
+  ): Promise<ApiResponse<AuthResponse['data']>> {
     try {
       const deviceInfo = await collectDeviceInfo();
 
-      const endpoint = API_ENDPOINTS.AUTH[provider.toUpperCase() as keyof typeof API_ENDPOINTS.AUTH];
+      const endpoint =
+        API_ENDPOINTS.AUTH[
+          provider.toUpperCase() as keyof typeof API_ENDPOINTS.AUTH
+        ];
 
       const response = await httpClient.post<AuthResponse['data']>(
         endpoint as string,
@@ -158,7 +160,7 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<AuthResponse>;
+      return response;
     } catch (error) {
       console.error(`${provider} login error:`, error);
       return {
@@ -224,7 +226,10 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<Tokens>;
+      return {
+        success: false,
+        error: response.error,
+      };
     } catch (error) {
       console.error('Token refresh error:', error);
       return {
@@ -253,7 +258,7 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<MFASetupData>;
+      return response;
     } catch (error) {
       console.error('MFA setup error:', error);
       return {
@@ -269,7 +274,7 @@ class AuthApiService {
   /**
    * Verify MFA code (during login)
    */
-  async verifyMFA(code: string): Promise<ApiResponse<AuthResponse>> {
+  async verifyMFA(code: string): Promise<ApiResponse<AuthResponse['data']>> {
     try {
       const mfaSessionToken = await getMFASessionToken();
 
@@ -291,7 +296,7 @@ class AuthApiService {
         };
       }
 
-      return response as ApiResponse<AuthResponse>;
+      return response;
     } catch (error) {
       console.error('MFA verify error:', error);
       return {
