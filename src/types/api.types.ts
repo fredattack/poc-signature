@@ -27,24 +27,38 @@ export interface ApiError {
 }
 
 // ============================================================================
-// PAGINATION
+// PAGINATION (Laravel Format)
 // ============================================================================
 
 export interface PaginationParams {
-  page: number;
-  limit: number;
-  sortBy?: string;
-  sortOrder?: 'asc' | 'desc';
+  page?: number;
+  per_page?: number;
+  sort_by?: string;
+  sort_order?: 'asc' | 'desc';
+  [key: string]: unknown;
+}
+
+export interface LaravelPaginationLinks {
+  first: string;
+  last: string;
+  prev: string | null;
+  next: string | null;
+}
+
+export interface LaravelPaginationMeta {
+  current_page: number;
+  from: number;
+  last_page: number;
+  path: string;
+  per_page: number;
+  to: number;
+  total: number;
 }
 
 export interface PaginatedResponse<T> {
   data: T[];
-  pagination: {
-    page: number;
-    limit: number;
-    total: number;
-    totalPages: number;
-  };
+  links: LaravelPaginationLinks;
+  meta: LaravelPaginationMeta;
 }
 
 // ============================================================================

@@ -31,7 +31,7 @@ export interface LoginRequest {
 
 /**
  * Mock authentication service for POC
- * Replace with actual Firebase/Supabase implementation
+ * Replace with actual Laravel backend implementation
  */
 class AuthService {
   /**

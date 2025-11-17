@@ -20,7 +20,7 @@ import { Tokens } from '@/types/auth.types';
 
 const API_BASE_URL =
   (process.env.EXPO_PUBLIC_API_URL as string | undefined) ??
-  'https://api.signatureapp.com/api/v1';
+  'http://localhost:8000/api/v1';
 
 const DEFAULT_TIMEOUT = 30000; // 30 seconds
 

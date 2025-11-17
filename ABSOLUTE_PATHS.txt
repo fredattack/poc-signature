@@ -1,0 +1,92 @@
+BACKEND DOCUMENTATION - ABSOLUTE FILE PATHS
+=============================================
+
+Created: November 17, 2025
+
+DOCUMENTATION FILES (in React Native project)
+──────────────────────────────────────────────────────────────────
+
+Primary Documentation (READ IN THIS ORDER):
+
+1. /Users/fred/PhpstormProjects/poc-signature/BACKEND_DOCUMENTATION_INDEX.md
+   - Navigation guide for all documentation
+   - Quick reference for finding information
+   - Feature checklist and implementation phases
+   - Size: 11 KB
+
+2. /Users/fred/PhpstormProjects/poc-signature/LARAVEL_API_DOCUMENTATION.md
+   - Complete, detailed API reference
+   - All 37 endpoints with full request/response examples
+   - Database schema documentation
+   - Validation rules and error handling
+   - Size: 27 KB (MOST COMPREHENSIVE)
+
+3. /Users/fred/PhpstormProjects/poc-signature/API_QUICK_REFERENCE.md
+   - Quick lookup guide
+   - Endpoint summary
+   - Common patterns
+   - Quick implementation examples
+   - Size: 6.2 KB (QUICK REFERENCE)
+
+4. /Users/fred/PhpstormProjects/poc-signature/BACKEND_EXPLORATION_SUMMARY.md
+   - Strategic overview
+   - Architecture and design
+   - Implementation details
+   - Recommendations for React Native client
+   - Size: 15 KB
+
+BACKEND PROJECT LOCATION
+──────────────────────────────────────────────────────────────────
+
+/Users/fred/PhpstormProjects/signature-api/
+
+KEY FILES IN BACKEND:
+
+Routes:
+  /Users/fred/PhpstormProjects/signature-api/routes/api.php
+
+Controllers:
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/AuthController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/SignatureController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/WallpaperController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/WallpaperTemplateController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/SubscriptionController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/AnalyticsController.php
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Controllers/Api/V1/FeedbackController.php
+
+Models:
+  /Users/fred/PhpstormProjects/signature-api/app/Models/User.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/Signature.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/Wallpaper.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/WallpaperTemplate.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/Subscription.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/Session.php
+  /Users/fred/PhpstormProjects/signature-api/app/Models/OauthProvider.php
+
+Services:
+  /Users/fred/PhpstormProjects/signature-api/app/Services/JwtService.php
+  /Users/fred/PhpstormProjects/signature-api/app/Services/AnalyticsService.php
+  /Users/fred/PhpstormProjects/signature-api/app/Services/SubscriptionPlanService.php
+
+Middleware:
+  /Users/fred/PhpstormProjects/signature-api/app/Http/Middleware/JwtAuthMiddleware.php
+
+Configuration:
+  /Users/fred/PhpstormProjects/signature-api/config/jwt.php
+  /Users/fred/PhpstormProjects/signature-api/config/auth.php
+
+Migrations:
+  /Users/fred/PhpstormProjects/signature-api/database/migrations/
+
+REACT NATIVE PROJECT
+──────────────────────────────────────────────────────────────────
+
+/Users/fred/PhpstormProjects/poc-signature/
+
+RELATED DOCUMENTATION:
+
+  /Users/fred/PhpstormProjects/poc-signature/AUTH_SYSTEM_README.md
+  /Users/fred/PhpstormProjects/poc-signature/AUTH_INSTALLATION.md
+  /Users/fred/PhpstormProjects/poc-signature/DESIGN-SPECS-maquettes-figma.md
+  /Users/fred/PhpstormProjects/poc-signature/SDD-Application-Mobile-SignatureApp.md
+
